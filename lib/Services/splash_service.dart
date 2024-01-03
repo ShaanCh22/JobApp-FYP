@@ -33,3 +33,15 @@ class SplashServiec{
 
   }
 }
+// void isLogin(BuildContext context){
+//   if(user!=null){
+//     Future.delayed(const Duration(seconds:2)).then((value) => {
+//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const BottomNavBar()))
+//     });
+//   }else{
+//     Future.delayed(const Duration(seconds:2)).then((value) => {
+//       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const OnBoardScreen()))
+//     });
+//   }
+//
+// }
