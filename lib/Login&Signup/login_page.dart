@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
 import '../Widgets/bottom_navigation_bar.dart';
 import 'ForgetPasswordScreen.dart';
@@ -42,7 +43,9 @@ class _LoginState extends State<Login> {
         Fluttertoast.showToast(
             msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const BottomNavBar()));
+            PageTransition(child:BottomNavBar(),
+                type: PageTransitionType.rightToLeft,
+                duration: Duration(milliseconds: 500)));
       } catch (error) {
         setState(() {
           _isLoading = false;
@@ -65,11 +68,11 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 5.h),
+            padding: EdgeInsets.only(left: 20.w,right: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -232,9 +235,10 @@ class _LoginState extends State<Login> {
                       onPressed: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                const ForgetPasswordScreen()));
+                            PageTransition(
+                                child:ForgetPasswordScreen(),
+                                type: PageTransitionType.rightToLeft,
+                                duration: Duration(milliseconds: 300)));
                       },
                       child: Text('Forget Password?',
                           style: GoogleFonts.dmSans(
@@ -285,10 +289,14 @@ class _LoginState extends State<Login> {
                       ),
                       TextButton(
                           onPressed: () {
+                            // *** Neat Code ***
                             Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Signup()));
+                                PageTransition(
+                                    child:Signup(),
+                                    type: PageTransitionType.rightToLeft,
+                                    duration: Duration(milliseconds: 300)
+                                ));
                           },
                           child: Text(
                             'Register Now',

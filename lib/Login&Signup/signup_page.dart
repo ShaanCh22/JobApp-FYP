@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Login&Signup/verify_email_page.dart';
+import 'package:page_transition/page_transition.dart';
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -42,13 +43,15 @@ class _SignupState extends State<Signup> {
             .showSnackBar(const SnackBar(
           content: Text("OTP has been sent"),
         ));
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpScreen(
+        Navigator.push(context, PageTransition(child:OtpScreen(
           myauth: myauth,
           name: _nametext.text,
           mail: _emailText.text,
           phone: _phonenumbertext.text,
           pass: _passText.text,
-        )));
+        ),
+            type: PageTransitionType.rightToLeft,
+            duration: Duration(milliseconds: 500)));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(
@@ -60,6 +63,7 @@ class _SignupState extends State<Signup> {
       _isLoading=false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

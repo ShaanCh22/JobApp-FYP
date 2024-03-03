@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'login_page.dart';
 class ConfirmForget extends StatefulWidget {
@@ -51,10 +52,13 @@ class _ConfirmForgetState extends State<ConfirmForget> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
                       onPressed: (){
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
+                        Navigator.pushReplacement(context,
+                            PageTransition(child:Login(),
+                                type: PageTransitionType.topToBottom,
+                                duration: Duration(milliseconds: 300)));
                       },
                       child: Text(
-                        'Login',
+                        'Go to Login',
                         style: GoogleFonts.dmSans(
                             color: Colors.white,
                             fontSize: 16.sp,

@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/setting_page.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'edit_profile.dart';
 
@@ -26,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
+              automaticallyImplyLeading: false,
               floating: true,
               toolbarHeight: 50,
               // backgroundColor: Color(0xff282837),
@@ -44,7 +46,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.only(right: 10.w),
                   child: IconButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingPage()));
+                        Navigator.push(context, PageTransition(child:SettingPage(),
+                            type: PageTransitionType.rightToLeft,
+                            duration: Duration(milliseconds: 300)));
                       },
                       icon: const Icon(
                         Icons.settings_outlined,
@@ -95,7 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.r))),
                               onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfilePage()));
+                                Navigator.push(context, PageTransition(child:EditProfilePage(),
+                                    type: PageTransitionType.rightToLeft,
+                                    duration: Duration(milliseconds: 300)));
                               },
                               child:Text(
                                   'Edit Profile',
@@ -119,7 +125,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.r))),
                               onPressed: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadResumePage()));
+                                Navigator.push(context, PageTransition(child:UploadResumePage(),
+                                    type: PageTransitionType.rightToLeft,
+                                    duration: Duration(milliseconds: 300)));
                               },
                               child:Text(
                                   'Add Resume',
@@ -150,7 +158,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),),
                         trailing:  IconButton(
                           onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadResumePage()));
+                            Navigator.push(context, PageTransition(child:UploadResumePage(),
+                                type: PageTransitionType.rightToLeft,
+                                duration: Duration(milliseconds: 300)));
                           },
                           icon: SvgPicture.asset(
                             theme: const SvgTheme(

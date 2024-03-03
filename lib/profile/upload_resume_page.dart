@@ -35,14 +35,14 @@ class _UploadResumePageState extends State<UploadResumePage> {
             strokeCap: StrokeCap.round,
             strokeWidth: 2.w,
             child: SizedBox(
-              height: 165.h,width: 340.w,
+              height: 165.h,width: 380.w,
               child: ElevatedButton(
                 style: ButtonStyle(
                     splashFactory: InkRipple.splashFactory,
                     // splashColor: Color(0xff5800FF),
-                  padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-                  backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
-                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))
+                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))
                 ),
                 onPressed: (){},
                 child: Column(
@@ -56,8 +56,8 @@ class _UploadResumePageState extends State<UploadResumePage> {
                       height: 24.h,
                     ),
                     Text('Drop Resume',style: GoogleFonts.dmSans(
-                      fontSize: 16.sp,height: 2.h,
-                      color: Colors.grey
+                        fontSize: 16.sp,height: 2.h,
+                        color: Colors.grey
                     ),)
                   ],
                 ),
@@ -66,29 +66,29 @@ class _UploadResumePageState extends State<UploadResumePage> {
           ),
           SizedBox(height: 30.h,),
           Text('Queue',style: GoogleFonts.dmSans(
-            color: Colors.white,
-            fontSize: 18.sp
+              color: Colors.white,
+              fontSize: 18.sp
           ),),
           SizedBox(height: 30.h,),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xff282837),
-              borderRadius: BorderRadius.circular(8.r)
+                color: Color(0xff282837),
+                borderRadius: BorderRadius.circular(8.r)
             ),
 
             child: ListTile(
               contentPadding: EdgeInsets.only(left: 10.w,top: 5.h,bottom: 5),
               title: Text('File Name.pdf',style: GoogleFonts.dmSans(
-                color: Colors.white,
-                fontSize: 16.sp
+                  color: Colors.white,
+                  fontSize: 16.sp
               ),),
               trailing: ElevatedButton(
                 onPressed: (){},
-                style: const ButtonStyle(
-                  shape: MaterialStatePropertyAll(CircleBorder()),
-                  backgroundColor: MaterialStatePropertyAll(Colors.transparent),
-                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                  elevation: MaterialStatePropertyAll(0)
+                style: ButtonStyle(
+                    shape: MaterialStatePropertyAll(CircleBorder()),
+                    backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                    elevation: MaterialStatePropertyAll(0)
                 ),
                 child: SvgPicture.asset(
                   'assets/svg/cross.svg',
@@ -103,7 +103,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
           SizedBox(height: 16.h,),
           Container(
             decoration: BoxDecoration(
-                color: const Color(0xff282837),
+                color: Color(0xff282837),
                 borderRadius: BorderRadius.circular(8.r)
             ),
 
@@ -115,7 +115,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
               ),),
               trailing: ElevatedButton(
                 onPressed: (){},
-                style: const ButtonStyle(
+                style: ButtonStyle(
                     shape: MaterialStatePropertyAll(CircleBorder()),
                     backgroundColor: MaterialStatePropertyAll(Colors.transparent),
                     padding: MaterialStatePropertyAll(EdgeInsets.zero),

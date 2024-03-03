@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../Services/global_methods.dart';
 import '../Widgets/bottom_navigation_bar.dart';
@@ -97,7 +98,9 @@ class _OtpScreenState extends State<OtpScreen> {
         }).then((signedInUser) =>
         {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const BottomNavBar()))
+              context, PageTransition(child:BottomNavBar(),
+              type: PageTransitionType.rightToLeft,
+              duration: Duration(milliseconds: 500)))
         })
       });
     } catch (e) {

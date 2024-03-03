@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'confirm_forget.dart';
 class ForgetPasswordScreen extends StatefulWidget {
@@ -31,7 +32,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             email: _forgetpassText.text.trim()
         );
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const ConfirmForget()));}
+        Navigator.pushReplacement(context,
+            PageTransition(child:ConfirmForget(),
+                type: PageTransitionType.rightToLeft,
+                duration: Duration(milliseconds: 300)));}
     }catch(error){
       setState(() {
         _isLoading= false;

@@ -58,7 +58,7 @@ class MainPage extends StatelessWidget {
               ),
             );
           } else if (snapshot.hasData) {
-            return const BottomNavBar();
+            return const SplashScreen();
           } else {
             return const SplashScreen();
           }
