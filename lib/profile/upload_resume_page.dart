@@ -40,8 +40,8 @@ class _UploadResumePageState extends State<UploadResumePage> {
                 style: ButtonStyle(
                     splashFactory: InkRipple.splashFactory,
                     // splashColor: Color(0xff5800FF),
-                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                    backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+                    padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
                     shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))
                 ),
                 onPressed: (){},
@@ -72,7 +72,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
           SizedBox(height: 30.h,),
           Container(
             decoration: BoxDecoration(
-                color: Color(0xff282837),
+                color: const Color(0xff282837),
                 borderRadius: BorderRadius.circular(8.r)
             ),
 
@@ -84,7 +84,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
               ),),
               trailing: ElevatedButton(
                 onPressed: (){},
-                style: ButtonStyle(
+                style: const ButtonStyle(
                     shape: MaterialStatePropertyAll(CircleBorder()),
                     backgroundColor: MaterialStatePropertyAll(Colors.transparent),
                     padding: MaterialStatePropertyAll(EdgeInsets.zero),
@@ -103,7 +103,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
           SizedBox(height: 16.h,),
           Container(
             decoration: BoxDecoration(
-                color: Color(0xff282837),
+                color: const Color(0xff282837),
                 borderRadius: BorderRadius.circular(8.r)
             ),
 
@@ -115,7 +115,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
               ),),
               trailing: ElevatedButton(
                 onPressed: (){},
-                style: ButtonStyle(
+                style: const ButtonStyle(
                     shape: MaterialStatePropertyAll(CircleBorder()),
                     backgroundColor: MaterialStatePropertyAll(Colors.transparent),
                     padding: MaterialStatePropertyAll(EdgeInsets.zero),

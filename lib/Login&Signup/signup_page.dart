@@ -51,7 +51,7 @@ class _SignupState extends State<Signup> {
           pass: _passText.text,
         ),
             type: PageTransitionType.rightToLeft,
-            duration: Duration(milliseconds: 500)));
+            duration: const Duration(milliseconds: 500)));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(
@@ -127,7 +127,7 @@ class _SignupState extends State<Signup> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: 'Enter Your Name/ Company Name',
+                          hintText: 'Enter Your Name',
                           hintStyle: TextStyle(color: Colors.grey),
                           prefixIcon: Icon(Icons.person_outline_sharp,size: 20,color: Colors.grey,),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
@@ -160,7 +160,7 @@ class _SignupState extends State<Signup> {
                         controller: _emailText,
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'Email shuold not be empty!';
+                            return 'Email should not be empty!';
                           }
                           else if(!value.contains('@')){
                             return 'Please enter a valid email address!';

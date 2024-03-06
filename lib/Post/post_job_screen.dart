@@ -122,7 +122,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             controller: _emailText,
                             validator: (value){
                               if(value!.isEmpty){
-                                return 'Job title shuold not be empty!';
+                                return 'Job title should not be empty!';
                               }
                               else{
                                 return null;

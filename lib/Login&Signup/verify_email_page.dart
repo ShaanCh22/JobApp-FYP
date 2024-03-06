@@ -91,16 +91,25 @@ class _OtpScreenState extends State<OtpScreen> {
       {
         FirebaseFirestore.instance.collection("Users").doc(
             signedInUser.user?.uid).set({
+          "Id":FirebaseFirestore.instance.collection("Users").doc(
+              signedInUser.user?.uid),
           "Name": widget.name,
           "Email": widget.mail,
           "Phone Number": widget.phone,
+          "User Image": "",
+          "Gender":"",
+          "About Me":"",
+          "Experience":"",
+          "Education":"",
+          "Skills":"",
+          "Resume Url":"",
           "Created At": Timestamp.now()
         }).then((signedInUser) =>
         {
           Navigator.pushReplacement(
-              context, PageTransition(child:BottomNavBar(),
+              context, PageTransition(child:const BottomNavBar(),
               type: PageTransitionType.rightToLeft,
-              duration: Duration(milliseconds: 500)))
+              duration: const Duration(milliseconds: 500)))
         })
       });
     } catch (e) {

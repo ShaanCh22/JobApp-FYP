@@ -15,7 +15,7 @@ class GlobalMethod{
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Error Occured',style: TextStyle(color: Colors.redAccent),),
+                  child: Text('Error Occurred',style: TextStyle(color: Colors.redAccent),),
                 )
               ],
             ),

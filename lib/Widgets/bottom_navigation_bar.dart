@@ -163,7 +163,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     height: 20,
                   ),
                   Text(
-                    'Favrot',
+                    'Favorit',
                     style:
                     GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
                   )
@@ -180,7 +180,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     height: 20,
                   ),
                   Text(
-                    'Favrot',
+                    'Favorit',
                     style: GoogleFonts.dmSans(
                         fontSize: 12.sp, color: const Color(0xff5800FF)),
                   )
@@ -332,7 +332,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //               children: [
 //                 SizedBox(height: 8.h,),
 //                 SvgPicture.asset('assets/svg/img_nav_favorit.svg',color: Colors.grey,),
-//                 Text('Favrot',style: GoogleFonts.dmSans(
+//                 Text('Favorit',style: GoogleFonts.dmSans(
 //                     fontSize: 12.sp,
 //                     color: Colors.grey
 //                 ),)
@@ -342,7 +342,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //               children: [
 //                 SizedBox(height: 8.h,),
 //                 SvgPicture.asset('assets/svg/img_nav_favorit_primary.svg',),
-//                 Text('Favrot',style: GoogleFonts.dmSans(
+//                 Text('Favorit',style: GoogleFonts.dmSans(
 //                     fontSize: 12.sp,
 //                     color: Color(0xff5800FF)
 //                 ),)

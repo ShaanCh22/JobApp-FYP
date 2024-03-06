@@ -1,10 +1,17 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jobseek/profile/profile_page.dart';
+import 'package:page_transition/page_transition.dart';
+
+import '../Services/global_methods.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -19,10 +26,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController(text: '');
   final TextEditingController _phoneTextControler =
   TextEditingController(text: '');
-  final TextEditingController _genderTextControler =
-  TextEditingController(text: '');
-  final bool _isLoading=false;
+  String? gender;
+  bool _isLoading = false;
   File? imageFile;
+  final FirebaseAuth _auth=FirebaseAuth.instance;
+  String? imageUrl;
 
   Future pickImage()async{
     try{
@@ -54,6 +62,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
     }
   }
+  Future uploadProfileData() async{
+    final isValid =_editDataFormKey.currentState!.validate();
+    if(isValid){
+      if(imageFile==null){
+        GlobalMethod.showErrorDialog(
+            error: 'Please pick an image',
+            ctx: context
+        );
+        return;
+      }
+      setState(() {
+        _isLoading=true;
+      });
+      try{
+        final User? user=_auth.currentUser;
+        final uid=user!.uid;
+        final ref=FirebaseStorage.instance.ref().child('userProfileImages').child('$uid.jpg');
+        await ref.putFile(imageFile!);
+        imageUrl=await ref.getDownloadURL();
+        FirebaseFirestore.instance.collection('Users').doc(uid).update({
+          'User Image':imageUrl,
+          'Phone Number':_phoneTextControler.text,
+          'Gender':gender
+        });
+        const SnackBar(content: Text('Changes saved'),);
+        Navigator.push(context, PageTransition(child: const ProfilePage(), type: PageTransitionType.leftToRight));
+      }catch(error){
+        setState(() {
+          _isLoading=false;
+        });
+        GlobalMethod.showErrorDialog(
+            error: error.toString(),
+            ctx: context);
+      }
+    }
+    setState(() {
+      _isLoading=false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +120,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           GestureDetector(
             onTap: (){
               showModalBottomSheet(
-                  backgroundColor: Color(0xff1D1D2F),
+                  backgroundColor: const Color(0xff1D1D2F),
                   context: context,
                   builder: (BuildContext context){
                     return Column(
@@ -84,17 +131,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             pickImageCamera();
                             Navigator.pop(context);
                           },
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
                             padding: MaterialStatePropertyAll(EdgeInsets.zero),
                             shape: MaterialStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadius.zero)),
                             // splashFactory: InkSplash.splashFactory,
                             splashFactory: InkSparkle.splashFactory,
-                            overlayColor: const MaterialStatePropertyAll(Color(
+                            overlayColor: MaterialStatePropertyAll(Color(
                                 0x4d5800ff)),
                           ),
                           child: ListTile(
-                            leading: Icon(Icons.camera_alt,color: Colors.white,),
+                            leading: const Icon(Icons.camera_alt,color: Colors.white,),
                             title: Text('Take profile picture',style: GoogleFonts.dmSans(
                                 color: Colors.white
                             ),),
@@ -105,17 +152,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             pickImage();
                             Navigator.pop(context);
                           },
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
                             padding: MaterialStatePropertyAll(EdgeInsets.zero),
                             shape: MaterialStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadius.zero)),
                             // splashFactory: InkSplash.splashFactory,
                             splashFactory: InkSparkle.splashFactory,
-                            overlayColor: const MaterialStatePropertyAll(Color(
+                            overlayColor: MaterialStatePropertyAll(Color(
                                 0x4d5800ff)),
                           ),
                           child: ListTile(
-                            leading: Icon(Icons.photo_library,color: Colors.white,),
+                            leading: const Icon(Icons.photo_library,color: Colors.white,),
                             title: Text('Select profile picture',style: GoogleFonts.dmSans(
                                 color: Colors.white
                             ),),
@@ -124,17 +171,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         imageFile==null
                             ? ElevatedButton(
                           onPressed:(){},
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
                             padding: MaterialStatePropertyAll(EdgeInsets.zero),
                             shape: MaterialStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadius.zero)),
                             // splashFactory: InkSplash.splashFactory,
                             splashFactory: InkSparkle.splashFactory,
-                            overlayColor: const MaterialStatePropertyAll(Color(
+                            overlayColor: MaterialStatePropertyAll(Color(
                                 0x4d5800ff)),
                           ),
                           child: ListTile(
-                            leading: Icon(Icons.delete_forever,color: Colors.grey,),
+                            leading: const Icon(Icons.delete_forever,color: Colors.grey,),
                             title: Text('Delete profile image',style: GoogleFonts.dmSans(
                                 color: Colors.grey
                             ),),
@@ -147,17 +194,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             });
                             Navigator.pop(context);
                           },
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
                             padding: MaterialStatePropertyAll(EdgeInsets.zero),
                             shape: MaterialStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadius.zero)),
                             // splashFactory: InkSplash.splashFactory,
                             splashFactory: InkSparkle.splashFactory,
-                            overlayColor: const MaterialStatePropertyAll(Color(
+                            overlayColor: MaterialStatePropertyAll(Color(
                                 0x4d5800ff)),
                           ),
                           child: ListTile(
-                            leading: Icon(Icons.delete_forever,color: Colors.white,),
+                            leading: const Icon(Icons.delete_forever,color: Colors.white,),
                             title: Text('Delete profile image',style: GoogleFonts.dmSans(
                                 color: Colors.white
                             ),),
@@ -180,7 +227,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child:ClipRRect(
                       borderRadius: BorderRadius.circular(40.r),
                       child:imageFile==null
-                          ?Icon(Icons.camera_alt_outlined,size:40,color:Colors.white,)
+                          ?const Icon(Icons.camera_alt_outlined,size:40,color:Colors.white,)
                           :Image.file(imageFile!,fit:BoxFit.cover),
                     )
                 ),
@@ -202,20 +249,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   height: 8.h,
                 ),
                 TextFormField(
+                  enabled: false,
                   textInputAction: TextInputAction.next,
                   // onEditingComplete: () =>
                   //     FocusScope.of(context).requestFocus(_passFocusNode),
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailTextControler,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Email should not be empty!';
-                    } else if (!value.contains('@')) {
-                      return 'Please enter a valid email!';
-                    } else {
-                      return null;
-                    }
-                  },
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
                     isCollapsed: true,
@@ -313,54 +352,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SizedBox(
                   height: 8.h,
                 ),
-                TextFormField(
-                  textInputAction: TextInputAction.done,
-                  // focusNode: _passFocusNode,
-                  keyboardType: TextInputType.text,
-                  controller: _genderTextControler,
-                  //Change it dynamically
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Password should not be empty!';
-                    } else if (value.length < 8) {
-                      return 'Password Should be at least 8 Characters';
-                    } else {
-                      return null;
-                    }
-                  },
-                  style: const TextStyle(
-                    color: Colors.white,
+                Container(
+                  decoration: BoxDecoration(
+                      color: const Color(0xff282837),
+                      borderRadius: BorderRadius.circular(8)
                   ),
-                  decoration: const InputDecoration(
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.all(15),
-                    filled: true,
-                    fillColor: Color(0xff282837),
-                    hintText: 'Male',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.male_outlined,
-                      size: 20,
-                      color: Colors.grey,
-                    ),
-                    enabledBorder:
-                    UnderlineInputBorder(borderSide: BorderSide.none),
-                    focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.redAccent,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xff5800FF),
-                        )),
-                    errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.redAccent,
-                        )),
-                  ),
+                  child: Column(children: [
+                    RadioListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text('Male',style: GoogleFonts.dmSans(
+                            color: Colors.white),
+                        ),
+                        activeColor: const Color(0xff5800FF),
+                        value: 'Male',
+                        groupValue: gender,
+                        onChanged:(value){
+                          setState(() {
+                            gender=value.toString();
+                          });
+                        }),
+                    RadioListTile(contentPadding: EdgeInsets.zero,
+                        title: Text('Female',style: GoogleFonts.dmSans(
+                            color: Colors.white),
+                        ),
+                        activeColor: const Color(0xff5800FF),
+                        value: 'Female',
+                        groupValue: gender,
+                        onChanged:(value){
+                          setState(() {
+                            gender=value.toString();
+                          });
+                        }),
+                    RadioListTile(contentPadding: EdgeInsets.zero,
+                        title: Text('Others',style: GoogleFonts.dmSans(
+                            color: Colors.white),
+                        ),
+                        activeColor: const Color(0xff5800FF),
+                        value: 'Others',
+                        groupValue: gender,
+                        onChanged:(value){
+                          setState(() {
+                            gender=value.toString();
+                          });
+                        })
+                  ],),
                 ),
+
+
               ],
             ),
           ),
@@ -370,13 +408,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
             height: 53.h,
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-
                     splashFactory: InkRipple.splashFactory,
                     backgroundColor: const Color(0xff5800FF),
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r))),
-                onPressed: (){},
+                onPressed: (){
+                  uploadProfileData();
+                },
                 child: _isLoading
                     ? const CircularProgressIndicator(
                   color: Colors.white,

@@ -24,9 +24,9 @@ class _SettingPageState extends State<SettingPage> {
       Navigator.pushReplacement(
           context,
           PageTransition(
-              child:Login(),
+              child:const Login(),
               type: PageTransitionType.topToBottom,
-              duration: Duration(milliseconds: 300)));
+              duration: const Duration(milliseconds: 300)));
     }catch(error){
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
     }

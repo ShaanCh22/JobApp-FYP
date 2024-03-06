@@ -43,9 +43,9 @@ class _LoginState extends State<Login> {
         Fluttertoast.showToast(
             msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
         Navigator.pushReplacement(context,
-            PageTransition(child:BottomNavBar(),
+            PageTransition(child:const BottomNavBar(),
                 type: PageTransitionType.rightToLeft,
-                duration: Duration(milliseconds: 500)));
+                duration: const Duration(milliseconds: 500)));
       } catch (error) {
         setState(() {
           _isLoading = false;
@@ -236,9 +236,9 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                             context,
                             PageTransition(
-                                child:ForgetPasswordScreen(),
+                                child:const ForgetPasswordScreen(),
                                 type: PageTransitionType.rightToLeft,
-                                duration: Duration(milliseconds: 300)));
+                                duration: const Duration(milliseconds: 300)));
                       },
                       child: Text('Forget Password?',
                           style: GoogleFonts.dmSans(
@@ -293,9 +293,9 @@ class _LoginState extends State<Login> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child:Signup(),
+                                    child:const Signup(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration: Duration(milliseconds: 300)
+                                    duration: const Duration(milliseconds: 300)
                                 ));
                           },
                           child: Text(

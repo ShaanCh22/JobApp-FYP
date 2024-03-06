@@ -33,9 +33,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         );
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context,
-            PageTransition(child:ConfirmForget(),
+            PageTransition(child:const ConfirmForget(),
                 type: PageTransitionType.rightToLeft,
-                duration: Duration(milliseconds: 300)));}
+                duration: const Duration(milliseconds: 300)));}
     }catch(error){
       setState(() {
         _isLoading= false;
@@ -96,7 +96,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         controller: _forgetpassText,
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'Email shuold not be empty!';
+                            return 'Email should not be empty!';
                           }
                           else if(!value.contains('@')){
                             return 'Please enter a valid email address!';

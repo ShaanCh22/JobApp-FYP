@@ -10,11 +10,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SplashServiec splashServiec= SplashServiec();
+  SplashService splashService= SplashService();
   @override
   void initState() {
     super.initState();
-    splashServiec.isLogin(context);
+    splashService.isLogin(context);
   }
   @override
   Widget build(BuildContext context) {

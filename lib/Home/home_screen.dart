@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Spotofy USA Inc',
+                                            'Spotify USA Inc',
                                             style: GoogleFonts.dmSans(
                                               color: const Color(0xffF6F8FE),
                                               fontSize: 13.sp,
@@ -403,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w600),
                                 ),
                                 subtitle: Text(
-                                  'Zian Design! - 1 Hours Ago',
+                                  'Zion Design! - 1 Hours Ago',
                                   style: GoogleFonts.dmSans(
                                     color: const Color(0xffF6F8FE),
                                     fontSize: 12.sp,

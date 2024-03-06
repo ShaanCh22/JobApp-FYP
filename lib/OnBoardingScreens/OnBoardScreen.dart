@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Login&Signup/login_page.dart';
-import 'IntroContents.dart';
+import 'intro_contents.dart';
 class OnBoardScreen extends StatefulWidget {
   const OnBoardScreen({super.key});
 
@@ -128,7 +128,7 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                 ),
                 onPressed: (){
                   // _controller.animateToPage(3, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
                 }, child: Text('Skip',
               style: GoogleFonts.dmSans(
                   color: Colors.white,

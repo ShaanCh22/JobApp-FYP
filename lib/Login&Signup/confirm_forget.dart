@@ -53,9 +53,9 @@ class _ConfirmForgetState extends State<ConfirmForget> {
                               borderRadius: BorderRadius.circular(8.r))),
                       onPressed: (){
                         Navigator.pushReplacement(context,
-                            PageTransition(child:Login(),
+                            PageTransition(child:const Login(),
                                 type: PageTransitionType.topToBottom,
-                                duration: Duration(milliseconds: 300)));
+                                duration: const Duration(milliseconds: 300)));
                       },
                       child: Text(
                         'Go to Login',

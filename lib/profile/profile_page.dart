@@ -7,7 +7,9 @@ import 'package:jobseek/profile/setting_page.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
 import 'package:page_transition/page_transition.dart';
 
+import 'aboutme_screen.dart';
 import 'edit_profile.dart';
+import 'experience_screen.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -46,9 +48,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: EdgeInsets.only(right: 10.w),
                   child: IconButton(
                       onPressed: () {
-                        Navigator.push(context, PageTransition(child:SettingPage(),
+                        Navigator.push(context, PageTransition(child:const SettingPage(),
                             type: PageTransitionType.rightToLeft,
-                            duration: Duration(milliseconds: 300)));
+                            duration: const Duration(milliseconds: 300)));
                       },
                       icon: const Icon(
                         Icons.settings_outlined,
@@ -99,9 +101,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.r))),
                               onPressed: (){
-                                Navigator.push(context, PageTransition(child:EditProfilePage(),
+                                Navigator.push(context, PageTransition(child:const EditProfilePage(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration: Duration(milliseconds: 300)));
+                                    duration: const Duration(milliseconds: 300)));
                               },
                               child:Text(
                                   'Edit Profile',
@@ -125,9 +127,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.r))),
                               onPressed: (){
-                                Navigator.push(context, PageTransition(child:UploadResumePage(),
+                                Navigator.push(context, PageTransition(child:const UploadResumePage(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration: Duration(milliseconds: 300)));
+                                    duration: const Duration(milliseconds: 300)));
                               },
                               child:Text(
                                   'Add Resume',
@@ -158,9 +160,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),),
                         trailing:  IconButton(
                           onPressed: (){
-                            Navigator.push(context, PageTransition(child:UploadResumePage(),
+                            Navigator.push(context, PageTransition(child:const UploadResumePage(),
                                 type: PageTransitionType.rightToLeft,
-                                duration: Duration(milliseconds: 300)));
+                                duration: const Duration(milliseconds: 300)));
                           },
                           icon: SvgPicture.asset(
                             theme: const SvgTheme(
@@ -197,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),                          width: 24,
                           height: 24,
                         ),
-                        title: Text('UI Design Portofolio.pdf',style: GoogleFonts.dmSans(
+                        title: Text('UI Design Portfolio.pdf',style: GoogleFonts.dmSans(
                           color: Colors.white,
                           fontSize: 16.sp,
                         ),),
@@ -222,7 +224,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.w500
                         ),),
                         trailing:  IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(context,
+                                PageTransition(child: const AboutMeScreen(), type: PageTransitionType.rightToLeft));
+                          },
                           icon: SvgPicture.asset(
                             'assets/svg/img_icon_line_onprimary_24x24.svg',
                             theme: const SvgTheme(
@@ -242,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               SizedBox(height: 15.h,),
-              //Exprience section
+              //Experience section
               Container(
                 color: const Color(0xff282837),
                 child: Padding(
@@ -257,7 +262,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.w500
                         ),),
                         trailing:  IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(context, PageTransition(child: const ExperienceScreen(),
+                                type: PageTransitionType.rightToLeft));
+                          },
                           icon: SvgPicture.asset(
                             'assets/svg/img_icon_line_onprimary_24x24.svg',
                             theme: const SvgTheme(
@@ -350,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: const Color(0xff5800FF)
                                 ),),
                               SizedBox(height: 5.h,),
-                              Text('University of Suzuran Yogyakarta',
+                              Text('University of Suzerain Jogjakarta',
                                 style: GoogleFonts.dmSans(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.w500,
