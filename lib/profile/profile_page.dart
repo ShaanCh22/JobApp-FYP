@@ -199,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),                          width: 24,
                           height: 24,
                         ),
-                        title: Text('UI Design Portfolio.pdf',style: GoogleFonts.dmSans(
+                        title: Text('UI Design Portofolio.pdf',style: GoogleFonts.dmSans(
                           color: Colors.white,
                           fontSize: 16.sp,
                         ),),
@@ -358,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: const Color(0xff5800FF)
                                 ),),
                               SizedBox(height: 5.h,),
-                              Text('University of Suzerain Jogjakarta',
+                              Text("University of Suzerain Jogjakarta",
                                 style: GoogleFonts.dmSans(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.w500,

@@ -86,8 +86,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           'Phone Number':_phoneTextControler.text,
           'Gender':gender
         });
-        const SnackBar(content: Text('Changes saved'),);
-        Navigator.push(context, PageTransition(child: const ProfilePage(), type: PageTransitionType.leftToRight));
+        const SnackBar(
+          content: Text('Changes saved'),
+        );
+        Navigator.push(context, PageTransition(
+            child: const ProfilePage(),
+            type: PageTransitionType.leftToRight
+        ));
       }catch(error){
         setState(() {
           _isLoading=false;

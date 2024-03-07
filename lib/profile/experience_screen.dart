@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../Services/global_methods.dart';
+import 'add_experience_screen.dart';
 
 class ExperienceScreen extends StatefulWidget {
   const ExperienceScreen({super.key});
@@ -15,18 +17,15 @@ class ExperienceScreen extends StatefulWidget {
 
 class _ExperienceScreenState extends State<ExperienceScreen> {
   final _experienceformkey = GlobalKey<FormState>();
+  final ScrollController scController=ScrollController();
   final TextEditingController _experiencecontroller = TextEditingController(text: '');
-  final TextEditingController _companycontroller = TextEditingController(text: '');
-  final TextEditingController _locationcontroller = TextEditingController(text: '');
   String? gender;
-  bool _isLoading = false;
   final FirebaseAuth _auth=FirebaseAuth.instance;
 
   Future uploadAboutData() async{
     final isValid =_experienceformkey.currentState!.validate();
     if(isValid){
       setState(() {
-        _isLoading=true;
       });
       try{
         final User? user=_auth.currentUser;
@@ -36,14 +35,12 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
         });
         Future.delayed(const Duration(seconds:1)).then((value) => {
           setState(() {
-            _isLoading=false;
             Fluttertoast.showToast(
                 msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
           })
         });
       }catch(error){
         setState(() {
-          _isLoading=false;
         });
         GlobalMethod.showErrorDialog(
             error: error.toString(),
@@ -57,169 +54,73 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        title: Text('Experience',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
-      ),
-      body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading:Text('Summary',style: GoogleFonts.dmSans(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500
-            ),),
-            trailing: Text('Maximum 150 words',style: GoogleFonts.dmSans(
-                color: Colors.grey,
-                fontSize: 15.sp
-            ),),
-          ),
-          SizedBox(height: 24.h,),
-          Form(
-            key: _experienceformkey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Company',
-                  style: GoogleFonts.dmSans(
-                      color: Colors.white, fontSize: 14.sp),
-                ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                TextFormField(
-                  enabled: false,
-                  textInputAction: TextInputAction.next,
-                  // onEditingComplete: () =>
-                  //     FocusScope.of(context).requestFocus(_passFocusNode),
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _companycontroller,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Company name should not be empty!';
-                    }else {
-                      return null;
-                    }
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.all(15),
-                    filled: true,
-                    fillColor: Color(0xff282837),
-                    hintText: 'company name',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xff5800FF),
-                        )),
-                    enabledBorder:
-                    UnderlineInputBorder(borderSide: BorderSide.none),
-                    focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.redAccent,
-                        )),
-                    errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.red,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Text(
-                  'Location',
-                  style: GoogleFonts.dmSans(
-                      color: Colors.white, fontSize: 14.sp),
-                ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  // focusNode: _passFocusNode,
-                  keyboardType: TextInputType.phone,
-                  controller: _locationcontroller,
-                  //Change it dynamically
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Location should not be empty!';
-                    }else {
-                      return null;
-                    }
-                  },
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: const InputDecoration(
-                    isCollapsed: true,
-                    contentPadding: EdgeInsets.all(15),
-                    filled: true,
-                    fillColor: Color(0xff282837),
-                    hintText: 'location',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
-                    enabledBorder:
-                    UnderlineInputBorder(borderSide: BorderSide.none),
-                    focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.redAccent,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color(0xff5800FF),
-                        )),
-                    errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.redAccent,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 35.h,),
-          SizedBox(
-            width: double.infinity,
-            height: 53.h,
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    splashFactory: InkRipple.splashFactory,
-                    backgroundColor: const Color(0xff5800FF),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r))),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          centerTitle: true,
+          title: Text('Experience',style: GoogleFonts.dmSans(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500
+          ),),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 5.w),
+              child: IconButton(
                 onPressed: (){
-                  uploadAboutData();
+                  Navigator.push(context,
+                      PageTransition(child: const AddExperienceScreen(),
+                          type:PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300)));
                 },
-                child: _isLoading
-                    ? const CircularProgressIndicator(
-                  color: Colors.white,
-                )
-                    : Text(
-                  'Submit',
-                  style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold),
-                )),
-          ),
-
-        ],
-      ),
+                icon: const Icon(Icons.add,color: Colors.white,),
+                iconSize: 28,
+              ),
+            )
+          ],
+        ),
+        body: ListView.separated(
+          itemCount: 2,
+          itemBuilder: (context, index){
+            return Container(
+              color: const Color(0xff282837),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Mey 2019 - Dec 2020',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xff5800FF)
+                      ),),
+                    SizedBox(height: 5.h,),
+                    Text('User Interface Design',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white
+                      ),),
+                    Text('At Slab Design!',
+                      style: GoogleFonts.dmSans(
+                          height: 1,
+                          fontSize: 14.sp,
+                          color: Colors.grey
+                      ),),
+                    SizedBox(height: 8.h,),
+                    Text('1. Produce products with web views and apps.\n2. Complete some given real projects',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 16.sp,
+                          color: Colors.grey
+                      ),),
+                  ],
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return SizedBox(height: 20.h,);
+          },
+        )
     );
   }
 }

@@ -25,7 +25,7 @@ class _SettingPageState extends State<SettingPage> {
           context,
           PageTransition(
               child:const Login(),
-              type: PageTransitionType.topToBottom,
+              type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 300)));
     }catch(error){
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);

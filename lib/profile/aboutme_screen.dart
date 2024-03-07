@@ -71,13 +71,13 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading:Text('Summary',style: GoogleFonts.dmSans(
-              color: Colors.white,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500
             ),),
             trailing: Text('Maximum 150 words',style: GoogleFonts.dmSans(
-              color: Colors.grey,
-              fontSize: 15.sp
+                color: Colors.grey,
+                fontSize: 15.sp
             ),),
           ),
           SizedBox(height: 24.h,),
