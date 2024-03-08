@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobseek/profile/education_screen.dart';
 import 'package:jobseek/profile/setting_page.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
 import 'package:page_transition/page_transition.dart';
@@ -333,7 +334,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.w500
                         ),),
                         trailing:  IconButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(context, PageTransition(child: const EducationScreen(),
+                                type: PageTransitionType.rightToLeft));
+                          },
                           icon: SvgPicture.asset(
                             'assets/svg/img_icon_line_onprimary_24x24.svg',
                             theme: const SvgTheme(
