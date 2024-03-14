@@ -99,9 +99,6 @@ class _OtpScreenState extends State<OtpScreen> {
           "User Image": "",
           "Gender":"",
           "About Me":"",
-          "Experience":"",
-          "Education":"",
-          "Skills":"",
           "Resume Url":"",
           "Created At": Timestamp.now()
         }).then((signedInUser) =>

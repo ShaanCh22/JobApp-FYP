@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:uuid/uuid.dart';
 import '../Services/global_methods.dart';
 import 'education_screen.dart';
 
@@ -19,6 +20,7 @@ class AddEducationScreen extends StatefulWidget {
 
 class _AddEducationScreenState extends State<AddEducationScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
+  final Uuid _educationid =const Uuid();
   final TextEditingController _schoolTextController = TextEditingController(text: '');
   final TextEditingController _degreeTextController = TextEditingController(text: '');
   final TextEditingController _fieldTextController = TextEditingController(text: '');
@@ -35,7 +37,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
         _isLoading=true;
       });
       try{
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Education').doc(_degreeTextController.text).set({
+        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Education').doc(_educationid.v1()).set({
           'School':_schoolTextController.text,
           'Degree':_degreeTextController.text,
           'Field of Study':_fieldTextController.text,
@@ -46,10 +48,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
         const SnackBar(
           content: Text('Changes saved'),
         );
-        Navigator.push(context, PageTransition(
+        Navigator.pushReplacement(context, PageTransition(
             child: const EducationScreen(),
             type: PageTransitionType.topToBottom,
-          duration: Duration(milliseconds: 500)
+            duration: const Duration(milliseconds: 500)
         ));
       }catch(error){
         setState(() {
@@ -276,7 +278,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                                         lastDate: DateTime(2100));
                                     if(pickedDate!=null){
                                       setState(() {
-                                        _startDateController.text=DateFormat('yMMMM').format(pickedDate);
+                                        _startDateController.text=DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },
@@ -337,7 +339,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                                         lastDate: DateTime(2100));
                                     if(pickedDate!=null){
                                       setState(() {
-                                        _endDateController.text=DateFormat('yMMMM').format(pickedDate);
+                                        _endDateController.text=DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },

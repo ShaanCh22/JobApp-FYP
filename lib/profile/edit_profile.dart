@@ -12,6 +12,7 @@ import 'package:jobseek/profile/profile_page.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../Services/global_methods.dart';
+import 'gender_screen.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -26,7 +27,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController(text: '');
   final TextEditingController _phoneTextControler =
   TextEditingController(text: '');
-  String? gender;
   bool _isLoading = false;
   File? imageFile;
   final FirebaseAuth _auth=FirebaseAuth.instance;
@@ -84,7 +84,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         FirebaseFirestore.instance.collection('Users').doc(uid).update({
           'User Image':imageUrl,
           'Phone Number':_phoneTextControler.text,
-          'Gender':gender
         });
         const SnackBar(
           content: Text('Changes saved'),
@@ -106,6 +105,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _isLoading=false;
     });
   }
+  // Future uploadProfileData() async{
+  //   final isValid =_editDataFormKey.currentState!.validate();
+  //   if(isValid){
+  //     setState(() {
+  //       _isLoading=true;
+  //     });
+  //     try{
+  //       if(imageFile!=null){
+  //         final User? user=_auth.currentUser;
+  //         final uid=user!.uid;
+  //         final ref=FirebaseStorage.instance.ref().child('userProfileImages').child('$uid.jpg');
+  //         await ref.putFile(imageFile!);
+  //         imageUrl=await ref.getDownloadURL();
+  //         FirebaseFirestore.instance.collection('Users').doc(uid).update({
+  //           'User Image':imageUrl,
+  //         }).then((value) => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //           content: Text("Changes Saved"),
+  //         )));
+  //       }
+  //     }catch(error){
+  //       setState(() {
+  //         _isLoading=false;
+  //       });
+  //       GlobalMethod.showErrorDialog(
+  //           error: error.toString(),
+  //           ctx: context);
+  //     }
+  //   }
+  //   setState(() {
+  //     _isLoading=false;
+  //   });
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -245,6 +278,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Email
                 Text(
                   'Your Email Account',
                   style: GoogleFonts.dmSans(
@@ -292,6 +326,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SizedBox(
                   height: 20.h,
                 ),
+                // Phone
                 Text(
                   'Phone',
                   style: GoogleFonts.dmSans(
@@ -307,11 +342,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   controller: _phoneTextControler,
                   //Change it dynamically
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Password should not be empty!';
+                    if (value==null) {
+                      value=' ';
                     }else {
                       return null;
                     }
+                    return null;
                   },
                   style: const TextStyle(
                     color: Colors.white,
@@ -349,6 +385,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SizedBox(
                   height: 20.h,
                 ),
+                // Gender
                 Text(
                   'Gender',
                   style: GoogleFonts.dmSans(
@@ -357,50 +394,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SizedBox(
                   height: 8.h,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: const Color(0xff282837),
-                      borderRadius: BorderRadius.circular(8)
-                  ),
-                  child: Column(children: [
-                    RadioListTile(
-                        contentPadding: EdgeInsets.zero,
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, PageTransition(child: const GenderScreen(),
+                        type: PageTransitionType.rightToLeft));
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: const Color(0xff282837),
+                          borderRadius: BorderRadius.circular(4.r)
+                      ),
+                      child: ListTile(
+                        leading: const Icon(Icons.person,color: Colors.grey,),
                         title: Text('Male',style: GoogleFonts.dmSans(
-                            color: Colors.white),
-                        ),
-                        activeColor: const Color(0xff5800FF),
-                        value: 'Male',
-                        groupValue: gender,
-                        onChanged:(value){
-                          setState(() {
-                            gender=value.toString();
-                          });
-                        }),
-                    RadioListTile(contentPadding: EdgeInsets.zero,
-                        title: Text('Female',style: GoogleFonts.dmSans(
-                            color: Colors.white),
-                        ),
-                        activeColor: const Color(0xff5800FF),
-                        value: 'Female',
-                        groupValue: gender,
-                        onChanged:(value){
-                          setState(() {
-                            gender=value.toString();
-                          });
-                        }),
-                    RadioListTile(contentPadding: EdgeInsets.zero,
-                        title: Text('Others',style: GoogleFonts.dmSans(
-                            color: Colors.white),
-                        ),
-                        activeColor: const Color(0xff5800FF),
-                        value: 'Others',
-                        groupValue: gender,
-                        onChanged:(value){
-                          setState(() {
-                            gender=value.toString();
-                          });
-                        })
-                  ],),
+                            color: Colors.white
+                        ),),
+                      )
+                  ),
                 ),
 
 
