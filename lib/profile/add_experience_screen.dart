@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:uuid/uuid.dart';
 import '../Services/global_methods.dart';
 import 'experience_screen.dart';
 
@@ -20,7 +19,6 @@ class AddExperienceScreen extends StatefulWidget {
 
 class _AddExperienceScreenState extends State<AddExperienceScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  final Uuid _experienceid =const Uuid();
   final TextEditingController _titletext = TextEditingController(text: '');
   final TextEditingController _companytext = TextEditingController(text: '');
   final TextEditingController _locationtext = TextEditingController(text: '');
@@ -37,7 +35,9 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
         _isLoading=true;
       });
       try{
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Experience').doc(_experienceid.v1()).set({
+        String id=DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Experience').doc(id).set({
+          'id':id,
           'Title':_titletext.text,
           'Company Name':_companytext.text,
           'Location':_locationtext.text,

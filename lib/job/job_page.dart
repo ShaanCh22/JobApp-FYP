@@ -122,7 +122,7 @@ class _JobPageState extends State<JobPage> {
                                           fontWeight: FontWeight.w600),
                                     ),
                                     subtitle: Text(
-                                      'Zion Design! - 1 Hours Ago',
+                                      'Zia n Design! - 1 Hours Ago',
                                       style: GoogleFonts.dmSans(
                                         color: const Color(0xffF6F8FE),
                                         fontSize: 12.sp,

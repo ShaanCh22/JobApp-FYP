@@ -127,7 +127,7 @@ class _SignupState extends State<Signup> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: 'Enter Your Name',
+                          hintText: 'Enter Your Name/ Company Name',
                           hintStyle: TextStyle(color: Colors.grey),
                           prefixIcon: Icon(Icons.person_outline_sharp,size: 20,color: Colors.grey,),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),

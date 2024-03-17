@@ -22,7 +22,6 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _editDataFormKey = GlobalKey<FormState>();
-  // final FocusNode _passFocusNode = FocusNode();
   final TextEditingController _emailTextControler =
   TextEditingController(text: '');
   final TextEditingController _phoneTextControler =
@@ -30,8 +29,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
   bool _isLoading = false;
   File? imageFile;
   final FirebaseAuth _auth=FirebaseAuth.instance;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
   String? imageUrl;
+  String? _imgUrl;
+  String? _gndr;
 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getEditProfileData();
+  }
+  @override
+  void setState(VoidCallback fn) {
+    // TODO: implement setState
+    super.setState(fn);
+    _getGender();
+
+  }
   Future pickImage()async{
     try{
       final image=await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -56,6 +72,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         maxHeight: 1080,
         maxWidth: 1080
     );
+    if(croppedImage==null){
+      setState(() {
+        imageFile=null;
+      });
+    }
     if(croppedImage!=null){
       setState(() {
         imageFile=File(croppedImage.path);
@@ -65,13 +86,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future uploadProfileData() async{
     final isValid =_editDataFormKey.currentState!.validate();
     if(isValid){
-      if(imageFile==null){
-        GlobalMethod.showErrorDialog(
-            error: 'Please pick an image',
-            ctx: context
-        );
-        return;
-      }
       setState(() {
         _isLoading=true;
       });
@@ -79,66 +93,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
         final User? user=_auth.currentUser;
         final uid=user!.uid;
         final ref=FirebaseStorage.instance.ref().child('userProfileImages').child('$uid.jpg');
-        await ref.putFile(imageFile!);
-        imageUrl=await ref.getDownloadURL();
+        if(imageFile!=null){
+          await ref.putFile(imageFile!);
+          imageUrl=await ref.getDownloadURL();
+          FirebaseFirestore.instance.collection('Users').doc(uid).update({
+            'User Image':imageUrl,
+            'Phone Number':_phoneTextControler.text,
+          });
+        }
         FirebaseFirestore.instance.collection('Users').doc(uid).update({
-          'User Image':imageUrl,
           'Phone Number':_phoneTextControler.text,
         });
         const SnackBar(
           content: Text('Changes saved'),
         );
-        Navigator.push(context, PageTransition(
-            child: const ProfilePage(),
-            type: PageTransitionType.leftToRight
-        ));
+        Navigator.push(context, PageTransition(child: ProfilePage(), type: PageTransitionType.topToBottom));
       }catch(error){
         setState(() {
           _isLoading=false;
         });
-        GlobalMethod.showErrorDialog(
-            error: error.toString(),
-            ctx: context);
+        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
     }
     setState(() {
       _isLoading=false;
     });
   }
-  // Future uploadProfileData() async{
-  //   final isValid =_editDataFormKey.currentState!.validate();
-  //   if(isValid){
-  //     setState(() {
-  //       _isLoading=true;
-  //     });
-  //     try{
-  //       if(imageFile!=null){
-  //         final User? user=_auth.currentUser;
-  //         final uid=user!.uid;
-  //         final ref=FirebaseStorage.instance.ref().child('userProfileImages').child('$uid.jpg');
-  //         await ref.putFile(imageFile!);
-  //         imageUrl=await ref.getDownloadURL();
-  //         FirebaseFirestore.instance.collection('Users').doc(uid).update({
-  //           'User Image':imageUrl,
-  //         }).then((value) => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-  //           content: Text("Changes Saved"),
-  //         )));
-  //       }
-  //     }catch(error){
-  //       setState(() {
-  //         _isLoading=false;
-  //       });
-  //       GlobalMethod.showErrorDialog(
-  //           error: error.toString(),
-  //           ctx: context);
-  //     }
-  //   }
-  //   setState(() {
-  //     _isLoading=false;
-  //   });
-  // }
-
-
+  void deletePF(){
+    final User? user=_auth.currentUser;
+    final uid=user!.uid;
+    FirebaseFirestore.instance.collection('Users').doc(uid).update({
+      'User Image':'',
+    });
+  }
+  Future _getEditProfileData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    setState(() {
+      _emailTextControler.text=ref.get('Email');
+      _phoneTextControler.text=ref.get('Phone Number');
+      _imgUrl=ref.get('User Image');
+      _gndr=ref.get('Gender');
+    });
+  }
+  Future _getGender() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    setState(() {
+      _gndr=ref.get('Gender');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,9 +208,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),),
                           ),
                         ),
-                        imageFile==null
-                            ? ElevatedButton(
-                          onPressed:(){},
+                        _imgUrl=='' ?
+                        imageFile==null ?
+                        const SizedBox() :
+                        ElevatedButton(
+                          onPressed: (){
+                            setState(() {
+                              imageFile=null;
+                            });
+                            Navigator.pop(context);
+                          },
                           style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
                             padding: MaterialStatePropertyAll(EdgeInsets.zero),
@@ -219,18 +228,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 0x4d5800ff)),
                           ),
                           child: ListTile(
-                            leading: const Icon(Icons.delete_forever,color: Colors.grey,),
+                            leading: const Icon(Icons.delete_forever,color: Colors.white,),
                             title: Text('Delete profile image',style: GoogleFonts.dmSans(
-                                color: Colors.grey
+                                color: Colors.white
                             ),),
                           ),
-                        )
-                            : ElevatedButton(
+                        ) :
+                        ElevatedButton(
                           onPressed: (){
                             setState(() {
+                              deletePF();
+                              _imgUrl=null;
                               imageFile=null;
+                              imageUrl=null;
+                              Navigator.pop(context);
                             });
-                            Navigator.pop(context);
+                            Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>const EditProfilePage()));
                           },
                           style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll(Color(0xff1D1D2F)),
@@ -260,15 +273,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
               strokeCap: StrokeCap.round,
               strokeWidth: 2,
               child: Center(
-                child: CircleAvatar(
-                    radius: 40.r,
-                    child:ClipRRect(
-                      borderRadius: BorderRadius.circular(40.r),
-                      child:imageFile==null
-                          ?const Icon(Icons.camera_alt_outlined,size:40,color:Colors.white,)
-                          :Image.file(imageFile!,fit:BoxFit.cover),
-                    )
-                ),
+                  child:_imgUrl=='' ?
+                  CircleAvatar(
+                      radius:40.r,
+                      child:ClipRRect(
+                        borderRadius:BorderRadius.circular(40.r),
+                        child:imageFile==null
+                            ?const Icon(Icons.camera_alt_outlined,size:40,color:Colors.white,)
+                            :Image.file(imageFile!,fit:BoxFit.cover),
+                      )
+                  ) :
+                  CircleAvatar(
+                      radius:40.r,
+                      child:ClipRRect(
+                        borderRadius:BorderRadius.circular(40.r),
+                        child:imageFile==null?
+                        Image.network(_imgUrl.toString(),fit:BoxFit.cover)
+                            :Image.file(imageFile!,fit:BoxFit.cover),
+                      )
+                  )
               ),
             ),
           ),
@@ -294,7 +317,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   //     FocusScope.of(context).requestFocus(_passFocusNode),
                   keyboardType: TextInputType.emailAddress,
                   controller: _emailTextControler,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.grey),
                   decoration: const InputDecoration(
                     isCollapsed: true,
                     contentPadding: EdgeInsets.all(15),
@@ -341,13 +364,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   keyboardType: TextInputType.phone,
                   controller: _phoneTextControler,
                   //Change it dynamically
-                  validator: (value) {
-                    if (value==null) {
-                      value=' ';
-                    }else {
-                      return null;
+                  validator:(value){
+                    if(value==null){
+                      return ;
                     }
-                    return null;
+                    return ;
                   },
                   style: const TextStyle(
                     color: Colors.white,
@@ -406,7 +427,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       child: ListTile(
                         leading: const Icon(Icons.person,color: Colors.grey,),
-                        title: Text('Male',style: GoogleFonts.dmSans(
+                        title: Text('$_gndr',style: GoogleFonts.dmSans(
                             color: Colors.white
                         ),),
                       )

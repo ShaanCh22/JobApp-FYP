@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-
 import 'add_skill_screen.dart';
 
 class SkillScreen extends StatefulWidget {
@@ -64,7 +63,10 @@ class _SkillScreenState extends State<SkillScreen> {
                   return
                     Chip(
                       deleteIcon: const Icon(Icons.close,color: Colors.white,size: 20,),
-                      onDeleted: (){},
+                      onDeleted: (){
+                        CollectionReference ref=FirebaseFirestore.instance.collection("Users").doc(uid).collection("Skills");
+                        ref.doc(snapshot.data!.docs[index]['id'].toString()).delete();
+                      },
                       label: Text('${snapshot.data!.docs[index]['Title']}',style: GoogleFonts.dmSans(
                         color: Colors.white,
                         fontSize: 14.sp,

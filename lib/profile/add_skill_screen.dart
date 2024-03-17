@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/skill_screen.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:uuid/uuid.dart';
 import '../Services/global_methods.dart';
 
 
@@ -19,7 +18,6 @@ class AddSkillScreen extends StatefulWidget {
 
 class _AddSkillScreenState extends State<AddSkillScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  final Uuid _skillid=const Uuid();
   final TextEditingController _skilltext = TextEditingController(text: '');
   bool _isLoading = false;
   final User? _user=FirebaseAuth.instance.currentUser;
@@ -31,7 +29,9 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
         _isLoading=true;
       });
       try{
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Skills').doc(_skillid.v1()).set({
+        String id=DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Skills').doc(id).set({
+          'id':id,
           'Title':_skilltext.text,
         });
         const SnackBar(

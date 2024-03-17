@@ -20,7 +20,21 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
   String? gender;
   bool _isLoading = false;
   final FirebaseAuth _auth=FirebaseAuth.instance;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getAboutData();
+  }
+
+  Future _getAboutData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    setState(() {
+      _aboutmeController.text=ref.get('About Me');
+    });
+  }
   Future uploadAboutData() async{
     final isValid =_aboutdataFormKey.currentState!.validate();
     if(isValid){
@@ -95,7 +109,7 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
               ),
               validator: (value) {
                 if (value!.isEmpty) {
-                  return 'Please write about yourself';
+                  return;
                 }else {
                   return null;
                 }

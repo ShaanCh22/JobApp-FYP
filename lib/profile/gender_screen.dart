@@ -17,6 +17,21 @@ class _GenderScreenState extends State<GenderScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
   String? gender;
   final User? _user=FirebaseAuth.instance.currentUser;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getGenderData();
+  }
+
+  Future _getGenderData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    setState(() {
+      gender=ref.get('Gender');
+    });
+  }
 
   Future _submitExpData() async{
     final isValid = _addExpFormKey.currentState!.validate();

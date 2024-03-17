@@ -7,64 +7,83 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
-import 'education_screen.dart';
+import 'experience_screen.dart';
 
 
-class AddEducationScreen extends StatefulWidget {
-  const AddEducationScreen({super.key});
+class UpdateExperienceScreen extends StatefulWidget {
+  String id;
+  UpdateExperienceScreen(this.id, {super.key});
 
   @override
-  State<AddEducationScreen> createState() => _AddEducationScreenState();
+  State<UpdateExperienceScreen> createState() => _UpdateExperienceScreenState();
 }
 
-class _AddEducationScreenState extends State<AddEducationScreen> {
+class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  final TextEditingController _schoolTextController = TextEditingController(text: '');
-  final TextEditingController _degreeTextController = TextEditingController(text: '');
-  final TextEditingController _fieldTextController = TextEditingController(text: '');
+  final TextEditingController _titletext = TextEditingController(text: '');
+  final TextEditingController _companytext = TextEditingController(text: '');
+  final TextEditingController _locationtext = TextEditingController(text: '');
   final TextEditingController _startDateController = TextEditingController(text: '');
   final TextEditingController _endDateController = TextEditingController(text: '');
-  final TextEditingController _descriptionTextController = TextEditingController(text: '');
+  final TextEditingController _jobdescText = TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user=FirebaseAuth.instance.currentUser;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  Future _submitEduData() async{
-    final isValid = _addExpFormKey.currentState!.validate();
-    if(isValid) {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getExpData();
+  }
+  Future _getExpData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).collection('Experience').doc(widget.id).get();
+    setState(() {
+      _titletext.text=ref.get('Title');
+      _companytext.text=ref.get('Company Name');
+      _locationtext.text=ref.get('Location');
+      _startDateController.text=ref.get('Start Date');
+      _endDateController.text=ref.get('End Date');
+      _jobdescText.text=ref.get('Job Description');
+    });
+  }
+  Future _updateExperienceData() async{
+    final isValid =_addExpFormKey.currentState!.validate();
+    if(isValid){
       setState(() {
         _isLoading=true;
       });
       try{
-        String id=DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Education').doc(id).set({
-          'id':id,
-          'School':_schoolTextController.text,
-          'Degree':_degreeTextController.text,
-          'Field of Study':_fieldTextController.text,
+        FirebaseFirestore.instance.collection('Users').doc(uid).collection('Experience').doc(widget.id).update({
+          'Title':_titletext.text,
+          'Company Name':_companytext.text,
+          'Location':_locationtext.text,
           'Start Date':_startDateController.text,
           'End Date':_endDateController.text,
-          'Description':_descriptionTextController.text
+          'Job Description':_jobdescText.text,
         });
-        const SnackBar(
-          content: Text('Changes saved'),
-        );
-        Navigator.pushReplacement(context, PageTransition(
-            child: const EducationScreen(),
-            type: PageTransitionType.topToBottom,
-            duration: const Duration(milliseconds: 500)
-        ));
+        Future.delayed(const Duration(seconds:1)).then((value) => {
+          setState(() {
+            _isLoading=false;
+            Fluttertoast.showToast(
+                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+          })
+        });
       }catch(error){
         setState(() {
-          _isLoading = false;
+          _isLoading=false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        GlobalMethod.showErrorDialog(
+            error: error.toString(),
+            ctx: context);
       }
-      Fluttertoast.showToast(
-          msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
-    setState(() {
-      _isLoading=false;
-    });
+
+
+  }
+  void _deleteExperienceData(){
+    CollectionReference ref = FirebaseFirestore.instance.collection('Users').doc(uid).collection('Experience');
+    ref.doc(widget.id).delete();
+    Navigator.pushReplacement(context, PageTransition(child: const ExperienceScreen(), type: PageTransitionType.topToBottom));
   }
 
   @override
@@ -74,7 +93,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Add Education',style: GoogleFonts.dmSans(
+        title: Text('Edit Experience',style: GoogleFonts.dmSans(
             fontSize: 18.sp,
             fontWeight: FontWeight.w500
         ),),
@@ -89,9 +108,9 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                   key: _addExpFormKey,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // School
+                      // Title
                       Text(
-                        'School',
+                        'Title',
                         style: GoogleFonts.dmSans(
                             color: Colors.white, fontSize: 14.sp),
                       ),
@@ -101,10 +120,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
-                        controller: _schoolTextController,
+                        controller: _titletext,
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'School is required!';
+                            return 'Please enter title!';
                           }
                           else{
                             return null;
@@ -116,7 +135,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: 'Ex: Boston University',
+                          hintText: 'Ex: UI/UX Designer',
                           hintStyle: TextStyle(color: Colors.grey),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
@@ -130,10 +149,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           ),
                         ),
                       ),
-                      //Degree
+                      //Company Name
                       SizedBox(height: 20.h,),
                       Text(
-                        'Degree',
+                        'Company',
                         style: GoogleFonts.dmSans(
                             color: Colors.white, fontSize: 14.sp),
                       ),
@@ -144,10 +163,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
-                        controller: _degreeTextController,
+                        controller: _companytext,
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'Degree is required!';
+                            return 'Please enter company name!';
                           }
                           else{
                             return null;
@@ -159,7 +178,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: "Ex: Bachelor's",
+                          hintText: 'Ex: Microsoft',
                           hintStyle: TextStyle(color: Colors.grey),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
@@ -174,10 +193,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                         ),
 
                       ),
-                      //Field of Study
+                      //Location
                       SizedBox(height: 20.h,),
                       Text(
-                        'Field of Study',
+                        'Location',
                         style: GoogleFonts.dmSans(
                             color: Colors.white, fontSize: 14.sp),
                       ),
@@ -188,10 +207,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
-                        controller: _fieldTextController,
+                        controller: _locationtext,
                         validator: (value){
                           if(value!.isEmpty){
-                            return 'Field is required!';
+                            return 'Please enter location!';
                           }
                           else{
                             return null;
@@ -203,7 +222,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: 'Ex: Computer Science',
+                          hintText: 'Ex: London, United Kingdom',
                           hintStyle: TextStyle(color: Colors.grey),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
@@ -278,7 +297,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                                         lastDate: DateTime(2100));
                                     if(pickedDate!=null){
                                       setState(() {
-                                        _startDateController.text=DateFormat('y').format(pickedDate);
+                                        _startDateController.text=DateFormat('yMMMM').format(pickedDate);
                                       });
                                     }
                                   },
@@ -339,7 +358,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                                         lastDate: DateTime(2100));
                                     if(pickedDate!=null){
                                       setState(() {
-                                        _endDateController.text=DateFormat('y').format(pickedDate);
+                                        _endDateController.text=DateFormat('yMMMM').format(pickedDate);
                                       });
                                     }
                                   },
@@ -348,10 +367,10 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           ),
                         ],
                       ),
-                      //Description
+                      //Job Description
                       SizedBox(height: 20.h,),
                       Text(
-                        'Description',
+                        'Job Description',
                         style: GoogleFonts.dmSans(
                             color: Colors.white, fontSize: 14.sp),
                       ),
@@ -363,7 +382,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                         maxLines: 8,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
-                        controller: _descriptionTextController,
+                        controller: _jobdescText,
                         validator: (value){
                           if(value!.isEmpty){
                             return 'Please enter description!';
@@ -378,7 +397,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           contentPadding: EdgeInsets.all(15),
                           filled: true,
                           fillColor: Color(0xff282837),
-                          hintText: 'description',
+                          hintText: 'job description',
                           hintStyle: TextStyle(color: Colors.grey),
                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
@@ -395,7 +414,29 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    style: ButtonStyle(
+                        splashFactory: InkRipple.splashFactory,
+                        overlayColor: const MaterialStatePropertyAll(Color(
+                            0x4d5800ff)),
+                        padding: const MaterialStatePropertyAll(
+                            EdgeInsets.all(15)),
+
+                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)))
+                    ),
+                    onPressed: (){
+                      _deleteExperienceData();
+                    },
+                    child: Text('Delete Experience',style: GoogleFonts.dmSans(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp
+                    ),),
+                  ),
+                ),
+                SizedBox(height: 10.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -407,14 +448,14 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
                       onPressed: (){
-                        _submitEduData();
+                        _updateExperienceData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
                         color: Colors.white,
                       )
                           : Text(
-                        'Submit',
+                        'Save',
                         style: GoogleFonts.dmSans(
                             color: Colors.white,
                             fontSize: 16.sp,

@@ -26,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final user = FirebaseAuth.instance.currentUser;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,95 +80,188 @@ class _ProfilePageState extends State<ProfilePage> {
                     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: Column(
                       children: [
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            radius: 30.r,
-                          ),
-                          title: StreamBuilder(
-                              stream: FirebaseFirestore.instance.collection("Users").doc(uid).snapshots(),
-                              builder: (context,snapshot) {
-                                if(snapshot.connectionState==ConnectionState.waiting){
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                                if(snapshot.hasError){
-                                  return Center(child: Text(snapshot.hasError.toString()));
-                                }
-                                return Text(
+                        StreamBuilder(
+                            stream: FirebaseFirestore.instance.collection('Users').doc(uid).snapshots(),
+                            builder: (context, snapshot) {
+                              if(snapshot.connectionState==ConnectionState.waiting){
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if(snapshot.hasError){
+                                return Center(child: Text(snapshot.hasError.toString()));
+                              }
+                              return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading:CircleAvatar(
+                                    radius: 30.r,
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30.r),
+                                        child:snapshot.data!.get('User Image')=="" ?
+                                        const Icon(Icons.camera_alt_outlined,size:25,color:Colors.white,) :
+                                        Image.network('${snapshot.data!.get('User Image')}'))),
+                                title: Text(
                                   '${snapshot.data!.get('Name')}',
                                   style: GoogleFonts.dmSans(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.white),
-                                );
-                              }
-                          ),
-                          subtitle: Text(
-                            user!.email.toString(),
-                            style: GoogleFonts.dmSans(
-                                fontSize: 16.sp, color: Colors.grey),
-                          ),
+                                ),
+                                subtitle: Text(
+                                  '${snapshot.data!.get('Email')}',
+                                  style: GoogleFonts.dmSans(
+                                      fontSize: 16.sp, color: Colors.grey),
+                                ),
+                              );
+                            }
                         ),
+                        // ListTile(
+                        //   contentPadding: EdgeInsets.zero,
+                        //   leading: CircleAvatar(
+                        //     radius: 30.r,
+                        //   ),
+                        //   title: StreamBuilder(
+                        //     stream: FirebaseFirestore.instance.collection("Users").doc(uid).snapshots(),
+                        //     builder: (context,snapshot) {
+                        //       if(snapshot.connectionState==ConnectionState.waiting){
+                        //         return const Center(
+                        //           child: CircularProgressIndicator(),
+                        //         );
+                        //       }
+                        //       if(snapshot.hasError){
+                        //         return Center(child: Text(snapshot.hasError.toString()));
+                        //       }
+                        //       return Text(
+                        //         '${snapshot.data!.get('Name')}',
+                        //         style: GoogleFonts.dmSans(
+                        //             fontSize: 18.sp,
+                        //             fontWeight: FontWeight.w500,
+                        //             color: Colors.white),
+                        //       );
+                        //     }
+                        //   ),
+                        //   subtitle: Text(
+                        //     user!.email.toString(),
+                        //     style: GoogleFonts.dmSans(
+                        //         fontSize: 16.sp, color: Colors.grey),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 15.h,
                         ),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          leading: SizedBox(
-                            width: 160.w,
-                            height: 45.h,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    splashFactory: InkRipple.splashFactory,
-                                    backgroundColor: const Color(0xff5800FF),
-                                    foregroundColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.r))),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      PageTransition(
-                                          child: const EditProfilePage(),
-                                          type: PageTransitionType.rightToLeft,
-                                          duration:
-                                          const Duration(milliseconds: 300)));
-                                },
-                                child: Text('EditProfile',
-                                    style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                    ))),
-                          ),
-                          trailing: SizedBox(
-                            width: 160.w,
-                            height: 45.h,
-                            child: OutlinedButton(
-                                style: ElevatedButton.styleFrom(
-                                    splashFactory: InkRipple.splashFactory,
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: const Color(0xff5800FF),
-                                    side: const BorderSide(
-                                        color: Color(0xff5800FF), width: 1),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.r))),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      PageTransition(
-                                          child: const UploadResumePage(),
-                                          type: PageTransitionType.rightToLeft,
-                                          duration:
-                                          const Duration(milliseconds: 300)));
-                                },
-                                child: Text('AddResume',
-                                    style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                    ))),
-                          ),
+                        Wrap(
+                          spacing: 50.w,
+                          runSpacing: 10.h,
+                          children: [
+                            SizedBox(
+                              width: 160.w,
+                              height: 45.h,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      splashFactory: InkRipple.splashFactory,
+                                      backgroundColor: const Color(0xff5800FF),
+                                      foregroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.r))),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            child: const EditProfilePage(),
+                                            type: PageTransitionType.rightToLeft,
+                                            duration:
+                                            const Duration(milliseconds: 300)));
+                                  },
+                                  child: Text('Edit Profile',
+                                      style: GoogleFonts.dmSans(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                      ))),
+                            ),
+                            SizedBox(
+                              width: 160.w,
+                              height: 45.h,
+                              child: OutlinedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      splashFactory: InkRipple.splashFactory,
+                                      backgroundColor: Colors.transparent,
+                                      foregroundColor: const Color(0xff5800FF),
+                                      side: const BorderSide(
+                                          color: Color(0xff5800FF), width: 1),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.r))),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            child: const UploadResumePage(),
+                                            type: PageTransitionType.rightToLeft,
+                                            duration:
+                                            const Duration(milliseconds: 300)));
+                                  },
+                                  child: Text('Add Resume',
+                                      style: GoogleFonts.dmSans(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                      ))),
+                            ),
+                          ],
                         ),
+                        // ListTile(
+                        //   contentPadding: EdgeInsets.zero,
+                        //   leading: SizedBox(
+                        //     width: 160.w,
+                        //     height: 45.h,
+                        //     child: ElevatedButton(
+                        //         style: ElevatedButton.styleFrom(
+                        //             splashFactory: InkRipple.splashFactory,
+                        //             backgroundColor: const Color(0xff5800FF),
+                        //             foregroundColor: Colors.black,
+                        //             shape: RoundedRectangleBorder(
+                        //                 borderRadius: BorderRadius.circular(8.r))),
+                        //         onPressed: () {
+                        //           Navigator.push(
+                        //               context,
+                        //               PageTransition(
+                        //                   child: const EditProfilePage(),
+                        //                   type: PageTransitionType.rightToLeft,
+                        //                   duration:
+                        //                   const Duration(milliseconds: 300)));
+                        //         },
+                        //         child: Text('Edit Profile',
+                        //             style: GoogleFonts.dmSans(
+                        //               color: Colors.white,
+                        //               fontSize: 14.sp,
+                        //             ))),
+                        //   ),
+                        //   trailing: SizedBox(
+                        //     width: 160.w,
+                        //     height: 45.h,
+                        //     child: OutlinedButton(
+                        //         style: ElevatedButton.styleFrom(
+                        //             splashFactory: InkRipple.splashFactory,
+                        //             backgroundColor: Colors.transparent,
+                        //             foregroundColor: const Color(0xff5800FF),
+                        //             side: const BorderSide(
+                        //                 color: Color(0xff5800FF), width: 1),
+                        //             shape: RoundedRectangleBorder(
+                        //                 borderRadius: BorderRadius.circular(8.r))),
+                        //         onPressed: () {
+                        //           Navigator.push(
+                        //               context,
+                        //               PageTransition(
+                        //                   child: const UploadResumePage(),
+                        //                   type: PageTransitionType.rightToLeft,
+                        //                   duration:
+                        //                   const Duration(milliseconds: 300)));
+                        //         },
+                        //         child: Text('Add Resume',
+                        //             style: GoogleFonts.dmSans(
+                        //               color: Colors.white,
+                        //               fontSize: 14.sp,
+                        //             ))),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

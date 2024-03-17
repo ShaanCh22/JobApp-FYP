@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Spotify USA Inc',
+                                            'Spotofy USA Inc',
                                             style: GoogleFonts.dmSans(
                                               color: const Color(0xffF6F8FE),
                                               fontSize: 13.sp,

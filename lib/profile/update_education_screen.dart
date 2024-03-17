@@ -10,14 +10,14 @@ import '../Services/global_methods.dart';
 import 'education_screen.dart';
 
 
-class AddEducationScreen extends StatefulWidget {
-  const AddEducationScreen({super.key});
-
+class UpdateEducationScreen extends StatefulWidget {
+  String id;
+  UpdateEducationScreen(this.id, {super.key});
   @override
-  State<AddEducationScreen> createState() => _AddEducationScreenState();
+  State<UpdateEducationScreen> createState() => _UpdateEducationScreenState();
 }
 
-class _AddEducationScreenState extends State<AddEducationScreen> {
+class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
   final TextEditingController _schoolTextController = TextEditingController(text: '');
   final TextEditingController _degreeTextController = TextEditingController(text: '');
@@ -26,45 +26,64 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
   final TextEditingController _endDateController = TextEditingController(text: '');
   final TextEditingController _descriptionTextController = TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user=FirebaseAuth.instance.currentUser;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
-  Future _submitEduData() async{
-    final isValid = _addExpFormKey.currentState!.validate();
-    if(isValid) {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getEduData();
+  }
+
+  Future _getEduData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education').doc(widget.id).get();
+    setState(() {
+      _schoolTextController.text=ref.get('School');
+      _degreeTextController.text=ref.get('Degree');
+      _fieldTextController.text=ref.get('Field of Study');
+      _startDateController.text=ref.get('Start Date');
+      _endDateController.text=ref.get('End Date');
+      _descriptionTextController.text=ref.get('Description');
+    });
+  }
+  Future _updateEducationData() async{
+    final isValid =_addExpFormKey.currentState!.validate();
+    if(isValid){
       setState(() {
         _isLoading=true;
       });
       try{
-        String id=DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Education').doc(id).set({
-          'id':id,
+        FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education').doc(widget.id).update({
           'School':_schoolTextController.text,
           'Degree':_degreeTextController.text,
           'Field of Study':_fieldTextController.text,
           'Start Date':_startDateController.text,
           'End Date':_endDateController.text,
-          'Description':_descriptionTextController.text
+          'Description':_descriptionTextController.text,
         });
-        const SnackBar(
-          content: Text('Changes saved'),
-        );
-        Navigator.pushReplacement(context, PageTransition(
-            child: const EducationScreen(),
-            type: PageTransitionType.topToBottom,
-            duration: const Duration(milliseconds: 500)
-        ));
+        Future.delayed(const Duration(seconds:1)).then((value) => {
+          setState(() {
+            _isLoading=false;
+            Fluttertoast.showToast(
+                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+          })
+        });
       }catch(error){
         setState(() {
-          _isLoading = false;
+          _isLoading=false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        GlobalMethod.showErrorDialog(
+            error: error.toString(),
+            ctx: context);
       }
-      Fluttertoast.showToast(
-          msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
-    setState(() {
-      _isLoading=false;
-    });
+
+
+  }
+  void _deleteEducation(){
+    CollectionReference ref = FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education');
+    ref.doc(widget.id).delete();
+    Navigator.pushReplacement(context, PageTransition(child: const EducationScreen(), type: PageTransitionType.topToBottom));
   }
 
   @override
@@ -74,7 +93,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Add Education',style: GoogleFonts.dmSans(
+        title: Text('Edit Education',style: GoogleFonts.dmSans(
             fontSize: 18.sp,
             fontWeight: FontWeight.w500
         ),),
@@ -360,7 +379,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                       ),
                       TextFormField(
                         maxLength: 150,
-                        maxLines: 8,
+                        maxLines: 7,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _descriptionTextController,
@@ -395,7 +414,29 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                    style: ButtonStyle(
+                        splashFactory: InkRipple.splashFactory,
+                        overlayColor: const MaterialStatePropertyAll(Color(
+                            0x4d5800ff)),
+                        padding: const MaterialStatePropertyAll(
+                            EdgeInsets.all(15)),
+
+                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)))
+                    ),
+                    onPressed: (){
+                      _deleteEducation();
+                    },
+                    child: Text('Delete Education',style: GoogleFonts.dmSans(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.sp
+                    ),),
+                  ),
+                ),
+                SizedBox(height: 10.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -407,14 +448,14 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
                       onPressed: (){
-                        _submitEduData();
+                        _updateEducationData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
                         color: Colors.white,
                       )
                           : Text(
-                        'Submit',
+                        'Save',
                         style: GoogleFonts.dmSans(
                             color: Colors.white,
                             fontSize: 16.sp,
