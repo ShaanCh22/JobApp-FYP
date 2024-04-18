@@ -1,7 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 
+import '../Widgets/job_card.dart';
+import '../Widgets/shimmer_jobcard.dart';
+import 'job_detail_page.dart';
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -11,9 +17,11 @@ class JobPage extends StatefulWidget {
 }
 
 class _JobPageState extends State<JobPage> {
-  Future reloadData()async{
-
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  refreshData() {
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,175 +32,118 @@ class _JobPageState extends State<JobPage> {
             SliverAppBar(
               floating: true,
               toolbarHeight: 50,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
               centerTitle: true,
-              title:Text('Job Recommendation',style: GoogleFonts.dmSans(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500
-              ),),
-            ),
-          ],
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: reloadData,
               backgroundColor: const Color(0xff1D1D2F),
-              color: const Color(0xff5800FF),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 45.h,width: double.infinity,
-                      child: Card(
-                        color: const Color(0xff1D1D2F),
-                        shape: const RoundedRectangleBorder(),
-                        child: Padding(
-                          padding:  const EdgeInsets.only(top: 8,left: 20,right: 20),
-                          child: Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 5.w),
-                            child: Wrap(alignment: WrapAlignment.spaceBetween,
-                              children: [
-                                Text('65 Available',style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontSize: 16.sp
-                                ),),
-                                SizedBox(width: 70.w,height: 24.h,
-                                  child: InkWell(
-                                    onTap: (){},
-                                    borderRadius: BorderRadius.circular(12),
-                                    splashFactory: InkSplash.splashFactory,
-                                    splashColor: const Color(0xff5800FF),
-                                    overlayColor: const MaterialStatePropertyAll(Color(
-                                        0x4d5800ff)),
-                                    child: Wrap(spacing: 3,
-                                      children: [
-                                        const Icon(Icons.filter_list_sharp,color: Colors.white,size: 24,),
-                                        Text('Filter',style: GoogleFonts.dmSans(
-                                            color: Colors.white,
-                                            fontSize: 16.sp
-
-                                        ),),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 25.h,),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: 25+1,
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context,index){
-                        if(index<25) {
-                          return SizedBox(
-                            width: double.infinity,
-                            height: 107.h,
-                            child: ElevatedButton(
-                              style: const ButtonStyle(
-                                  splashFactory: InkRipple.splashFactory,
-                                  // splashColor: Color(0xff5800FF),
-                                  overlayColor: MaterialStatePropertyAll(Color(
-                                      0x4d5800ff)),
-                                  padding: MaterialStatePropertyAll(
-                                      EdgeInsets.zero),
-                                  backgroundColor: MaterialStatePropertyAll(
-                                      Color(0xff282837)),
-                                  shape: MaterialStatePropertyAll(
-                                      ContinuousRectangleBorder())
-                              ),
-                              onPressed: () {},
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    contentPadding: EdgeInsets.only(left: 15.w),
-                                    leading: const CircleAvatar(
-                                        backgroundColor: Colors.white),
-                                    title: Text(
-                                      'UX Writing',
-                                      style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    subtitle: Text(
-                                      'Zia n Design! - 1 Hours Ago',
-                                      style: GoogleFonts.dmSans(
-                                        color: const Color(0xffF6F8FE),
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
-                                    trailing: Padding(
-                                      padding: EdgeInsets.only(bottom: 15.h,),
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(Icons.bookmark_border_sharp),
-                                        style: const ButtonStyle(
-                                          overlayColor: MaterialStatePropertyAll(
-                                              Color(0xff292c47)),
-                                          padding:
-                                          MaterialStatePropertyAll(
-                                              EdgeInsets.zero),
-                                          iconColor:
-                                          MaterialStatePropertyAll(
-                                              Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15.w),
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.location_on_outlined,
-                                          color: Color(0xffd1d1d1), size: 18,),
-                                        Text(
-                                          'Solo, Indonesia',
-                                          style: GoogleFonts.dmSans(
-                                            color: const Color(0xffd1d1d1),
-                                            fontSize: 14.sp,
-                                          ),
-                                        ),
-                                        SizedBox(width: 10.w,),
-                                        const Icon(Icons.currency_exchange_outlined,
-                                          color: Color(0xffd1d1d1), size: 15,),
-                                        Text(
-                                          ' IDR 8.500.000',
-                                          style: GoogleFonts.dmSans(
-                                            color: const Color(0xffd1d1d1),
-                                            fontSize: 14.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }else{
-                          return const Padding(
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: Center(
-                              child: CircularProgressIndicator(color: Color(0xff5800FF)),
-                            ),
-                          );
-                        }
-                      },
-                      separatorBuilder: (context, index) => SizedBox(height: 15.h,),
-                    )
-
-                  ],
-                ),
+              elevation: 0,
+              title: Text(
+                'Jobs',
+                style: GoogleFonts.dmSans(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold),
               ),
             ),
+          ],
+          body: StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('Jobs').snapshots(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return ListView.separated(
+                  itemCount: 7,
+                  itemBuilder: (context, index) => const ShimmerJobCard(),
+                  separatorBuilder: (context, index) => SizedBox(
+                    height: 10.h,
+                  ),
+                );
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.data?.docs.isNotEmpty == true) {
+                  return RefreshIndicator(
+                    backgroundColor: const Color(0xff1D1D2F),
+                    color: Colors.white,
+                    onRefresh: () => refreshData(),
+                    child: ListView.separated(
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        return ElevatedButton(
+                          onPressed: () {
+                            String id = snapshot.data!.docs[index]['id'];
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: JobDetailScreen(
+                                      id: id,
+                                      jobDescription: snapshot.data.docs[index]
+                                          ['JobDescription'],
+                                      jobExperience: snapshot.data.docs[index]
+                                          ['JobExperience'],
+                                      jobType: snapshot.data.docs[index]
+                                          ['JobType'],
+                                      jobLocation: snapshot.data.docs[index]
+                                          ['JobLocation'],
+                                      userImage: snapshot.data.docs[index]
+                                          ['UserImage'],
+                                      userName: snapshot.data.docs[index]
+                                          ['UserName'],
+                                      jobTitle: snapshot.data.docs[index]
+                                          ['JobTitle'],
+                                      postDate: snapshot.data.docs[index]
+                                          ['PostedAt'],
+                                      jobSalary: snapshot.data.docs[index]
+                                          ['JobSalary'],
+                                    ),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          style: const ButtonStyle(
+                              splashFactory: InkRipple.splashFactory,
+                              // splashColor: Color(0xff5800FF),
+                              overlayColor:
+                                  MaterialStatePropertyAll(Color(0x4d5800ff)),
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.zero),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Color(0xff282837)),
+                              shape: MaterialStatePropertyAll(
+                                  ContinuousRectangleBorder())),
+                          child: JobCard(
+                            iconBtn: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.bookmark_border_outlined),
+                            ),
+                            jobLocation: snapshot.data.docs[index]
+                                ['JobLocation'],
+                            userImage: snapshot.data.docs[index]['UserImage'],
+                            userName: snapshot.data.docs[index]['UserName'],
+                            jobTitle: snapshot.data.docs[index]['JobTitle'],
+                            postDate: snapshot.data.docs[index]['PostedAt'],
+                            jobSalary: snapshot.data.docs[index]['JobSalary'],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          height: 10.h,
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      'There is no Job!',
+                      style: GoogleFonts.dmSans(
+                          color: Colors.white, fontSize: 16.sp),
+                    ),
+                  );
+                }
+              }
+              return Center(
+                child: Text(
+                  'Something went wrong',
+                  style:
+                      GoogleFonts.dmSans(color: Colors.white, fontSize: 16.sp),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -200,3 +151,17 @@ class _JobPageState extends State<JobPage> {
   }
 }
 
+// Container(
+// color: Color(0xff1D1D2F),
+// child: ListTile(
+// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
+// color: Colors.white,
+// fontSize: 16.sp
+// ),),
+// trailing: IconButton(
+// onPressed: (){},
+// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
+// ),
+// ),
+// ),
+// SizedBox(height: 10.h,),

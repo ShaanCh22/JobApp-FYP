@@ -16,21 +16,28 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  void logOut()async{
-    try{
+  void logOut() async {
+    try {
       await FirebaseAuth.instance.signOut();
       Fluttertoast.showToast(
           msg: 'Successfully Logout', toastLength: Toast.LENGTH_SHORT);
       Navigator.pushReplacement(
           context,
           PageTransition(
-              child:const Login(),
+              child: const Login(),
               type: PageTransitionType.rightToLeft,
               duration: const Duration(milliseconds: 300)));
-    }catch(error){
+    } catch (error) {
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
     }
   }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,10 +45,11 @@ class _SettingPageState extends State<SettingPage> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Setting',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text(
+          'Setting',
+          style:
+              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
+        ),
       ),
       body: ListView(
         children: [
@@ -49,17 +57,17 @@ class _SettingPageState extends State<SettingPage> {
           Container(
               color: const Color(0xff282837),
               child: ListTile(
-                leading: Text('Dark Mode',style: GoogleFonts.dmSans(
-                    fontSize: 16.sp,
-                    color: Colors.white
-                ),),
-              )
-          ),
+                leading: Text(
+                  'Dark Mode',
+                  style:
+                      GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.white),
+                ),
+              )),
           ListTile(
-            leading: Text('General',style: GoogleFonts.dmSans(
-                fontSize: 16.sp,
-                color: Colors.grey
-            ),),
+            leading: Text(
+              'General',
+              style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
+            ),
           ),
           //General Section
           Container(
@@ -67,97 +75,109 @@ class _SettingPageState extends State<SettingPage> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Application History',
+                      leading: Text(
+                        'Application History',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Language',
+                      leading: Text(
+                        'Language',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: Text('English',
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: Text(
+                        'English',
                         style: GoogleFonts.dmSans(
-                            fontSize: 14.sp,
-                            color: Colors.grey
-                        ),),
+                            fontSize: 14.sp, color: Colors.grey),
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Change Password',
+                      leading: Text(
+                        'Change Password',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Notifications',
+                      leading: Text(
+                        'Notifications',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
-              )
-          ),
+              )),
           ListTile(
-            leading: Text('Help',style: GoogleFonts.dmSans(
-                fontSize: 16.sp,
-                color: Colors.grey
-            ),),
+            leading: Text(
+              'Help',
+              style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
+            ),
           ),
           Container(
               margin: EdgeInsets.only(bottom: 20.h),
@@ -165,80 +185,91 @@ class _SettingPageState extends State<SettingPage> {
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Give Feedback',
+                      leading: Text(
+                        'Give Feedback',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Privacy & Policy',
+                      leading: Text(
+                        'Privacy & Policy',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff282837)),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Help Center',
+                      leading: Text(
+                        'Help Center',
                         style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing:const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                            fontSize: 16.sp, color: Colors.white),
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   ListTile(
-                    leading: Text('Version',
+                    leading: Text(
+                      'Version',
                       style: GoogleFonts.dmSans(
-                          fontSize: 16.sp,
-                          color: Colors.white
-                      ),),
-                    trailing: Text('v2.12',
+                          fontSize: 16.sp, color: Colors.white),
+                    ),
+                    trailing: Text(
+                      'v2.12',
                       style: GoogleFonts.dmSans(
-                          fontSize: 14.sp,
-                          color: Colors.grey
-                      ),),
+                          fontSize: 14.sp, color: Colors.grey),
+                    ),
                   ),
                 ],
-              )
-          ),
+              )),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SizedBox(
@@ -252,7 +283,7 @@ class _SettingPageState extends State<SettingPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r))),
                   onPressed: () => logOut(),
-                  child:Text(
+                  child: Text(
                     'Logout',
                     style: GoogleFonts.dmSans(
                         color: Colors.white,

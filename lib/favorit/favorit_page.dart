@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
 
@@ -21,14 +20,16 @@ class _FavoritePageState extends State<FavoritePage> {
             SliverAppBar(
               floating: true,
               toolbarHeight: 50,
-              backgroundColor: Colors.transparent,
+              backgroundColor: const Color(0xff1D1D2F),
               elevation: 0,
               centerTitle: true,
-              title:Text('Favorit',style: GoogleFonts.dmSans(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500
-              ),),
+              title: Text(
+                'Favorit',
+                style: GoogleFonts.dmSans(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
           ],
           body: SafeArea(
@@ -36,13 +37,12 @@ class _FavoritePageState extends State<FavoritePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 25.h,),
                   ListView.separated(
                     shrinkWrap: true,
-                    itemCount: 8+1,
+                    itemCount: 8 + 1,
                     physics: const BouncingScrollPhysics(),
-                    itemBuilder: (context,index){
-                      if(index<8) {
+                    itemBuilder: (context, index) {
+                      if (index < 8) {
                         return SizedBox(
                           width: double.infinity,
                           height: 107.h,
@@ -50,15 +50,14 @@ class _FavoritePageState extends State<FavoritePage> {
                             style: const ButtonStyle(
                                 splashFactory: InkRipple.splashFactory,
                                 // splashColor: Color(0xff5800FF),
-                                overlayColor: MaterialStatePropertyAll(Color(
-                                    0x4d5800ff)),
-                                padding: MaterialStatePropertyAll(
-                                    EdgeInsets.zero),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Color(0xff282837)),
+                                overlayColor:
+                                    MaterialStatePropertyAll(Color(0x4d5800ff)),
+                                padding:
+                                    MaterialStatePropertyAll(EdgeInsets.zero),
+                                backgroundColor:
+                                    MaterialStatePropertyAll(Color(0xff282837)),
                                 shape: MaterialStatePropertyAll(
-                                    ContinuousRectangleBorder())
-                            ),
+                                    ContinuousRectangleBorder())),
                             onPressed: () {},
                             child: Column(
                               children: [
@@ -81,30 +80,35 @@ class _FavoritePageState extends State<FavoritePage> {
                                     ),
                                   ),
                                   trailing: Padding(
-                                    padding: EdgeInsets.only(bottom: 15.h,),
+                                    padding: EdgeInsets.only(
+                                      bottom: 15.h,
+                                    ),
                                     child: IconButton(
                                       onPressed: () {},
-                                      icon: const Icon(Icons.bookmark,),
+                                      icon: const Icon(
+                                        Icons.bookmark,
+                                      ),
                                       style: const ButtonStyle(
                                         overlayColor: MaterialStatePropertyAll(
                                             Color(0xff292c47)),
-                                        padding:
-                                        MaterialStatePropertyAll(
+                                        padding: MaterialStatePropertyAll(
                                             EdgeInsets.zero),
-                                        iconColor:
-                                        MaterialStatePropertyAll(
+                                        iconColor: MaterialStatePropertyAll(
                                             Colors.white),
                                       ),
                                     ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15.w),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.location_on_outlined,
-                                        color: Color(0xffd1d1d1), size: 18,),
+                                      const Icon(
+                                        Icons.location_on_outlined,
+                                        color: Color(0xffd1d1d1),
+                                        size: 18,
+                                      ),
                                       Text(
                                         'Solo, Indonesia',
                                         style: GoogleFonts.dmSans(
@@ -112,9 +116,14 @@ class _FavoritePageState extends State<FavoritePage> {
                                           fontSize: 14.sp,
                                         ),
                                       ),
-                                      SizedBox(width: 10.w,),
-                                      const Icon(Icons.currency_exchange_outlined,
-                                        color: Color(0xffd1d1d1), size: 15,),
+                                      SizedBox(
+                                        width: 10.w,
+                                      ),
+                                      const Icon(
+                                        Icons.currency_exchange_outlined,
+                                        color: Color(0xffd1d1d1),
+                                        size: 15,
+                                      ),
                                       Text(
                                         ' IDR 8.500.000',
                                         style: GoogleFonts.dmSans(
@@ -129,18 +138,20 @@ class _FavoritePageState extends State<FavoritePage> {
                             ),
                           ),
                         );
-                      }else{
+                      } else {
                         return const Padding(
                           padding: EdgeInsets.only(bottom: 15),
                           child: Center(
-                            child: CircularProgressIndicator(color: Color(0xff5800FF)),
+                            child: CircularProgressIndicator(
+                                color: Color(0xff5800FF)),
                           ),
                         );
                       }
                     },
-                    separatorBuilder: (context, index) => SizedBox(height: 15.h,),
+                    separatorBuilder: (context, index) => SizedBox(
+                      height: 15.h,
+                    ),
                   )
-
                 ],
               ),
             ),
@@ -150,5 +161,3 @@ class _FavoritePageState extends State<FavoritePage> {
     );
   }
 }
-
-

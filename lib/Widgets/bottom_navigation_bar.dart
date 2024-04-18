@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Home/home_screen.dart';
-import '../Post/post_job_screen.dart';
 import '../favorit/favorit_page.dart';
 import '../job/job_page.dart';
 import '../profile/profile_page.dart';
@@ -17,7 +16,12 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int index = 0;
-  final screens = [const HomeScreen(), const JobPage(),const PostJobScreen(), const FavoritePage(), const ProfilePage(),];
+  final screens = [
+    const HomeScreen(),
+    const JobPage(),
+    const FavoritePage(),
+    const ProfilePage(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +52,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   ),
                   SvgPicture.asset(
                     'assets/svg/img_nav_home_onprimary.svg',
-                    theme: const SvgTheme(
-                        currentColor: Colors.grey
-                    ),                    width: 22,
+                    theme: const SvgTheme(currentColor: Colors.grey),
+                    width: 22,
                     height: 20,
                   ),
                   Text(
@@ -89,15 +92,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   ),
                   SvgPicture.asset(
                     'assets/svg/img_nav_jobs.svg',
-                    theme: const SvgTheme(
-                        currentColor: Colors.grey
-                    ),                    width: 22,
+                    theme: const SvgTheme(currentColor: Colors.grey),
+                    width: 22,
                     height: 20,
                   ),
                   Text(
                     'Jobs',
                     style:
-                    GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
+                        GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
                   )
                 ],
               ),
@@ -126,46 +128,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   SizedBox(
                     height: 5.h,
                   ),
-                  const Icon(Icons.add_box_outlined,color: Colors.grey,size: 20,),
-                  Text(
-                    'Post',
-                    style:
-                    GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
-                  )
-                ],
-              ),
-              selectedIcon: Column(
-                children: [
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                  const Icon(Icons.add_box,color: Color(0xff5800FF),size: 20,),
-                  Text(
-                    'Post',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 12.sp, color: const Color(0xff5800FF)),
-                  )
-                ],
-              ),
-              label: '',
-            ),
-            NavigationDestination(
-              icon: Column(
-                children: [
-                  SizedBox(
-                    height: 5.h,
-                  ),
                   SvgPicture.asset(
                     'assets/svg/img_nav_favorit.svg',
-                    theme: const SvgTheme(
-                        currentColor: Colors.grey
-                    ),                    width: 22,
+                    theme: const SvgTheme(currentColor: Colors.grey),
+                    width: 22,
                     height: 20,
                   ),
                   Text(
-                    'Favorit',
+                    'Favor',
                     style:
-                    GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
+                        GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
                   )
                 ],
               ),
@@ -196,15 +168,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   ),
                   SvgPicture.asset(
                     'assets/svg/img_nav_profile.svg',
-                    theme: const SvgTheme(
-                        currentColor: Colors.grey
-                    ),                    width: 22,
+                    theme: const SvgTheme(currentColor: Colors.grey),
+                    width: 22,
                     height: 20,
                   ),
                   Text(
                     'Profile',
                     style:
-                    GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
+                        GoogleFonts.dmSans(fontSize: 12.sp, color: Colors.grey),
                   )
                 ],
               ),
@@ -332,7 +303,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //               children: [
 //                 SizedBox(height: 8.h,),
 //                 SvgPicture.asset('assets/svg/img_nav_favorit.svg',color: Colors.grey,),
-//                 Text('Favorit',style: GoogleFonts.dmSans(
+//                 Text('Favor',style: GoogleFonts.dmSans(
 //                     fontSize: 12.sp,
 //                     color: Colors.grey
 //                 ),)
@@ -342,7 +313,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //               children: [
 //                 SizedBox(height: 8.h,),
 //                 SvgPicture.asset('assets/svg/img_nav_favorit_primary.svg',),
-//                 Text('Favorit',style: GoogleFonts.dmSans(
+//                 Text('Favor',style: GoogleFonts.dmSans(
 //                     fontSize: 12.sp,
 //                     color: Color(0xff5800FF)
 //                 ),)

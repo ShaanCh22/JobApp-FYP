@@ -22,9 +22,9 @@ class _LoginState extends State<Login> {
   final FocusNode _passFocusNode = FocusNode();
 
   final TextEditingController _emailTextControler =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   final TextEditingController _passTextControler =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   bool _obsecuretext = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -42,8 +42,10 @@ class _LoginState extends State<Login> {
             password: _passTextControler.text.trim());
         Fluttertoast.showToast(
             msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
-        Navigator.pushReplacement(context,
-            PageTransition(child:const BottomNavBar(),
+        Navigator.pushReplacement(
+            context,
+            PageTransition(
+                child: const BottomNavBar(),
                 type: PageTransitionType.rightToLeft,
                 duration: const Duration(milliseconds: 500)));
       } catch (error) {
@@ -72,7 +74,7 @@ class _LoginState extends State<Login> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w,right: 20.w),
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -139,18 +141,18 @@ class _LoginState extends State<Login> {
                           ),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Color(0xff5800FF),
-                              )),
+                            color: Color(0xff5800FF),
+                          )),
                           enabledBorder:
-                          UnderlineInputBorder(borderSide: BorderSide.none),
+                              UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                           errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.red,
-                              )),
+                            color: Colors.red,
+                          )),
                         ),
                       ),
                       SizedBox(
@@ -210,20 +212,20 @@ class _LoginState extends State<Login> {
                             size: 20,
                             color: Colors.grey,
                           ),
-                          enabledBorder:
-                          const UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Color(0xff5800FF),
-                              )),
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                     ],
@@ -236,7 +238,7 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                             context,
                             PageTransition(
-                                child:const ForgetPasswordScreen(),
+                                child: const ForgetPasswordScreen(),
                                 type: PageTransitionType.rightToLeft,
                                 duration: const Duration(milliseconds: 300)));
                       },
@@ -262,15 +264,15 @@ class _LoginState extends State<Login> {
                       onPressed: () => _submitFormOnLogin(),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Login',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Login',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
                 SizedBox(
                   height: 200.h,
@@ -293,10 +295,10 @@ class _LoginState extends State<Login> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child:const Signup(),
+                                    child: const Signup(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration: const Duration(milliseconds: 300)
-                                ));
+                                    duration:
+                                        const Duration(milliseconds: 300)));
                           },
                           child: Text(
                             'Register Now',

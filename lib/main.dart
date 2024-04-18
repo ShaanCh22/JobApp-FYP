@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'splash_screen.dart';
+import 'package:jobseek/splash_screen.dart';
 import 'package:flutter/services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xff1D1D2F),
+    statusBarColor: Color(0xff1D1D2F),
   ));
   runApp(const MyApp());
 }
@@ -18,10 +18,10 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    double dwidth= MediaQuery.of(context).size.width;
-    double dheight= MediaQuery.of(context).size.height;
+    double dwidth = MediaQuery.of(context).size.width;
+    double dheight = MediaQuery.of(context).size.height;
     return ScreenUtilInit(
-      builder: (_,child)=> MaterialApp(
+      builder: (_, child) => MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Jobseek',
           theme: ThemeData(
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           home: const MainPage()),
-      designSize:  Size(dwidth, dheight),
+      designSize: Size(dwidth, dheight),
     );
   }
 }

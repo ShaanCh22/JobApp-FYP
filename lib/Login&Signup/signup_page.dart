@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Login&Signup/verify_email_page.dart';
 import 'package:page_transition/page_transition.dart';
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -14,21 +15,21 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-
   final _signupFormKey = GlobalKey<FormState>();
   final FocusNode _passFocusNode = FocusNode();
 
   final TextEditingController _nametext = TextEditingController(text: '');
-  final TextEditingController _phonenumbertext = TextEditingController(text: '');
+  final TextEditingController _phonenumbertext =
+      TextEditingController(text: '');
   final TextEditingController _emailText = TextEditingController(text: '');
   final TextEditingController _passText = TextEditingController(text: '');
-  bool _obsecuretext =false;
+  bool _obsecuretext = false;
   bool _isLoading = false;
   EmailOTP myauth = EmailOTP();
 
-  Future _submitFormOnSignup() async{
+  Future _submitFormOnSignup() async {
     final isValid = _signupFormKey.currentState!.validate();
-    if(isValid) {
+    if (isValid) {
       setState(() {
         _isLoading = true;
       });
@@ -39,31 +40,31 @@ class _SignupState extends State<Signup> {
           otpLength: 4,
           otpType: OTPType.digitsOnly);
       if (await myauth.sendOTP() == true) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("OTP has been sent"),
         ));
-        Navigator.push(context, PageTransition(child:OtpScreen(
-          myauth: myauth,
-          name: _nametext.text,
-          mail: _emailText.text,
-          phone: _phonenumbertext.text,
-          pass: _passText.text,
-        ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(milliseconds: 500)));
+        Navigator.push(
+            context,
+            PageTransition(
+                child: OtpScreen(
+                  myauth: myauth,
+                  name: _nametext.text,
+                  mail: _emailText.text,
+                  phone: _phonenumbertext.text,
+                  pass: _passText.text,
+                ),
+                type: PageTransitionType.rightToLeft,
+                duration: const Duration(milliseconds: 500)));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Oops, OTP send failed"),
         ));
       }
     }
     setState(() {
-      _isLoading=false;
+      _isLoading = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +78,9 @@ class _SignupState extends State<Signup> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Register 👌',
                     style: TextStyle(
@@ -94,10 +96,13 @@ class _SignupState extends State<Signup> {
                   style: GoogleFonts.dmSans(
                       color: const Color(0xffD1D1D1), fontSize: 14.sp),
                 ),
-                SizedBox(height: 30.h,),
+                SizedBox(
+                  height: 30.h,
+                ),
                 Form(
                   key: _signupFormKey,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       //Name
                       Text(
@@ -110,14 +115,14 @@ class _SignupState extends State<Signup> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
+                        onEditingComplete: () =>
+                            FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _nametext,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Name should not be empty!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
@@ -129,22 +134,31 @@ class _SignupState extends State<Signup> {
                           fillColor: Color(0xff282837),
                           hintText: 'Enter Your Name/ Company Name',
                           hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.person_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                          prefixIcon: Icon(
+                            Icons.person_outline_sharp,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
+                          enabledBorder:
+                              UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Email
-                      SizedBox(height: 20.h,),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       Text(
                         'Email',
                         style: GoogleFonts.dmSans(
@@ -155,17 +169,16 @@ class _SignupState extends State<Signup> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
+                        onEditingComplete: () =>
+                            FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailText,
-                        validator: (value){
-                          if(value!.isEmpty){
-                            return 'Email should not be empty!';
-                          }
-                          else if(!value.contains('@')){
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Email shuold not be empty!';
+                          } else if (!value.contains('@')) {
                             return 'Please enter a valid email address!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
@@ -177,22 +190,31 @@ class _SignupState extends State<Signup> {
                           fillColor: Color(0xff282837),
                           hintText: 'Enter Email',
                           hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                          prefixIcon: Icon(
+                            Icons.mail_outline_sharp,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
+                          enabledBorder:
+                              UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Phone Number
-                      SizedBox(height: 20.h,),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       Text(
                         'Phone Number',
                         style: GoogleFonts.dmSans(
@@ -203,14 +225,14 @@ class _SignupState extends State<Signup> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.done,
-                        onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
+                        onEditingComplete: () =>
+                            FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.phone,
                         controller: _phonenumbertext,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Phone Number should not be empty';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
@@ -222,22 +244,31 @@ class _SignupState extends State<Signup> {
                           fillColor: Color(0xff282837),
                           hintText: 'Enter Phone Number',
                           hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.phone,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                          prefixIcon: Icon(
+                            Icons.phone,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
+                          enabledBorder:
+                              UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Password
-                      SizedBox(height: 20.h,),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       Text(
                         'Password',
                         style: GoogleFonts.dmSans(
@@ -251,29 +282,29 @@ class _SignupState extends State<Signup> {
                         focusNode: _passFocusNode,
                         keyboardType: TextInputType.visiblePassword,
                         controller: _passText,
-                        obscureText: !_obsecuretext,//Change it dynamically
-                        validator: (value){
-                          if(value!.isEmpty){
+                        obscureText: !_obsecuretext, //Change it dynamically
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Password should not be empty!';
-                          }
-                          else if(value.length<8){
+                          } else if (value.length < 8) {
                             return 'Password should be at least 8 characters!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          suffixIcon:GestureDetector(
-                            onTap: (){
+                          suffixIcon: GestureDetector(
+                            onTap: () {
                               setState(() {
                                 _obsecuretext = !_obsecuretext;
                               });
                             },
                             child: Icon(
-                              _obsecuretext ? Icons.visibility_off_sharp :
-                              Icons.visibility_sharp,color: Colors.grey,
+                              _obsecuretext
+                                  ? Icons.visibility_off_sharp
+                                  : Icons.visibility_sharp,
+                              color: Colors.grey,
                             ),
                           ),
                           isCollapsed: true,
@@ -282,23 +313,33 @@ class _SignupState extends State<Signup> {
                           fillColor: const Color(0xff282837),
                           hintText: 'Enter Password',
                           hintStyle: const TextStyle(color: Colors.grey),
-                          prefixIcon: const Icon(Icons.lock_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                          prefixIcon: const Icon(
+                            Icons.lock_outline_sharp,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:const OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 30.h,),
+                SizedBox(
+                  height: 30.h,
+                ),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -312,15 +353,15 @@ class _SignupState extends State<Signup> {
                       onPressed: () => _submitFormOnSignup(),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Register',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Register',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
               ],
             ),

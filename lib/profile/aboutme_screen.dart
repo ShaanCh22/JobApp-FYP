@@ -16,55 +16,53 @@ class AboutMeScreen extends StatefulWidget {
 class _AboutMeScreenState extends State<AboutMeScreen> {
   final _aboutdataFormKey = GlobalKey<FormState>();
   final TextEditingController _aboutmeController =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   String? gender;
   bool _isLoading = false;
-  final FirebaseAuth _auth=FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getAboutData();
   }
 
-  Future _getAboutData() async{
-    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  Future _getAboutData() async {
+    DocumentSnapshot ref =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
     setState(() {
-      _aboutmeController.text=ref.get('About Me');
+      _aboutmeController.text = ref.get('About Me');
     });
   }
-  Future uploadAboutData() async{
-    final isValid =_aboutdataFormKey.currentState!.validate();
-    if(isValid){
+
+  Future uploadAboutData() async {
+    final isValid = _aboutdataFormKey.currentState!.validate();
+    if (isValid) {
       setState(() {
-        _isLoading=true;
+        _isLoading = true;
       });
-      try{
-        final User? user=_auth.currentUser;
-        final uid=user!.uid;
-        FirebaseFirestore.instance.collection('Users').doc(uid).update({
-          'About Me':_aboutmeController.text
-        });
-        Future.delayed(const Duration(seconds:1)).then((value) => {
-          setState(() {
-            _isLoading=false;
-            Fluttertoast.showToast(
-                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
-          })
-        });
-      }catch(error){
+      try {
+        final User? user = _auth.currentUser;
+        final uid = user!.uid;
+        FirebaseFirestore.instance
+            .collection('Users')
+            .doc(uid)
+            .update({'About Me': _aboutmeController.text});
+        Future.delayed(const Duration(seconds: 1)).then((value) => {
+              setState(() {
+                _isLoading = false;
+                Fluttertoast.showToast(
+                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+              })
+            });
+      } catch (error) {
         setState(() {
-          _isLoading=false;
+          _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(
-            error: error.toString(),
-            ctx: context);
+        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
     }
-
-
   }
 
   @override
@@ -74,27 +72,32 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text('About Me',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text(
+          'About Me',
+          style:
+              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
+        ),
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
+        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading:Text('Summary',style: GoogleFonts.dmSans(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500
-            ),),
-            trailing: Text('Maximum 150 words',style: GoogleFonts.dmSans(
-                color: Colors.grey,
-                fontSize: 15.sp
-            ),),
+            leading: Text(
+              'Summary',
+              style: GoogleFonts.dmSans(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500),
+            ),
+            trailing: Text(
+              'Maximum 150 words',
+              style: GoogleFonts.dmSans(color: Colors.grey, fontSize: 15.sp),
+            ),
           ),
-          SizedBox(height: 24.h,),
+          SizedBox(
+            height: 24.h,
+          ),
           Form(
             key: _aboutdataFormKey,
             child: TextFormField(
@@ -110,7 +113,7 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
               validator: (value) {
                 if (value!.isEmpty) {
                   return;
-                }else {
+                } else {
                   return null;
                 }
               },
@@ -124,23 +127,25 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
                   color: Colors.grey,
                 ),
                 enabledBorder:
-                UnderlineInputBorder(borderSide: BorderSide.none),
+                    UnderlineInputBorder(borderSide: BorderSide.none),
                 focusedErrorBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.redAccent,
-                    )),
+                  color: Colors.redAccent,
+                )),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Color(0xff5800FF),
-                    )),
+                  color: Color(0xff5800FF),
+                )),
                 errorBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: Colors.redAccent,
-                    )),
+                  color: Colors.redAccent,
+                )),
               ),
             ),
           ),
-          SizedBox(height: 35.h,),
+          SizedBox(
+            height: 35.h,
+          ),
           SizedBox(
             width: double.infinity,
             height: 53.h,
@@ -151,22 +156,21 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r))),
-                onPressed: (){
+                onPressed: () {
                   uploadAboutData();
                 },
                 child: _isLoading
                     ? const CircularProgressIndicator(
-                  color: Colors.white,
-                )
+                        color: Colors.white,
+                      )
                     : Text(
-                  'Submit',
-                  style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold),
-                )),
+                        'Submit',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
           ),
-
         ],
       ),
     );
