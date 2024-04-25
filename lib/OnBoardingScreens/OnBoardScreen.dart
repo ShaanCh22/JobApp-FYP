@@ -61,6 +61,7 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                             ),
                             Text(
                               contents[i].title,
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 30.sp,
                                   color: Colors.white,

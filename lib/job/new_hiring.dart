@@ -3,21 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jobseek/profile/update_job_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../Post/post_job_screen.dart';
 import '../Widgets/shimmer_jobcard.dart';
+import 'job_detail_page.dart';
 
 
-class MyJobsScreen extends StatefulWidget {
-  const MyJobsScreen({super.key});
+class NewHiring extends StatefulWidget {
+  const NewHiring({super.key});
 
   @override
-  State<MyJobsScreen> createState() => _MyJobsScreenState();
+  State<NewHiring> createState() => _NewHiringState();
 }
 
-class _MyJobsScreenState extends State<MyJobsScreen> {
+class _NewHiringState extends State<NewHiring> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   refreshData(){
     setState(() {
@@ -28,33 +27,19 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xff1D1D2F),
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        title: Text('My Jobs',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
+        title:Text('New Hiring',style: GoogleFonts.dmSans(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold
         ),),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 5.w),
-            child: IconButton(
-              onPressed: (){
-                Navigator.push(context,
-                    PageTransition(child: const PostJobScreen(),
-                        type:PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300)));
-              },
-              icon: const Icon(Icons.add,color: Colors.white,),
-              iconSize: 28,
-            ),
-          )
-        ],
+        centerTitle: true,
+        elevation: 1,
+        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xff1D1D2F),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('Jobs')
-            .where('uid',isEqualTo: uid)
+            .collection('Jobs').orderBy('PostedAt',descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot snapshot){
           if(snapshot.connectionState==ConnectionState.waiting){
@@ -76,7 +61,21 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                     return ElevatedButton(
                       onPressed: (){
                         String id=snapshot.data!.docs[index]['id'];
-                        Navigator.push(context, PageTransition(child:UpdateJobScreen(jobid: id), type: PageTransitionType.rightToLeft));
+                        Navigator.push(context,
+                            PageTransition(child:JobDetailScreen(
+                              id: id,
+                              ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
+                              jobDescription: snapshot.data.docs[index]['JobDescription'],
+                              jobExperience: snapshot.data.docs[index]['JobExperience'],
+                              jobType: snapshot.data.docs[index]['JobType'],
+                              jobLocation: snapshot.data.docs[index]['JobLocation'],
+                              userImage: snapshot.data.docs[index]['UserImage'],
+                              userName: snapshot.data.docs[index]['UserName'],
+                              jobTitle: snapshot.data.docs[index]['JobTitle'],
+                              postDate: snapshot.data.docs[index]['PostedAt'],
+                              jobSalary: snapshot.data.docs[index]['JobSalary'],
+                            ),
+                                type: PageTransitionType.rightToLeft));
                       },
                       style: const ButtonStyle(
                           splashFactory: InkRipple.splashFactory,
@@ -121,8 +120,21 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                                   ),
                                 ),
                                 trailing: Padding(
-                                  padding: EdgeInsets.only(right: 15.w),
-                                  child: const Icon(Icons.edit_outlined,color: Colors.white,),
+                                  padding: EdgeInsets.only(bottom: 15.h,),
+                                  child: IconButton(
+                                    onPressed: (){},
+                                    icon: const Icon(Icons.bookmark_border_outlined,color: Colors.white,),
+                                    style: const ButtonStyle(
+                                      overlayColor: MaterialStatePropertyAll(
+                                          Color(0xff292c47)),
+                                      padding:
+                                      MaterialStatePropertyAll(
+                                          EdgeInsets.zero),
+                                      iconColor:
+                                      MaterialStatePropertyAll(
+                                          Colors.white),
+                                    ),
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -184,4 +196,18 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   }
 }
 
+// Container(
+// color: Color(0xff1D1D2F),
+// child: ListTile(
+// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
+// color: Colors.white,
+// fontSize: 16.sp
+// ),),
+// trailing: IconButton(
+// onPressed: (){},
+// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
+// ),
+// ),
+// ),
+// SizedBox(height: 10.h,),
 

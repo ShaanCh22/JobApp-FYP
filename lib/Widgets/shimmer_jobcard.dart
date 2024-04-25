@@ -38,13 +38,14 @@ class ShimmerJobCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15.w),
               child: Wrap(
                 runSpacing: 10.h,
                 spacing: 10.w,
                 children: [
                   FadeShimmer.round(
-                    size: 10.r,
+                    size:10.r,
                     highlightColor: const Color(0xff798EA5),
                     baseColor: const Color(0x27878787),
                   ),
@@ -55,11 +56,9 @@ class ShimmerJobCard extends StatelessWidget {
                     highlightColor: const Color(0xff798EA5),
                     baseColor: const Color(0x27878787),
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10,),
                   FadeShimmer.round(
-                    size: 10.r,
+                    size:10.r,
                     highlightColor: const Color(0xff798EA5),
                     baseColor: const Color(0x27878787),
                   ),
@@ -74,6 +73,7 @@ class ShimmerJobCard extends StatelessWidget {
               ),
             )
           ],
-        ));
+        )
+    );
   }
 }

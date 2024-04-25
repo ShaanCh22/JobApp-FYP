@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class JobDetailScreen extends StatefulWidget {
   JobDetailScreen({
@@ -16,6 +17,7 @@ class JobDetailScreen extends StatefulWidget {
     required this.jobExperience,
     required this.jobType,
     required this.jobDescription,
+    required this.ownerEmail,
   });
 
   final String? userImage;
@@ -27,6 +29,7 @@ class JobDetailScreen extends StatefulWidget {
   final String? jobType;
   final String? jobExperience;
   final String? jobDescription;
+  final String? ownerEmail;
   String id;
 
   @override
@@ -35,6 +38,16 @@ class JobDetailScreen extends StatefulWidget {
 
 class _JobDetailScreenState extends State<JobDetailScreen> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
+
+  applyForJob(){
+    final Uri params = Uri(
+        scheme: 'mailto',
+        path: widget.ownerEmail,
+        query: 'subject=Applying for ${widget.jobTitle}&body=Hello, Please attach your Resume.'
+    );
+    final url = params.toString();
+    launchUrlString(url);
+  }
 
   // @override
   // void initState() {
@@ -64,7 +77,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         title: Text(
           'Detail Jobs',
           style:
-              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
+          GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
         ),
         actions: [
           Padding(
@@ -104,10 +117,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                               borderRadius: BorderRadius.circular(40.r),
                               child: widget.userImage == ""
                                   ? const Icon(
-                                      Icons.error,
-                                      size: 25,
-                                      color: Colors.red,
-                                    )
+                                Icons.error,
+                                size: 25,
+                                color: Colors.red,
+                              )
                                   : Image.network(widget.userImage!))),
                       title: Text(
                         '${widget.userName}',
@@ -205,8 +218,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                   foregroundColor: Colors.black,
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(5.r))),
-                              onPressed: () {},
+                                      BorderRadius.circular(5.r))),
+                              onPressed: () {
+                                applyForJob();
+                              },
                               child: Text('ApplyNow',
                                   style: GoogleFonts.dmSans(
                                     color: Colors.white,
@@ -223,7 +238,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                   foregroundColor: const Color(0xff5800FF),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(5.r))),
+                                      BorderRadius.circular(5.r))),
                               onPressed: () {},
                               child: const Icon(
                                 Icons.share_outlined,
@@ -254,12 +269,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     SizedBox(
                       height: 16.h,
                     ),
-                    Text('${widget.jobDescription}',
+                    Text(
+                        '${widget.jobDescription}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
-                          fontFamily: 'DMSans',
-                        )),
+                          fontFamily: 'DMSans',)),
                   ],
                 ),
               ),
@@ -286,8 +301,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
-                          fontFamily: 'DMSans',
-                        )),
+                          fontFamily: 'DMSans',)),
                   ],
                 ),
               ),

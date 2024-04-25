@@ -8,86 +8,30 @@ import 'package:intl/intl.dart';
 import '../Services/global_methods.dart';
 import '../presistent/presestent.dart';
 
-class PostJobScreen extends StatefulWidget {
-  const PostJobScreen({super.key});
+
+class UpdateJobScreen extends StatefulWidget {
+  String jobid;
+  UpdateJobScreen({super.key,required this.jobid});
 
   @override
-  State<PostJobScreen> createState() => _PostJobScreenState();
+  State<UpdateJobScreen> createState() => _UpdateJobScreenState();
 }
 
-class _PostJobScreenState extends State<PostJobScreen> {
-  final TextEditingController _jobcategorytext =
-  TextEditingController(text: '');
+class _UpdateJobScreenState extends State<UpdateJobScreen> {
+  final TextEditingController _jobcategorytext = TextEditingController(text: '');
   final TextEditingController _jobtitletext = TextEditingController(text: '');
   final TextEditingController _jobtypetext = TextEditingController(text: '');
-  final TextEditingController _joblocationtext =
-  TextEditingController(text: '');
+  final TextEditingController _joblocationtext = TextEditingController(text: '');
   final TextEditingController _jobdescription = TextEditingController(text: '');
   final TextEditingController _jobsalarytext = TextEditingController(text: '');
-  final TextEditingController _jobexperiencetext =
-  TextEditingController(text: '');
-  String dt = DateFormat('MMM d, y').format(DateTime.now());
+  final TextEditingController _jobexperiencetext = TextEditingController(text: '');
+  String dt=DateFormat('MMM d, y').format(DateTime.now());
   final _jobdataformkey = GlobalKey<FormState>();
   bool _isLoading = false;
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String? userImage;
   String? userName;
-  String? ownerEmail;
 
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-  }
-
-  getUserData() async {
-    final DocumentSnapshot userDoc =
-    await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    setState(() {
-      userImage = userDoc.get('User Image');
-      userName = userDoc.get('Name');
-      ownerEmail = userDoc.get('Email');
-    });
-  }
-  Future _submitJobData() async {
-    final isValid = _jobdataformkey.currentState!.validate();
-    if (isValid) {
-      setState(() {
-        _isLoading = true;
-      });
-      try {
-        String id = DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance.collection('Jobs').doc(id).set({
-          'uid': uid,
-          'id': id,
-          'JobCategory': _jobcategorytext.text,
-          'JobTitle': _jobtitletext.text,
-          'JobType': _jobtypetext.text,
-          'JobSalary': _jobsalarytext.text,
-          'JobExperience': _jobexperiencetext.text,
-          'JobLocation': _joblocationtext.text,
-          'JobDescription': _jobdescription.text,
-          'UserName': userName,
-          'UserImage': userImage,
-          "PostedAt": dt,
-          "OwnerEmail": ownerEmail
-        });
-        Future.delayed(const Duration(seconds: 1)).then((value) => {
-          setState(() {
-            _isLoading = false;
-            Fluttertoast.showToast(
-                msg: 'Job Posted', toastLength: Toast.LENGTH_SHORT);
-          })
-        });
-        Navigator.pop(context);
-      } catch (error) {
-        setState(() {
-          _isLoading = false;
-        });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
-      }
-    }
-  }
   _showJobCategoryDialog() {
     showDialog(
         context: context,
@@ -162,6 +106,63 @@ class _PostJobScreenState extends State<PostJobScreen> {
               ));
         });
   }
+  @override
+  void initState() {
+    super.initState();
+    _getJobData();
+  }
+  Future _getJobData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).get();
+    setState(() {
+      _jobtypetext.text=ref.get('JobType');
+      _jobtitletext.text=ref.get('JobTitle');
+      _jobsalarytext.text=ref.get('JobSalary');
+      _joblocationtext.text=ref.get('JobLocation');
+      _jobexperiencetext.text=ref.get('JobExperience');
+      _jobdescription.text=ref.get('JobDescription');
+      _jobcategorytext.text=ref.get('JobCategory');
+    });
+  }
+  Future _updateJobData() async{
+    final isValid =_jobdataformkey.currentState!.validate();
+    if(isValid){
+      setState(() {
+        _isLoading=true;
+      });
+      try{
+        FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).update({
+          'JobType':_jobtypetext.text,
+          'JobTitle':_jobtitletext.text,
+          'JobSalary':_jobsalarytext.text,
+          'JobLocation':_joblocationtext.text,
+          'JobExperience':_jobexperiencetext.text,
+          'JobDescription':_jobdescription.text,
+          'JobCategory':_jobcategorytext.text,
+        });
+        Future.delayed(const Duration(seconds:1)).then((value) => {
+          setState(() {
+            _isLoading=false;
+            Fluttertoast.showToast(
+                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+          })
+        });
+        Navigator.pop(context);
+      }catch(error){
+        setState(() {
+          _isLoading=false;
+        });
+        GlobalMethod.showErrorDialog(
+            error: error.toString(),
+            ctx: context);
+      }
+    }
+
+
+  }
+  void _deleteJobData(){
+    FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).delete();
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,18 +171,28 @@ class _PostJobScreenState extends State<PostJobScreen> {
           backgroundColor: const Color(0xff1D1D2F),
           foregroundColor: Colors.white,
           centerTitle: true,
-          title: Text(
-            'Create Job Post',
-            style: GoogleFonts.dmSans(
-                fontSize: 18.sp, fontWeight: FontWeight.w500),
-          ),
+          title: Text('Edit Job Post',style: GoogleFonts.dmSans(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500
+          ),),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 10.w),
+              child: IconButton(
+                onPressed: (){
+                  _deleteJobData();
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.delete_outline,color: Colors.white,),
+              ),
+            )
+          ],
         ),
-        body: SingleChildScrollView(
+        body:SingleChildScrollView(
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Tell us who you're hiring",
                       style: TextStyle(
@@ -197,13 +208,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     style: GoogleFonts.dmSans(
                         color: const Color(0xffD1D1D1), fontSize: 14.sp),
                   ),
-                  SizedBox(
-                    height: 30.h,
-                  ),
+                  SizedBox(height: 30.h,),
                   Form(
                     key: _jobdataformkey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //Job Category
                         Text(
@@ -219,10 +227,14 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           keyboardType: TextInputType.none,
                           readOnly: true,
                           controller: _jobcategorytext,
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          onTap: (){
+                            _showJobCategoryDialog();
+                          },
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Please select job category!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -234,39 +246,27 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             fillColor: Color(0xff282837),
                             hintText: 'Select job Category',
                             hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
-                              Icons.category_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
                             suffixIcon: Icon(
                               Icons.arrow_drop_down,
                               size: 25,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.category_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
-                          onTap: () {
-                            _showJobCategoryDialog();
-                          },
+
                         ),
                         //Job Title
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Job Title',
                           style: GoogleFonts.dmSans(
@@ -280,10 +280,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _jobtitletext,
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Job title should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -295,31 +296,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             fillColor: Color(0xff282837),
                             hintText: 'Enter job title',
                             hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
-                              Icons.title_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
+
                         ),
                         //Job Type
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Job Type',
                           style: GoogleFonts.dmSans(
@@ -336,10 +328,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           onTap: (){
                             _showJobTypeDialog();
                           },
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Job Type should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -356,31 +349,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               size: 25,
                               color: Colors.grey,
                             ),
-                            prefixIcon: Icon(
-                              Icons.title_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
+
                         ),
                         //Job Experience
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Required Experience',
                           style: GoogleFonts.dmSans(
@@ -394,10 +378,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.number,
                           controller: _jobexperiencetext,
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Experience should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -409,31 +394,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             fillColor: Color(0xff282837),
                             hintText: 'Experience Required',
                             hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
-                              Icons.title_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
+
                         ),
                         //Job Salary
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Job Salary',
                           style: GoogleFonts.dmSans(
@@ -447,10 +423,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _jobsalarytext,
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Job Salary should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -462,31 +439,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             fillColor: Color(0xff282837),
                             hintText: 'Enter job Salary',
                             hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
-                              Icons.title_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
+
                         ),
                         //Job Location
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Job Location',
                           style: GoogleFonts.dmSans(
@@ -500,10 +468,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _joblocationtext,
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Job location should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -515,31 +484,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             fillColor: Color(0xff282837),
                             hintText: 'Enter job location',
                             hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
-                              Icons.title_outlined,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
+
                         ),
                         //Job Description
-                        SizedBox(
-                          height: 20.h,
-                        ),
+                        SizedBox(height: 20.h,),
                         Text(
                           'Job Description',
                           style: GoogleFonts.dmSans(
@@ -553,11 +513,14 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           keyboardType: TextInputType.none,
                           controller: _jobdescription,
                           style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 15.sp),
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                              color: Colors.white,
+                              fontSize: 15.sp
+                          ),
+                          validator: (value){
+                            if(value!.isEmpty){
                               return 'Job description should not be empty!';
-                            } else {
+                            }
+                            else{
                               return null;
                             }
                           },
@@ -568,30 +531,23 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             contentPadding: EdgeInsets.all(15),
                             filled: true,
                             fillColor: Color(0xff282837),
-                            prefixIcon: Icon(
-                              Icons.description_outlined,
-                              color: Colors.grey,
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide.none),
+                            prefixIcon: Icon(Icons.description_outlined,color: Colors.grey,),
+                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                             focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Color(0xff5800FF),
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                            ),
                             errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.redAccent,
-                                )),
+                                borderSide: BorderSide(color: Colors.redAccent,)
+                            ),
                           ),
-                          onTap: () {
+                          onTap: (){
                             showModalBottomSheet(
                                 backgroundColor: const Color(0xff1D1D2F),
                                 context: context,
-                                builder: (BuildContext context) {
+                                builder: (BuildContext context){
                                   return Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -603,58 +559,47 @@ class _PostJobScreenState extends State<PostJobScreen> {
                                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                                           keyboardType: TextInputType.text,
                                           controller: _jobdescription,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
+                                          validator: (value){
+                                            if(value!.isEmpty){
                                               return 'Job description should not be empty!';
-                                            } else {
+                                            }
+                                            else{
                                               return null;
                                             }
                                           },
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          style: const TextStyle(color: Colors.white),
                                           decoration: const InputDecoration(
                                             isCollapsed: true,
                                             contentPadding: EdgeInsets.all(15),
                                             filled: true,
                                             fillColor: Color(0xff282837),
                                             hintText: 'Enter job title',
-                                            hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                            enabledBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide.none),
-                                            focusedErrorBorder:
-                                            OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.redAccent,
-                                                )),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0xff5800FF),
-                                                )),
+                                            hintStyle: TextStyle(color: Colors.grey),
+                                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                                            focusedErrorBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: Colors.redAccent,)
+                                            ),
+                                            focusedBorder:OutlineInputBorder(
+                                                borderSide: BorderSide(color: Color(0xff5800FF),)
+                                            ),
                                             errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.redAccent,
-                                                )),
+                                                borderSide: BorderSide(color: Colors.redAccent,)
+                                            ),
                                           ),
+
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10,),
                                       SizedBox(
                                         width: double.infinity,
                                         height: 53.h,
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                                splashFactory:
-                                                InkRipple.splashFactory,
-                                                backgroundColor:
-                                                const Color(0xff5800FF),
+                                                splashFactory: InkRipple.splashFactory,
+                                                backgroundColor: const Color(0xff5800FF),
                                                 foregroundColor: Colors.black,
                                                 shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        8.r))),
+                                                    borderRadius: BorderRadius.circular(8.r))),
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
@@ -667,13 +612,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                                               style: GoogleFonts.dmSans(
                                                   color: Colors.white,
                                                   fontSize: 16.sp,
-                                                  fontWeight:
-                                                  FontWeight.bold),
+                                                  fontWeight: FontWeight.bold),
                                             )),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      )
+                                      const SizedBox(height: 10,)
                                     ],
                                   );
                                 });
@@ -682,9 +624,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
+                  SizedBox(height: 20.h,),
                   SizedBox(
                     width: double.infinity,
                     height: 53.h,
@@ -695,15 +635,15 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             splashFactory: InkRipple.splashFactory,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.r))),
-                        onPressed: () {
-                          _submitJobData();
+                        onPressed: (){
+                          _updateJobData();
                         },
                         child: _isLoading
                             ? const CircularProgressIndicator(
                           color: Colors.white,
                         )
                             : Text(
-                          'Post',
+                          'Save',
                           style: GoogleFonts.dmSans(
                               color: Colors.white,
                               fontSize: 16.sp,
@@ -714,6 +654,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
               ),
             ),
           ),
-        ));
+        )
+    );
   }
 }
+
+

@@ -280,6 +280,7 @@ class _LoginState extends State<Login> {
                 Align(
                   alignment: Alignment.center,
                   child: Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 15.h),

@@ -11,7 +11,6 @@ class JobCard extends StatefulWidget {
     required this.jobLocation,
     required this.postDate,
     required this.jobSalary,
-    required this.iconBtn,
   });
 
   final String? userImage;
@@ -20,13 +19,11 @@ class JobCard extends StatefulWidget {
   final String? jobLocation;
   final String? postDate;
   final String? jobSalary;
-  final IconButton iconBtn;
   @override
   State<JobCard> createState() => _JobCardState();
 }
 
 class _JobCardState extends State<JobCard> {
-  DateTime dt = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -38,17 +35,13 @@ class _JobCardState extends State<JobCard> {
           children: [
             ListTile(
               contentPadding: EdgeInsets.only(left: 15.w),
-              leading: CircleAvatar(
+              leading:CircleAvatar(
                   radius: 22.r,
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(22.r),
-                      child: widget.userImage == ""
-                          ? const Icon(
-                              Icons.error,
-                              size: 25,
-                              color: Colors.red,
-                            )
-                          : Image.network(widget.userImage!))),
+                      child:widget.userImage=="" ?
+                      Icon(Icons.error,size:25,color:Colors.red,) :
+                      Image.network(widget.userImage!))),
               title: Text(
                 '${widget.jobTitle}',
                 style: GoogleFonts.dmSans(
@@ -64,29 +57,32 @@ class _JobCardState extends State<JobCard> {
                 ),
               ),
               trailing: Padding(
-                padding: EdgeInsets.only(
-                  bottom: 15.h,
-                ),
+                padding: EdgeInsets.only(bottom: 15.h,),
                 child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.edit_outlined),
+                  onPressed: (){
+
+                  },
+                  icon: Icon(Icons.bookmark_border_outlined,color: Colors.white,),
                   style: const ButtonStyle(
-                    overlayColor: MaterialStatePropertyAll(Color(0xff292c47)),
-                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                    iconColor: MaterialStatePropertyAll(Colors.white),
+                    overlayColor: MaterialStatePropertyAll(
+                        Color(0xff292c47)),
+                    padding:
+                    MaterialStatePropertyAll(
+                        EdgeInsets.zero),
+                    iconColor:
+                    MaterialStatePropertyAll(
+                        Colors.white),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15.w),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.location_on_outlined,
-                    color: Color(0xffd1d1d1),
-                    size: 18,
-                  ),
+                  const Icon(Icons.location_on_outlined,
+                    color: Color(0xffd1d1d1), size: 18,),
                   Text(
                     '${widget.jobLocation}',
                     style: GoogleFonts.dmSans(
@@ -94,14 +90,9 @@ class _JobCardState extends State<JobCard> {
                       fontSize: 14.sp,
                     ),
                   ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  const Icon(
-                    Icons.currency_exchange_outlined,
-                    color: Color(0xffd1d1d1),
-                    size: 15,
-                  ),
+                  SizedBox(width: 10.w,),
+                  const Icon(Icons.currency_exchange_outlined,
+                    color: Color(0xffd1d1d1), size: 15,),
                   Text(
                     '${widget.jobSalary}',
                     style: GoogleFonts.dmSans(
