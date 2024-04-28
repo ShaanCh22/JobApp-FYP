@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Services/global_methods.dart';
 
+
 class AddSkillScreen extends StatefulWidget {
   const AddSkillScreen({super.key});
 
@@ -16,30 +17,25 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
   final TextEditingController _skilltext = TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user = FirebaseAuth.instance.currentUser;
+  final User? _user=FirebaseAuth.instance.currentUser;
 
-  Future _submitExpData() async {
+  Future _submitExpData() async{
     final isValid = _addExpFormKey.currentState!.validate();
-    if (isValid) {
+    if(isValid) {
       setState(() {
-        _isLoading = true;
+        _isLoading=true;
       });
-      try {
-        String id = DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(_user?.uid)
-            .collection('Skills')
-            .doc(id)
-            .set({
-          'id': id,
-          'Title': _skilltext.text,
+      try{
+        String id=DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Skills').doc(id).set({
+          'id':id,
+          'Title':_skilltext.text,
         });
         const SnackBar(
           content: Text('Skill Added'),
         );
         Navigator.pop(context);
-      } catch (error) {
+      }catch(error){
         setState(() {
           _isLoading = false;
         });
@@ -47,7 +43,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
       }
     }
     setState(() {
-      _isLoading = false;
+      _isLoading=false;
     });
   }
 
@@ -58,23 +54,20 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text(
-          'Add Skills',
-          style:
-              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
-        ),
+        title: Text('Add Skills',style: GoogleFonts.dmSans(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500
+        ),),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 25.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.only(left: 20.w,right: 20.w,bottom: 25.h),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Form(
                   key: _addExpFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
                       Text(
@@ -89,10 +82,11 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _skilltext,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Skill is a required field!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -104,28 +98,22 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: UI/UX Designer',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -136,20 +124,20 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: () {
+                      onPressed: (){
                         _submitExpData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                        color: Colors.white,
+                      )
                           : Text(
-                              'Save',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        'Save',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
                 ),
               ],
             ),
@@ -159,3 +147,5 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
     );
   }
 }
+
+

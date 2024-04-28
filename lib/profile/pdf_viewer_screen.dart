@@ -35,13 +35,13 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         backgroundColor: const Color(0xff1D1D2F),
         elevation: 1,
         title: Text(widget.resumeName,style: GoogleFonts.dmSans(
-          color: Colors.white
+            color: Colors.white
         ),),
       ),
       body: document == null ?
-          const Center(
-            child: CircularProgressIndicator(),
-          ) :
+      const Center(
+        child: CircularProgressIndicator(),
+      ) :
       PDFViewer(document: document!,),
     );
   }

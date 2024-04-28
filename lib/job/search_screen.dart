@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
@@ -33,18 +34,18 @@ class _SearchScreenState extends State<SearchScreen> {
       autocorrect: true,
       controller: _searchQueryController,
       decoration: InputDecoration(
-        suffixIcon: IconButton(
-          onPressed: (){
-            _clearSearchQuery();
-          },
-          icon: const Icon(Icons.close,color: Colors.grey,),
-        ),
-        hintText: 'Search for jobs',
-        border: InputBorder.none,
-        hintStyle: GoogleFonts.dmSans(color: Colors.grey)
+          suffixIcon: IconButton(
+            onPressed: (){
+              _clearSearchQuery();
+            },
+            icon: const Icon(Icons.close,color: Colors.grey,),
+          ),
+          hintText: 'Search for jobs',
+          border: InputBorder.none,
+          hintStyle: GoogleFonts.dmSans(color: Colors.grey)
       ),
       style: GoogleFonts.dmSans(
-        color: Colors.white
+          color: Colors.white
       ),
       onChanged: (query)=>_updateSearchQuery(query),
     );

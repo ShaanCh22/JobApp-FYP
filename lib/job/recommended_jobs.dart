@@ -8,7 +8,6 @@ import 'package:page_transition/page_transition.dart';
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
-
 class RecommendedJobScreen extends StatefulWidget {
   const RecommendedJobScreen({super.key});
 
@@ -196,18 +195,4 @@ class _RecommendedJobScreenState extends State<RecommendedJobScreen> {
   }
 }
 
-// Container(
-// color: Color(0xff1D1D2F),
-// child: ListTile(
-// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
-// color: Colors.white,
-// fontSize: 16.sp
-// ),),
-// trailing: IconButton(
-// onPressed: (){},
-// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
-// ),
-// ),
-// ),
-// SizedBox(height: 10.h,),
 

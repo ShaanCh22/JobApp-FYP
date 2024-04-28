@@ -248,22 +248,10 @@ class _JobPageState extends State<JobPage> {
                                         fontSize: 12.sp,
                                       ),
                                     ),
-                                    trailing: Padding(
-                                      padding: EdgeInsets.only(bottom: 15.h,),
-                                      child: IconButton(
-                                        onPressed: (){},
-                                        icon: const Icon(Icons.bookmark_border_outlined,color: Colors.white,),
-                                        style: const ButtonStyle(
-                                          overlayColor: MaterialStatePropertyAll(
-                                              Color(0xff292c47)),
-                                          padding:
-                                          MaterialStatePropertyAll(
-                                              EdgeInsets.zero),
-                                          iconColor:
-                                          MaterialStatePropertyAll(
-                                              Colors.white),
-                                        ),
-                                      ),
+                                    trailing:Padding(
+                                      padding:  EdgeInsets.only(right: 10.w),
+                                      child: const Icon(Icons.arrow_forward_ios_sharp,
+                                        color: Colors.white,),
                                     ),
                                   ),
                                   Padding(
@@ -326,4 +314,5 @@ class _JobPageState extends State<JobPage> {
     );
   }
 }
+
 

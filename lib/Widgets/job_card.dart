@@ -40,7 +40,7 @@ class _JobCardState extends State<JobCard> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(22.r),
                       child:widget.userImage=="" ?
-                      Icon(Icons.error,size:25,color:Colors.red,) :
+                      const Icon(Icons.error,size:25,color:Colors.red,) :
                       Image.network(widget.userImage!))),
               title: Text(
                 '${widget.jobTitle}',
@@ -62,7 +62,7 @@ class _JobCardState extends State<JobCard> {
                   onPressed: (){
 
                   },
-                  icon: Icon(Icons.bookmark_border_outlined,color: Colors.white,),
+                  icon: const Icon(Icons.bookmark_border_outlined,color: Colors.white,),
                   style: const ButtonStyle(
                     overlayColor: MaterialStatePropertyAll(
                         Color(0xff292c47)),

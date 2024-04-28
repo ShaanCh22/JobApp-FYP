@@ -196,18 +196,4 @@ class _NewHiringState extends State<NewHiring> {
   }
 }
 
-// Container(
-// color: Color(0xff1D1D2F),
-// child: ListTile(
-// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
-// color: Colors.white,
-// fontSize: 16.sp
-// ),),
-// trailing: IconButton(
-// onPressed: (){},
-// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
-// ),
-// ),
-// ),
-// SizedBox(height: 10.h,),
 

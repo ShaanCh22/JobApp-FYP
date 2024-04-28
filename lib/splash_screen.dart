@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'Services/splash_service.dart';
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -11,13 +10,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SplashServiec splashServiec = SplashServiec();
+  SplashServiec splashServiec= SplashServiec();
   @override
   void initState() {
     super.initState();
     splashServiec.isLogin(context);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

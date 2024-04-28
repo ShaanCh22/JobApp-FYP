@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+
 import '../Services/global_methods.dart';
 import '../presistent/presestent.dart';
 
@@ -34,21 +35,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
   String? userName;
   String? ownerEmail;
 
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-  }
 
-  getUserData() async {
-    final DocumentSnapshot userDoc =
-    await FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    setState(() {
-      userImage = userDoc.get('User Image');
-      userName = userDoc.get('Name');
-      ownerEmail = userDoc.get('Email');
-    });
-  }
   Future _submitJobData() async {
     final isValid = _jobdataformkey.currentState!.validate();
     if (isValid) {
@@ -56,6 +43,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
         _isLoading = true;
       });
       try {
+        final DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
         String id = DateTime.now().millisecondsSinceEpoch.toString();
         FirebaseFirestore.instance.collection('Jobs').doc(id).set({
           'uid': uid,
@@ -67,10 +56,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
           'JobExperience': _jobexperiencetext.text,
           'JobLocation': _joblocationtext.text,
           'JobDescription': _jobdescription.text,
-          'UserName': userName,
-          'UserImage': userImage,
+          'UserName': userDoc.get('Name'),
+          'UserImage': userDoc.get('User Image'),
           "PostedAt": dt,
-          "OwnerEmail": ownerEmail
+          "OwnerEmail": userDoc.get('Email')
         });
         Future.delayed(const Duration(seconds: 1)).then((value) => {
           setState(() {

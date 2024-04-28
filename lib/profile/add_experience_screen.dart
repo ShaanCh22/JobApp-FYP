@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../Services/global_methods.dart';
 
+
 class AddExperienceScreen extends StatefulWidget {
   const AddExperienceScreen({super.key});
 
@@ -19,50 +20,44 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
   final TextEditingController _titletext = TextEditingController(text: '');
   final TextEditingController _companytext = TextEditingController(text: '');
   final TextEditingController _locationtext = TextEditingController(text: '');
-  final TextEditingController _startDateController =
-      TextEditingController(text: '');
-  final TextEditingController _endDateController =
-      TextEditingController(text: '');
+  final TextEditingController _startDateController = TextEditingController(text: '');
+  final TextEditingController _endDateController = TextEditingController(text: '');
   final TextEditingController _jobdescText = TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user = FirebaseAuth.instance.currentUser;
+  final User? _user=FirebaseAuth.instance.currentUser;
 
-  Future _submitExpData() async {
+  Future _submitExpData() async{
     final isValid = _addExpFormKey.currentState!.validate();
-    if (isValid) {
+    if(isValid) {
       setState(() {
-        _isLoading = true;
+        _isLoading=true;
       });
-      try {
-        String id = DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(_user?.uid)
-            .collection('Experience')
-            .doc(id)
-            .set({
-          'id': id,
-          'Title': _titletext.text,
-          'Company Name': _companytext.text,
-          'Location': _locationtext.text,
-          'Start Date': _startDateController.text,
-          'End Date': _endDateController.text,
-          'Job Description': _jobdescText.text
+      try{
+        String id=DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Experience').doc(id).set({
+          'id':id,
+          'Title':_titletext.text,
+          'Company Name':_companytext.text,
+          'Location':_locationtext.text,
+          'Start Date':_startDateController.text,
+          'End Date':_endDateController.text,
+          'Job Description':_jobdescText.text
         });
         const SnackBar(
           content: Text('Experience Added'),
         );
         Navigator.pop(context);
-      } catch (error) {
+      }catch(error){
         setState(() {
           _isLoading = false;
         });
         GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
-      Fluttertoast.showToast(msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(
+          msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
     setState(() {
-      _isLoading = false;
+      _isLoading=false;
     });
   }
 
@@ -73,23 +68,20 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text(
-          'Add Experience',
-          style:
-              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
-        ),
+        title: Text('Add Experience',style: GoogleFonts.dmSans(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500
+        ),),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 25.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.only(left: 20.w,right: 20.w,bottom: 25.h),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Form(
                   key: _addExpFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
                       Text(
@@ -104,10 +96,11 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _titletext,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Please enter title!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -119,26 +112,20 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: UI/UX Designer',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
                       ),
                       //Company Name
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Company',
                         style: GoogleFonts.dmSans(
@@ -152,10 +139,11 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _companytext,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Please enter company name!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -167,26 +155,21 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: Microsoft',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
+
                       ),
                       //Location
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Location',
                         style: GoogleFonts.dmSans(
@@ -200,10 +183,11 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _locationtext,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Please enter location!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -215,26 +199,21 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: London, United Kingdom',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
+
                       ),
                       //Start & End Date
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Wrap(
                         spacing: 20.w,
                         runSpacing: 20.h,
@@ -250,18 +229,20 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              SizedBox(
-                                width: 175.w,
+                              SizedBox(width: 175.w,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
                                   style: GoogleFonts.dmSans(
-                                      color: Colors.white, fontSize: 15.sp),
+                                      color: Colors.white,
+                                      fontSize: 15.sp
+                                  ),
                                   controller: _startDateController,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
+                                  validator: (value){
+                                    if(value!.isEmpty){
                                       return 'Start date required!';
-                                    } else {
+                                    }
+                                    else{
                                       return null;
                                     }
                                   },
@@ -272,40 +253,30 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                                     contentPadding: EdgeInsets.all(15),
                                     filled: true,
                                     fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(
-                                      Icons.date_range_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff5800FF),
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
+                                    focusedBorder:OutlineInputBorder(
+                                        borderSide: BorderSide(color: Color(0xff5800FF),)
+                                    ),
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
                                   ),
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
+                                  onTap: ()async{
+                                    DateTime? pickedDate=await showDatePicker(
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if (pickedDate != null) {
+                                    if(pickedDate!=null){
                                       setState(() {
-                                        _startDateController.text =
-                                            DateFormat('yMMMM')
-                                                .format(pickedDate);
+                                        _startDateController.text=DateFormat('yMMMM').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),
-                              )
+                                ),)
                             ],
                           ),
                           Column(
@@ -319,18 +290,20 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              SizedBox(
-                                width: 175.w,
+                              SizedBox(width: 175.w,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
                                   style: GoogleFonts.dmSans(
-                                      color: Colors.white, fontSize: 15.sp),
+                                      color: Colors.white,
+                                      fontSize: 15.sp
+                                  ),
                                   controller: _endDateController,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
+                                  validator: (value){
+                                    if(value!.isEmpty){
                                       return 'End date required!';
-                                    } else {
+                                    }
+                                    else{
                                       return null;
                                     }
                                   },
@@ -341,48 +314,36 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                                     contentPadding: EdgeInsets.all(15),
                                     filled: true,
                                     fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(
-                                      Icons.date_range_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff5800FF),
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
+                                    focusedBorder:OutlineInputBorder(
+                                        borderSide: BorderSide(color: Color(0xff5800FF),)
+                                    ),
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
                                   ),
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
+                                  onTap: ()async{
+                                    DateTime? pickedDate=await showDatePicker(
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if (pickedDate != null) {
+                                    if(pickedDate!=null){
                                       setState(() {
-                                        _endDateController.text =
-                                            DateFormat('yMMMM')
-                                                .format(pickedDate);
+                                        _endDateController.text=DateFormat('yMMMM').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),
-                              )
+                                ),)
                             ],
                           ),
                         ],
                       ),
                       //Job Description
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Job Description',
                         style: GoogleFonts.dmSans(
@@ -397,10 +358,11 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _jobdescText,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Please enter description!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -412,28 +374,22 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'job description',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                SizedBox(height: 20.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -444,20 +400,20 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: () {
+                      onPressed: (){
                         _submitExpData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                        color: Colors.white,
+                      )
                           : Text(
-                              'Submit',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        'Submit',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
                 ),
               ],
             ),
@@ -467,3 +423,5 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
     );
   }
 }
+
+

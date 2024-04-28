@@ -9,6 +9,7 @@ import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
 import 'education_screen.dart';
 
+
 class UpdateEducationScreen extends StatefulWidget {
   String id;
   UpdateEducationScreen(this.id, {super.key});
@@ -18,92 +19,72 @@ class UpdateEducationScreen extends StatefulWidget {
 
 class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  final TextEditingController _schoolTextController =
-      TextEditingController(text: '');
-  final TextEditingController _degreeTextController =
-      TextEditingController(text: '');
-  final TextEditingController _fieldTextController =
-      TextEditingController(text: '');
-  final TextEditingController _startDateController =
-      TextEditingController(text: '');
-  final TextEditingController _endDateController =
-      TextEditingController(text: '');
-  final TextEditingController _descriptionTextController =
-      TextEditingController(text: '');
+  final TextEditingController _schoolTextController = TextEditingController(text: '');
+  final TextEditingController _degreeTextController = TextEditingController(text: '');
+  final TextEditingController _fieldTextController = TextEditingController(text: '');
+  final TextEditingController _startDateController = TextEditingController(text: '');
+  final TextEditingController _endDateController = TextEditingController(text: '');
+  final TextEditingController _descriptionTextController = TextEditingController(text: '');
   bool _isLoading = false;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _getEduData();
   }
 
-  Future _getEduData() async {
-    DocumentSnapshot ref = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Education')
-        .doc(widget.id)
-        .get();
+  Future _getEduData() async{
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education').doc(widget.id).get();
     setState(() {
-      _schoolTextController.text = ref.get('School');
-      _degreeTextController.text = ref.get('Degree');
-      _fieldTextController.text = ref.get('Field of Study');
-      _startDateController.text = ref.get('Start Date');
-      _endDateController.text = ref.get('End Date');
-      _descriptionTextController.text = ref.get('Description');
+      _schoolTextController.text=ref.get('School');
+      _degreeTextController.text=ref.get('Degree');
+      _fieldTextController.text=ref.get('Field of Study');
+      _startDateController.text=ref.get('Start Date');
+      _endDateController.text=ref.get('End Date');
+      _descriptionTextController.text=ref.get('Description');
     });
   }
-
-  Future _updateEducationData() async {
-    final isValid = _addExpFormKey.currentState!.validate();
-    if (isValid) {
+  Future _updateEducationData() async{
+    final isValid =_addExpFormKey.currentState!.validate();
+    if(isValid){
       setState(() {
-        _isLoading = true;
+        _isLoading=true;
       });
-      try {
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(uid)
-            .collection('Education')
-            .doc(widget.id)
-            .update({
-          'School': _schoolTextController.text,
-          'Degree': _degreeTextController.text,
-          'Field of Study': _fieldTextController.text,
-          'Start Date': _startDateController.text,
-          'End Date': _endDateController.text,
-          'Description': _descriptionTextController.text,
+      try{
+        FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education').doc(widget.id).update({
+          'School':_schoolTextController.text,
+          'Degree':_degreeTextController.text,
+          'Field of Study':_fieldTextController.text,
+          'Start Date':_startDateController.text,
+          'End Date':_endDateController.text,
+          'Description':_descriptionTextController.text,
         });
-        Future.delayed(const Duration(seconds: 1)).then((value) => {
-              setState(() {
-                _isLoading = false;
-                Fluttertoast.showToast(
-                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
-              })
-            });
+        Future.delayed(const Duration(seconds:1)).then((value) => {
+          setState(() {
+            _isLoading=false;
+            Fluttertoast.showToast(
+                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+          })
+        });
         Navigator.pop(context);
-      } catch (error) {
+      }catch(error){
         setState(() {
-          _isLoading = false;
+          _isLoading=false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        GlobalMethod.showErrorDialog(
+            error: error.toString(),
+            ctx: context);
       }
     }
-  }
 
-  void _deleteEducation() {
-    CollectionReference ref = FirebaseFirestore.instance
-        .collection('Users')
-        .doc(uid)
-        .collection('Education');
+
+  }
+  void _deleteEducation(){
+    CollectionReference ref = FirebaseFirestore.instance.collection('Users').doc(uid).collection('Education');
     ref.doc(widget.id).delete();
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            child: const EducationScreen(),
-            type: PageTransitionType.topToBottom));
+    Navigator.pushReplacement(context, PageTransition(child: const EducationScreen(), type: PageTransitionType.topToBottom));
   }
 
   @override
@@ -113,23 +94,20 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: Text(
-          'Edit Education',
-          style:
-              GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
-        ),
+        title: Text('Edit Education',style: GoogleFonts.dmSans(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500
+        ),),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 25.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.only(left: 20.w,right: 20.w,bottom: 25.h),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Form(
                   key: _addExpFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // School
                       Text(
@@ -144,10 +122,11 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _schoolTextController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'School is required!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -159,26 +138,20 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: Boston University',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
                       ),
                       //Degree
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Degree',
                         style: GoogleFonts.dmSans(
@@ -192,10 +165,11 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _degreeTextController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Degree is required!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -207,26 +181,21 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                           fillColor: Color(0xff282837),
                           hintText: "Ex: Bachelor's",
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
+
                       ),
                       //Field of Study
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Field of Study',
                         style: GoogleFonts.dmSans(
@@ -240,10 +209,11 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _fieldTextController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Field is required!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -255,26 +225,21 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Ex: Computer Science',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
+
                       ),
                       //Start & End Date
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Wrap(
                         spacing: 20.w,
                         runSpacing: 20.h,
@@ -290,18 +255,20 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              SizedBox(
-                                width: 175.w,
+                              SizedBox(width: 175.w,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
                                   style: GoogleFonts.dmSans(
-                                      color: Colors.white, fontSize: 15.sp),
+                                      color: Colors.white,
+                                      fontSize: 15.sp
+                                  ),
                                   controller: _startDateController,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
+                                  validator: (value){
+                                    if(value!.isEmpty){
                                       return 'Start date required!';
-                                    } else {
+                                    }
+                                    else{
                                       return null;
                                     }
                                   },
@@ -312,39 +279,30 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                                     contentPadding: EdgeInsets.all(15),
                                     filled: true,
                                     fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(
-                                      Icons.date_range_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff5800FF),
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
+                                    focusedBorder:OutlineInputBorder(
+                                        borderSide: BorderSide(color: Color(0xff5800FF),)
+                                    ),
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
                                   ),
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
+                                  onTap: ()async{
+                                    DateTime? pickedDate=await showDatePicker(
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if (pickedDate != null) {
+                                    if(pickedDate!=null){
                                       setState(() {
-                                        _startDateController.text =
-                                            DateFormat('y').format(pickedDate);
+                                        _startDateController.text=DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),
-                              )
+                                ),)
                             ],
                           ),
                           Column(
@@ -358,18 +316,20 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                               SizedBox(
                                 height: 8.h,
                               ),
-                              SizedBox(
-                                width: 175.w,
+                              SizedBox(width: 175.w,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
                                   style: GoogleFonts.dmSans(
-                                      color: Colors.white, fontSize: 15.sp),
+                                      color: Colors.white,
+                                      fontSize: 15.sp
+                                  ),
                                   controller: _endDateController,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
+                                  validator: (value){
+                                    if(value!.isEmpty){
                                       return 'End date required!';
-                                    } else {
+                                    }
+                                    else{
                                       return null;
                                     }
                                   },
@@ -380,47 +340,36 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                                     contentPadding: EdgeInsets.all(15),
                                     filled: true,
                                     fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(
-                                      Icons.date_range_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide.none),
+                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                                     focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Color(0xff5800FF),
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
+                                    focusedBorder:OutlineInputBorder(
+                                        borderSide: BorderSide(color: Color(0xff5800FF),)
+                                    ),
                                     errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                      color: Colors.redAccent,
-                                    )),
+                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    ),
                                   ),
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
+                                  onTap: ()async{
+                                    DateTime? pickedDate=await showDatePicker(
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if (pickedDate != null) {
+                                    if(pickedDate!=null){
                                       setState(() {
-                                        _endDateController.text =
-                                            DateFormat('y').format(pickedDate);
+                                        _endDateController.text=DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),
-                              )
+                                ),)
                             ],
                           ),
                         ],
                       ),
                       //Description
-                      SizedBox(
-                        height: 20.h,
-                      ),
+                      SizedBox(height: 20.h,),
                       Text(
                         'Description',
                         style: GoogleFonts.dmSans(
@@ -435,10 +384,11 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _descriptionTextController,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Please enter description!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -450,20 +400,16 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'description',
                           hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
                       ),
                     ],
@@ -474,27 +420,24 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                   child: TextButton(
                     style: ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor:
-                            const MaterialStatePropertyAll(Color(0x4d5800ff)),
-                        padding:
-                            const MaterialStatePropertyAll(EdgeInsets.all(15)),
-                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r)))),
-                    onPressed: () {
+                        overlayColor: const MaterialStatePropertyAll(Color(
+                            0x4d5800ff)),
+                        padding: const MaterialStatePropertyAll(
+                            EdgeInsets.all(15)),
+
+                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)))
+                    ),
+                    onPressed: (){
                       _deleteEducation();
                     },
-                    child: Text(
-                      'Delete Education',
-                      style: GoogleFonts.dmSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15.sp),
-                    ),
+                    child: Text('Delete Education',style: GoogleFonts.dmSans(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp
+                    ),),
                   ),
                 ),
-                SizedBox(
-                  height: 10.h,
-                ),
+                SizedBox(height: 10.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -505,20 +448,20 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: () {
+                      onPressed: (){
                         _updateEducationData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                        color: Colors.white,
+                      )
                           : Text(
-                              'Save',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        'Save',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
                 ),
               ],
             ),
@@ -528,3 +471,5 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
     );
   }
 }
+
+

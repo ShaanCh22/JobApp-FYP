@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../Services/global_methods.dart';
-import '../Widgets/bottom_navigation_bar.dart';
+import '../main_page.dart';
 
 class Otp extends StatelessWidget {
   const Otp({super.key, required this.otpController});
@@ -120,7 +120,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           Navigator.pushReplacement(
                               context,
                               PageTransition(
-                                  child: const BottomNavBar(),
+                                  child: const MainPage(),
                                   type: PageTransitionType.rightToLeft,
                                   duration: const Duration(milliseconds: 500)))
                         })

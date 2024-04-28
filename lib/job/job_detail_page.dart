@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -38,6 +40,7 @@ class JobDetailScreen extends StatefulWidget {
 
 class _JobDetailScreenState extends State<JobDetailScreen> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
+  bool isFav=false;
 
   applyForJob(){
     final Uri params = Uri(
@@ -48,24 +51,48 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     final url = params.toString();
     launchUrlString(url);
   }
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   _getExpData();
-  // }
-  // Future _getExpData() async{
-  //   DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Jobs').doc(widget.id).get();
-  //   setState(() {
-  //     _titletext.text=ref.get('Title');
-  //     _companytext.text=ref.get('Company Name');
-  //     _locationtext.text=ref.get('Location');
-  //     _startDateController.text=ref.get('Start Date');
-  //     _endDateController.text=ref.get('End Date');
-  //     _jobdescText.text=ref.get('Job Description');
-  //   });
-  // }
+  checkIsFav(String jobid)async{
+    var document = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(uid).collection("FavoriteJobs").doc(jobid)
+        .get();
+    setState(() {
+      isFav=document.exists;
+    });
+  }
+  favJobs(String jobid)async{
+    var document = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(uid).collection("FavoriteJobs").doc(jobid)
+        .get();
+    if(document.exists){
+      setState(() {
+        isFav=false;
+      });
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(uid).collection("FavoriteJobs").doc(jobid)
+          .delete();
+      Fluttertoast.showToast(
+          msg: 'Removed from favorites', toastLength: Toast.LENGTH_SHORT);
+    }
+    else{
+      setState(() {
+        isFav=true;
+      });
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(uid).collection("FavoriteJobs").doc(jobid)
+          .set({});
+      Fluttertoast.showToast(
+          msg: 'Added to favorites', toastLength: Toast.LENGTH_SHORT);
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    checkIsFav(widget.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +110,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           Padding(
             padding: EdgeInsets.only(right: 5.w),
             child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
+              onPressed: () {
+                favJobs(widget.id);
+
+              },
+              icon: Icon(
+                isFav ? Icons.bookmark :
                 Icons.bookmark_border_outlined,
                 color: Colors.white,
               ),

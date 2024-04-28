@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
-import '../Widgets/bottom_navigation_bar.dart';
+import '../main_page.dart';
 import 'ForgetPasswordScreen.dart';
 import 'signup_page.dart';
 
@@ -45,7 +45,7 @@ class _LoginState extends State<Login> {
         Navigator.pushReplacement(
             context,
             PageTransition(
-                child: const BottomNavBar(),
+                child: const MainPage(),
                 type: PageTransitionType.rightToLeft,
                 duration: const Duration(milliseconds: 500)));
       } catch (error) {

@@ -15,8 +15,8 @@ class ShimmerJobCardH extends StatelessWidget {
           width: 202.w,
           height: 240.h,
           decoration: BoxDecoration(
-            color: const Color(0xff282837),
-            borderRadius: BorderRadius.circular(8.r)
+              color: const Color(0xff282837),
+              borderRadius: BorderRadius.circular(8.r)
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w),
