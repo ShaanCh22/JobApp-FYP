@@ -9,6 +9,7 @@ import 'package:jobseek/profile/setting_page.dart';
 import 'package:jobseek/profile/skill_screen.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
 import 'package:page_transition/page_transition.dart';
+
 import 'aboutme_screen.dart';
 import 'edit_profile.dart';
 import 'education_screen.dart';
@@ -28,11 +29,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String resumeUrl='';
   String resumeName='';
-  @override
-  void initState() {
-    super.initState();
-    _getResumeData();
-  }
   Future _getResumeData() async{
     DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
     setState(() {
@@ -42,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
   Future<void> refreshData()async{
     setState(() {
-
+      _getResumeData();
     });
   }
   @override
@@ -137,6 +133,37 @@ class _ProfilePageState extends State<ProfilePage> {
                                 );
                               }
                           ),
+                          // ListTile(
+                          //   contentPadding: EdgeInsets.zero,
+                          //   leading: CircleAvatar(
+                          //     radius: 30.r,
+                          //   ),
+                          //   title: StreamBuilder(
+                          //     stream: FirebaseFirestore.instance.collection("Users").doc(uid).snapshots(),
+                          //     builder: (context,snapshot) {
+                          //       if(snapshot.connectionState==ConnectionState.waiting){
+                          //         return const Center(
+                          //           child: CircularProgressIndicator(),
+                          //         );
+                          //       }
+                          //       if(snapshot.hasError){
+                          //         return Center(child: Text(snapshot.hasError.toString()));
+                          //       }
+                          //       return Text(
+                          //         '${snapshot.data!.get('Name')}',
+                          //         style: GoogleFonts.dmSans(
+                          //             fontSize: 18.sp,
+                          //             fontWeight: FontWeight.w500,
+                          //             color: Colors.white),
+                          //       );
+                          //     }
+                          //   ),
+                          //   subtitle: Text(
+                          //     user!.email.toString(),
+                          //     style: GoogleFonts.dmSans(
+                          //         fontSize: 16.sp, color: Colors.grey),
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 15.h,
                           ),
@@ -198,6 +225,61 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ],
                           ),
+                          // ListTile(
+                          //   contentPadding: EdgeInsets.zero,
+                          //   leading: SizedBox(
+                          //     width: 160.w,
+                          //     height: 45.h,
+                          //     child: ElevatedButton(
+                          //         style: ElevatedButton.styleFrom(
+                          //             splashFactory: InkRipple.splashFactory,
+                          //             backgroundColor: const Color(0xff5800FF),
+                          //             foregroundColor: Colors.black,
+                          //             shape: RoundedRectangleBorder(
+                          //                 borderRadius: BorderRadius.circular(8.r))),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //               context,
+                          //               PageTransition(
+                          //                   child: const EditProfilePage(),
+                          //                   type: PageTransitionType.rightToLeft,
+                          //                   duration:
+                          //                   const Duration(milliseconds: 300)));
+                          //         },
+                          //         child: Text('Edit Profile',
+                          //             style: GoogleFonts.dmSans(
+                          //               color: Colors.white,
+                          //               fontSize: 14.sp,
+                          //             ))),
+                          //   ),
+                          //   trailing: SizedBox(
+                          //     width: 160.w,
+                          //     height: 45.h,
+                          //     child: OutlinedButton(
+                          //         style: ElevatedButton.styleFrom(
+                          //             splashFactory: InkRipple.splashFactory,
+                          //             backgroundColor: Colors.transparent,
+                          //             foregroundColor: const Color(0xff5800FF),
+                          //             side: const BorderSide(
+                          //                 color: Color(0xff5800FF), width: 1),
+                          //             shape: RoundedRectangleBorder(
+                          //                 borderRadius: BorderRadius.circular(8.r))),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //               context,
+                          //               PageTransition(
+                          //                   child: const UploadResumePage(),
+                          //                   type: PageTransitionType.rightToLeft,
+                          //                   duration:
+                          //                   const Duration(milliseconds: 300)));
+                          //         },
+                          //         child: Text('Add Resume',
+                          //             style: GoogleFonts.dmSans(
+                          //               color: Colors.white,
+                          //               fontSize: 14.sp,
+                          //             ))),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -526,7 +608,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: 15.h,
                   ),
-                  //Skill section
+                  //Skill-section
                   Container(
                     color: const Color(0xff282837),
                     child: Padding(

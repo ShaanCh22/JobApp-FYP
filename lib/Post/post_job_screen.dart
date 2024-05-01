@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 import '../Services/global_methods.dart';
 import '../presistent/presestent.dart';
 
@@ -91,17 +90,17 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: ListView.separated(
                   shrinkWrap: true,
-                  itemCount: Presistent.jobCategoryList.length,
+                  itemCount: Presistent.jobCateegoryList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                         onTap: () {
                           setState(() {
                             _jobcategorytext.text =
-                            Presistent.jobCategoryList[index];
+                            Presistent.jobCateegoryList[index];
                           });
                           Navigator.pop(context);
                         },
-                        child: Text(Presistent.jobCategoryList[index],
+                        child: Text(Presistent.jobCateegoryList[index],
                           style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
                         )
                     );

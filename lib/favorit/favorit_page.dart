@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+
 import '../job/job_detail_page.dart';
 
 class FavoritPage extends StatefulWidget {
@@ -131,6 +132,7 @@ class _FavoritPageState extends State<FavoritPage> {
                         PageTransition(
                             child: JobDetailScreen(
                               id: id,
+                              uid:favItemList[index]['uid'],
                               ownerEmail: favItemList[index]['OwnerEmail'],
                               jobDescription: favItemList[index]
                               ['JobDescription'],

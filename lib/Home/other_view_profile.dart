@@ -7,17 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../profile/pdf_viewer_screen.dart';
 
-class ViewProfileScreen extends StatefulWidget {
-  const ViewProfileScreen({super.key});
+class OtherViewProfileScreen extends StatefulWidget {
+
+  String id;
+  OtherViewProfileScreen({super.key,required this.id});
 
   @override
-  State<ViewProfileScreen> createState() => _ViewProfileScreenState();
+  State<OtherViewProfileScreen> createState() => _OtherViewProfileScreenState();
 }
 
-class _ViewProfileScreenState extends State<ViewProfileScreen> {
+class _OtherViewProfileScreenState extends State<OtherViewProfileScreen> {
   final ScrollController scController = ScrollController();
   final user = FirebaseAuth.instance.currentUser;
-  String uid = FirebaseAuth.instance.currentUser!.uid;
   String? resumeUrl;
   String? resumeName;
   @override
@@ -26,7 +27,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
     _getResumeData();
   }
   Future _getResumeData() async{
-    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(widget.id).get();
     setState(() {
       resumeUrl=ref.get('Resume Url');
       resumeName=ref.get('ResumeName');
@@ -45,7 +46,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
           title: Padding(
             padding: EdgeInsets.only(left: 10.w),
             child: Text(
-              'Profile',
+              'Other Profile',
               style: GoogleFonts.dmSans(
                   color: Colors.white,
                   fontSize: 18.sp,
@@ -63,7 +64,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                   child: Column(
                     children: [
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(uid).snapshots(),
+                          stream: FirebaseFirestore.instance.collection('Users').doc(widget.id).snapshots(),
                           builder: (context, snapshot) {
                             if(snapshot.connectionState==ConnectionState.waiting){
                               return const Center(
@@ -269,7 +270,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                         ),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(uid).snapshots(),
+                          stream: FirebaseFirestore.instance.collection('Users').doc(widget.id).snapshots(),
                           builder: (context, snapshot) {
                             if(snapshot.connectionState==ConnectionState.waiting){
                               return const Center(
@@ -312,7 +313,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                         ),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(uid).collection("Experience").snapshots(),
+                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Experience").snapshots(),
                           builder: (context, snapshot) {
                             if(snapshot.connectionState==ConnectionState.waiting){
                               return const Center(
@@ -397,7 +398,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                         ),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(uid).collection("Education").snapshots(),
+                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Education").snapshots(),
                           builder: (context, snapshot) {
                             if(snapshot.connectionState==ConnectionState.waiting){
                               return const Center(
@@ -474,7 +475,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                         ),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(uid).collection("Skills").snapshots(),
+                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Skills").snapshots(),
                           builder: (context, snapshot) {
                             if(snapshot.connectionState==ConnectionState.waiting){
                               return const Center(

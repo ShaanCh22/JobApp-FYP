@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'confirm_forget.dart';
-
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
 
@@ -15,37 +14,36 @@ class ForgetPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+
   final FocusNode _passFocusNode = FocusNode();
   final _forgetFormKey = GlobalKey<FormState>();
   final TextEditingController _forgetpassText = TextEditingController();
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future _forgetPassSubmitForm() async {
+  Future _forgetPassSubmitForm() async{
     final isValid = _forgetFormKey.currentState!.validate();
-    try {
-      if (isValid) {
+    try{
+      if(isValid){
         setState(() {
-          _isLoading = true;
+          _isLoading=true;
         });
-        await _auth.sendPasswordResetEmail(email: _forgetpassText.text.trim());
+        await _auth.sendPasswordResetEmail(
+            email: _forgetpassText.text.trim()
+        );
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-            context,
-            PageTransition(
-                child: const ConfirmForget(),
+        Navigator.pushReplacement(context,
+            PageTransition(child:const ConfirmForget(),
                 type: PageTransitionType.rightToLeft,
-                duration: const Duration(milliseconds: 300)));
-      }
-    } catch (error) {
+                duration: const Duration(milliseconds: 300)));}
+    }catch(error){
       setState(() {
-        _isLoading = false;
+        _isLoading= false;
       });
-      Fluttertoast.showToast(
-          msg: error.toString(), toastLength: Toast.LENGTH_LONG);
+      Fluttertoast.showToast(msg: error.toString(),toastLength: Toast.LENGTH_LONG);
     }
     setState(() {
-      _isLoading = false;
+      _isLoading=false;
     });
   }
 
@@ -61,9 +59,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Forget Password',
                     style: TextStyle(
@@ -79,13 +76,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   style: GoogleFonts.dmSans(
                       color: const Color(0xffD1D1D1), fontSize: 14.sp),
                 ),
-                SizedBox(
-                  height: 30.h,
-                ),
+                SizedBox(height: 30.h,),
                 Form(
                   key: _forgetFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Your Email Account',
@@ -97,16 +91,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        onEditingComplete: () =>
-                            FocusScope.of(context).requestFocus(_passFocusNode),
+                        onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.emailAddress,
                         controller: _forgetpassText,
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        validator: (value){
+                          if(value!.isEmpty){
                             return 'Email shuold not be empty!';
-                          } else if (!value.contains('@')) {
+                          }
+                          else if(!value.contains('@')){
                             return 'Please enter a valid email address!';
-                          } else {
+                          }
+                          else{
                             return null;
                           }
                         },
@@ -118,33 +113,24 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           fillColor: Color(0xff282837),
                           hintText: 'Enter Your Email',
                           hintStyle: TextStyle(color: Colors.white),
-                          prefixIcon: Icon(
-                            Icons.mail_outline_sharp,
-                            size: 20,
-                            color: Colors.grey,
-                          ),
-                          enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          prefixIcon: Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
+                          focusedBorder:OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff5800FF),)
+                          ),
                           errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                              borderSide: BorderSide(color: Colors.redAccent,)
+                          ),
                         ),
+
                       ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 30.h,
-                ),
+                SizedBox(height: 30.h,),
                 SizedBox(
                   width: double.infinity,
                   height: 53.h,
@@ -158,15 +144,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       onPressed: () => _forgetPassSubmitForm(),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                        color: Colors.white,
+                      )
                           : Text(
-                              'Reset Now',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        'Reset Now',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
                 ),
               ],
             ),

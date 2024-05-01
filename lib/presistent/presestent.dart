@@ -1,5 +1,5 @@
 class Presistent{
-  static List<String> jobCategoryList = [
+  static List<String> jobCateegoryList = [
     'Accounting',
     'Business',
     'Information Technology',

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
@@ -79,6 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Navigator.push(context,
                           PageTransition(child:JobDetailScreen(
                             id: id,
+                            uid: snapshot.data.docs[index]['uid'],
                             ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
                             jobDescription: snapshot.data.docs[index]['JobDescription'],
                             jobExperience: snapshot.data.docs[index]['JobExperience'],

@@ -36,11 +36,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _getEditProfileData();
   }
   @override
   void setState(VoidCallback fn) {
+    // TODO: implement setState
     super.setState(fn);
     _getGender();
 
@@ -300,7 +302,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Emaill
+                // Email
                 Text(
                   'Your Email Account',
                   style: GoogleFonts.dmSans(

@@ -9,7 +9,6 @@ import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
 import 'education_screen.dart';
 
-
 class UpdateEducationScreen extends StatefulWidget {
   String id;
   UpdateEducationScreen(this.id, {super.key});

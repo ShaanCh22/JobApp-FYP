@@ -23,6 +23,7 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _getAboutData();
   }

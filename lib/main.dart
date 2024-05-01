@@ -1,13 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jobseek/splash_screen.dart';
 import 'package:flutter/services.dart';
-
+import 'package:jobseek/splash_screen.dart';
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async{
+  if (kDebugMode) {
+    print('Handling a background message ${message.messageId}');
+  }
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Color(0xff1D1D2F),
   ));

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Login&Signup/login_page.dart';
 import 'intro_contents.dart';
-
 class OnBoardScreen extends StatefulWidget {
   const OnBoardScreen({super.key});
 
@@ -32,8 +31,7 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: PageView.builder(
@@ -47,8 +45,7 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                   itemBuilder: (_, i) {
                     return SingleChildScrollView(
                       child: Container(
-                        margin: EdgeInsets.symmetric(
-                            vertical: 50.h, horizontal: 25.w),
+                        margin: EdgeInsets.symmetric(vertical: 50.h,horizontal: 25.w),
                         child: Column(
                           children: [
                             CircleAvatar(
@@ -61,7 +58,6 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                             ),
                             Text(
                               contents[i].title,
-                              textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 30.sp,
                                   color: Colors.white,
@@ -74,8 +70,7 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                               contents[i].description,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 16.sp,
-                                  color: const Color(0xffF6F8FE)),
+                                  fontSize: 16.sp, color: const Color(0xffF6F8FE)),
                             )
                           ],
                         ),
@@ -84,9 +79,8 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                   }),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: 40.h, right: 30.w),
-              child: Align(
-                alignment: Alignment.bottomRight,
+              padding: EdgeInsets.only(bottom: 40.h,right: 30.w),
+              child: Align(alignment: Alignment.bottomRight,
                 child: SmoothPageIndicator(
                   controller: _controller,
                   count: contents.length,
@@ -96,10 +90,8 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                     dotColor: Colors.white,
                     activeDotColor: const Color(0xff5800FF),
                   ),
-                  onDotClicked: (index) {
-                    _controller.animateToPage(index,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut);
+                  onDotClicked: (index){
+                    _controller.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
                   },
                 ),
               ),
@@ -108,20 +100,17 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton: Wrap(
+      floatingActionButton:Wrap(
         children: [
           SizedBox.fromSize(
             size: const Size.square(60),
             child: FloatingActionButton(
               onPressed: () {
-                if (currentIndex == contents.length - 1) {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => const Login()));
-                } else {
+                if(currentIndex==contents.length-1){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
+                } else{
                   _controller.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut);
-                }
+                      duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);}
               },
               shape: const CircleBorder(),
               backgroundColor: const Color(0xff5800FF),
@@ -137,18 +126,14 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                 style: const ButtonStyle(
                   splashFactory: InkRipple.splashFactory,
                 ),
-                onPressed: () {
+                onPressed: (){
                   // _controller.animateToPage(3, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => const Login()));
-                },
-                child: Text(
-                  'Skip',
-                  style: GoogleFonts.dmSans(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                )),
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
+                }, child: Text('Skip',
+              style: GoogleFonts.dmSans(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),)),
           )
         ],
       ),

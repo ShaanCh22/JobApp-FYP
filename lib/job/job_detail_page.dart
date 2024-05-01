@@ -1,10 +1,16 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:http/http.dart' as http;
+import '../Home/other_view_profile.dart';
 
 class JobDetailScreen extends StatefulWidget {
   JobDetailScreen({
@@ -20,6 +26,7 @@ class JobDetailScreen extends StatefulWidget {
     required this.jobType,
     required this.jobDescription,
     required this.ownerEmail,
+    required this.uid,
   });
 
   final String? userImage;
@@ -33,15 +40,21 @@ class JobDetailScreen extends StatefulWidget {
   final String? jobDescription;
   final String? ownerEmail;
   String id;
+  String uid;
 
   @override
   State<JobDetailScreen> createState() => _JobDetailScreenState();
 }
 
 class _JobDetailScreenState extends State<JobDetailScreen> {
+  String dt = DateFormat('MMM d, y').format(DateTime.now());
   String uid = FirebaseAuth.instance.currentUser!.uid;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin=FlutterLocalNotificationsPlugin();
   bool isFav=false;
-
+  String? utoken = '';
+  String? cuser = '';
+  String? ruid = '';
+  String? userImage = '';
   applyForJob(){
     final Uri params = Uri(
         scheme: 'mailto',
@@ -50,6 +63,16 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
     final url = params.toString();
     launchUrlString(url);
+  }
+  getUserToken()async{
+    DocumentSnapshot snap = await FirebaseFirestore.instance.collection('UserTokens').doc(widget.uid).get();
+    DocumentSnapshot uDoc = await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    setState(() {
+      utoken=snap['token'];
+      ruid=snap['id'];
+      cuser=uDoc['Name'];
+      userImage=uDoc['User Image'];
+    });
   }
   checkIsFav(String jobid)async{
     var document = await FirebaseFirestore.instance
@@ -88,11 +111,109 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           msg: 'Added to favorites', toastLength: Toast.LENGTH_SHORT);
     }
   }
+
+  void sendPushNotification(String token, String title, String body)async{
+    try{
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=AAAAoweGA3E:APA91bH7dhtvuJ79BqQyC0fjCshsF8O673ZuVQleiRXRztXyEZ4UD0_v7Tp8KHg7-XCJOgYRsnCUgS_TUJWZ_FbAMqnjJekeTy1xzHURXXeUL1WQty5hnmgR4YyNOlfuLUMZKhzk6CgY',
+        },
+        body: jsonEncode(
+            <String, dynamic>{
+              'priority': 'high',
+              'data': <String, dynamic>{
+                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                'status': 'done',
+                'body': body,
+                'title': title,
+              },
+              "notification" : <String, dynamic>{
+                "title": title,
+                "body": body,
+                "android_channel_id": 'fyp'
+              },
+              "to":token
+            }
+        ),
+      );
+      String id = DateTime.now().millisecondsSinceEpoch.toString();
+      FirebaseFirestore.instance.collection('Users').doc(widget.uid).collection('Notification').doc(id).set({
+        'title' :title.toString(),
+        'id' : id,
+        'body' :body.toString(),
+        'UserImage' : userImage,
+        "Arrived": dt,
+      });
+    }catch(e){
+      SnackBar(
+        content: Text(e.toString()),
+      );
+    }
+  }
+  initInfo(){
+    var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationsSettings = InitializationSettings(android: androidInitialize);
+    _flutterLocalNotificationsPlugin.initialize(initializationsSettings,onSelectNotification: (String? payload)async {
+      try{
+        if(payload !=null && payload.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>OtherViewProfileScreen(id: ruid!)));
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+          //   return OtherViewProfileScreen(id: widget.uid,);
+          // }));
+        } else{
+
+        }
+      }catch(e){
+        SnackBar(
+          content: Text(e.toString()),
+        );
+      }
+      return;
+    },
+    );
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
+      BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
+          message.notification!.body.toString(), htmlFormatBigText: true,
+          contentTitle: message.notification!.title.toString(),htmlFormatContentTitle: true
+      );
+      AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'fyp', 'fyp', importance: Importance.max,
+        styleInformation: bigTextStyleInformation,priority: Priority.max,playSound: false,
+        // sound: RowResourceAndroidNotificationSound('notification'),
+      );
+      NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+      await _flutterLocalNotificationsPlugin.show(0, message.notification!.title,
+          message.notification!.body, platformChannelSpecifics,
+          payload: message.data['title']);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getUserToken();
+    initInfo();
     checkIsFav(widget.id);
   }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _getExpData();
+  // }
+  // Future _getExpData() async{
+  //   DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Jobs').doc(widget.id).get();
+  //   setState(() {
+  //     _titletext.text=ref.get('Title');
+  //     _companytext.text=ref.get('Company Name');
+  //     _locationtext.text=ref.get('Location');
+  //     _startDateController.text=ref.get('Start Date');
+  //     _endDateController.text=ref.get('End Date');
+  //     _jobdescText.text=ref.get('Job Description');
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +373,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                       BorderRadius.circular(5.r))),
                               onPressed: () {
                                 applyForJob();
+                                sendPushNotification(
+                                    utoken!,
+                                    '$cuser,',
+                                    'applied your ${widget.jobTitle} job.');
                               },
                               child: Text('ApplyNow',
                                   style: GoogleFonts.dmSans(

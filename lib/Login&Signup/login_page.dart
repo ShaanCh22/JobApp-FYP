@@ -1,13 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobseek/main_page.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Services/global_methods.dart';
-import '../main_page.dart';
 import 'ForgetPasswordScreen.dart';
 import 'signup_page.dart';
 
@@ -22,9 +24,9 @@ class _LoginState extends State<Login> {
   final FocusNode _passFocusNode = FocusNode();
 
   final TextEditingController _emailTextControler =
-      TextEditingController(text: '');
+  TextEditingController(text: '');
   final TextEditingController _passTextControler =
-      TextEditingController(text: '');
+  TextEditingController(text: '');
   bool _obsecuretext = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -42,10 +44,14 @@ class _LoginState extends State<Login> {
             password: _passTextControler.text.trim());
         Fluttertoast.showToast(
             msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
-        Navigator.pushReplacement(
-            context,
-            PageTransition(
-                child: const MainPage(),
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseMessaging.instance.getToken().then((token)async{
+          await FirebaseFirestore.instance.collection('UserTokens').doc(uid).update({
+            'token' : token
+          });
+        });
+        Navigator.pushReplacement(context,
+            PageTransition(child:const MainPage(),
                 type: PageTransitionType.rightToLeft,
                 duration: const Duration(milliseconds: 500)));
       } catch (error) {
@@ -60,6 +66,33 @@ class _LoginState extends State<Login> {
     });
   }
 
+  void requestPermission()async{
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true
+    );
+
+    if(settings.authorizationStatus==AuthorizationStatus.authorized){
+      print('User granted permissions');
+    } else if(settings.authorizationStatus==AuthorizationStatus.provisional){
+      print('User granted provisional permissions');
+    } else{
+      print('User denied permissions');
+    }
+
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+  }
   @override
   void dispose() {
     _emailTextControler.dispose();
@@ -74,7 +107,7 @@ class _LoginState extends State<Login> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            padding: EdgeInsets.only(left: 20.w,right: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,18 +174,18 @@ class _LoginState extends State<Login> {
                           ),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                                color: Color(0xff5800FF),
+                              )),
                           enabledBorder:
-                              UnderlineInputBorder(borderSide: BorderSide.none),
+                          UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                                color: Colors.redAccent,
+                              )),
                           errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Colors.red,
-                          )),
+                                color: Colors.red,
+                              )),
                         ),
                       ),
                       SizedBox(
@@ -212,20 +245,20 @@ class _LoginState extends State<Login> {
                             size: 20,
                             color: Colors.grey,
                           ),
-                          enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide.none),
+                          enabledBorder:
+                          const UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                                color: Colors.redAccent,
+                              )),
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Color(0xff5800FF),
-                          )),
+                                color: Color(0xff5800FF),
+                              )),
                           errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                            color: Colors.redAccent,
-                          )),
+                                color: Colors.redAccent,
+                              )),
                         ),
                       ),
                     ],
@@ -238,7 +271,7 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                             context,
                             PageTransition(
-                                child: const ForgetPasswordScreen(),
+                                child:const ForgetPasswordScreen(),
                                 type: PageTransitionType.rightToLeft,
                                 duration: const Duration(milliseconds: 300)));
                       },
@@ -264,15 +297,15 @@ class _LoginState extends State<Login> {
                       onPressed: () => _submitFormOnLogin(),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
+                        color: Colors.white,
+                      )
                           : Text(
-                              'Login',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        'Login',
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                      )),
                 ),
                 SizedBox(
                   height: 200.h,
@@ -280,7 +313,6 @@ class _LoginState extends State<Login> {
                 Align(
                   alignment: Alignment.center,
                   child: Wrap(
-                    alignment: WrapAlignment.center,
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 15.h),
@@ -296,10 +328,10 @@ class _LoginState extends State<Login> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: const Signup(),
+                                    child:const Signup(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration:
-                                        const Duration(milliseconds: 300)));
+                                    duration: const Duration(milliseconds: 300)
+                                ));
                           },
                           child: Text(
                             'Register Now',

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jobseek/profile/profile_page.dart';
+
 import 'Home/home_screen.dart';
 import 'favorit/favorit_page.dart';
 import 'job/job_page.dart';

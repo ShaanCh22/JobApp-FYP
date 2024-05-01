@@ -11,6 +11,7 @@ import '../Widgets/shimmer_jobcard.dart';
 
 
 
+
 class MyJobsScreen extends StatefulWidget {
   const MyJobsScreen({super.key});
 
@@ -42,7 +43,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
             child: IconButton(
               onPressed: (){
                 Navigator.push(context,
-                    PageTransition(child: const PostJobScreen(),
+                    PageTransition(child: PostJobScreen(),
                         type:PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300)));
               },

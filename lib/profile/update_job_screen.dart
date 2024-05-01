@@ -46,17 +46,17 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                 width: MediaQuery.of(context).size.width * 0.9,
                 child: ListView.separated(
                   shrinkWrap: true,
-                  itemCount: Presistent.jobCategoryList.length,
+                  itemCount: Presistent.jobCateegoryList.length,
                   itemBuilder: (context, index) {
                     return InkWell(
                         onTap: () {
                           setState(() {
                             _jobcategorytext.text =
-                            Presistent.jobCategoryList[index];
+                            Presistent.jobCateegoryList[index];
                           });
                           Navigator.pop(context);
                         },
-                        child: Text(Presistent.jobCategoryList[index],
+                        child: Text(Presistent.jobCateegoryList[index],
                           style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
                         )
                     );
@@ -108,6 +108,7 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
   }
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _getJobData();
   }

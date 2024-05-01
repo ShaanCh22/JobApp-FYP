@@ -9,6 +9,7 @@ import '../Widgets/shimmer_jobcard.dart';
 import '../job/job_detail_page.dart';
 import '../job/new_hiring.dart';
 import '../job/recommended_jobs.dart';
+import 'notification_list.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -91,7 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.only(right: 10.w),
                   child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationListScreen()));
+                      },
                       icon: const Icon(
                         Icons.notifications_none_sharp,
                         color: Colors.white,
@@ -178,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           String id=snapshot.data!.docs[index]['id'];
                                           Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
                                             id: id,
+                                            uid: snapshot.data.docs[index]['uid'],
                                             ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
                                             jobDescription: snapshot.data.docs[index]['JobDescription'],
                                             jobExperience: snapshot.data.docs[index]['JobExperience'],
@@ -438,6 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       String id=snapshot.data!.docs[index]['id'];
                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
                                         id: id,
+                                        uid: snapshot.data.docs[index]['uid'],
                                         ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
                                         jobDescription: snapshot.data.docs[index]['JobDescription'],
                                         jobExperience: snapshot.data.docs[index]['JobExperience'],

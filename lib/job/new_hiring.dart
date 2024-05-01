@@ -8,7 +8,6 @@ import 'package:page_transition/page_transition.dart';
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
-
 class NewHiring extends StatefulWidget {
   const NewHiring({super.key});
 
@@ -64,6 +63,7 @@ class _NewHiringState extends State<NewHiring> {
                         Navigator.push(context,
                             PageTransition(child:JobDetailScreen(
                               id: id,
+                              uid: snapshot.data.docs[index]['uid'],
                               ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
                               jobDescription: snapshot.data.docs[index]['JobDescription'],
                               jobExperience: snapshot.data.docs[index]['JobExperience'],
@@ -196,4 +196,18 @@ class _NewHiringState extends State<NewHiring> {
   }
 }
 
+// Container(
+// color: Color(0xff1D1D2F),
+// child: ListTile(
+// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
+// color: Colors.white,
+// fontSize: 16.sp
+// ),),
+// trailing: IconButton(
+// onPressed: (){},
+// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
+// ),
+// ),
+// ),
+// SizedBox(height: 10.h,),
 

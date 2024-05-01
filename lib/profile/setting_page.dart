@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
 import '../Login&Signup/login_page.dart';
 import '../Services/global_methods.dart';
 
@@ -21,12 +20,7 @@ class _SettingPageState extends State<SettingPage> {
       await FirebaseAuth.instance.signOut();
       Fluttertoast.showToast(
           msg: 'Successfully Logout', toastLength: Toast.LENGTH_SHORT);
-      Navigator.pushReplacement(
-          context,
-          PageTransition(
-              child:const Login(),
-              type: PageTransitionType.rightToLeft,
-              duration: const Duration(milliseconds: 300)));
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const Login()), (route) => false);
     }catch(error){
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
     }
