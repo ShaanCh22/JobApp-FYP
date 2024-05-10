@@ -4,8 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter/services.dart';
 import 'package:jobseek/splash_screen.dart';
+import 'Utils/theme.dart';
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message)async{
   if (kDebugMode) {
     print('Handling a background message ${message.messageId}');
@@ -16,9 +17,6 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Color(0xff1D1D2F),
-  ));
   runApp(const MyApp());
 }
 
@@ -32,11 +30,9 @@ class MyApp extends StatelessWidget {
       builder: (_,child)=> MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Jobseek',
-          theme: ThemeData(
-            scaffoldBackgroundColor: const Color(0xff1D1D2F),
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
+          theme: lightThemeData(context),
+          darkTheme: darkThemeData(context),
+          themeMode: ThemeMode.system,
           home: const MyApplication()),
       designSize:  Size(dwidth, dheight),
     );

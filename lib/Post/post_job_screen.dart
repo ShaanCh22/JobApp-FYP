@@ -1,6 +1,8 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -155,13 +157,18 @@ class _PostJobScreenState extends State<PostJobScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xff1D1D2F),
-          foregroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Theme.of(context).colorScheme.onSurface,
+              statusBarIconBrightness: Theme.of(context).brightness
+          ),
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          foregroundColor: Theme.of(context).colorScheme.onSecondary,
+          elevation: 0,
           centerTitle: true,
           title: Text(
-            'Create Job Post',
-            style: GoogleFonts.dmSans(
-                fontSize: 18.sp, fontWeight: FontWeight.w500),
+              'Create Job Post',
+              style:Theme.of(context).textTheme.labelMedium
           ),
         ),
         body: SingleChildScrollView(
@@ -172,18 +179,13 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Tell us who you're hiring",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30.sp,
-                          fontFamily: 'DMSans',
-                          fontWeight: FontWeight.bold)),
+                      style: Theme.of(context).textTheme.displayLarge),
                   SizedBox(
                     height: 8.h,
                   ),
                   Text(
-                    'Please enter few details below.',
-                    style: GoogleFonts.dmSans(
-                        color: const Color(0xffD1D1D1), fontSize: 14.sp),
+                      'Please enter few details below.',
+                      style: Theme.of(context).textTheme.titleMedium
                   ),
                   SizedBox(
                     height: 30.h,
@@ -195,9 +197,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                       children: [
                         //Job Category
                         Text(
-                          'Job Category',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Category',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -214,15 +215,15 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Select job Category',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
                               Icons.category_outlined,
                               size: 20,
                               color: Colors.grey,
@@ -230,19 +231,19 @@ class _PostJobScreenState extends State<PostJobScreen> {
                             suffixIcon: Icon(
                               Icons.arrow_drop_down,
                               size: 25,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -256,9 +257,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Job Title',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Title',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -275,30 +275,30 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Enter job title',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
                               Icons.title_outlined,
                               size: 20,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -309,9 +309,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Job Type',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Type',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -331,35 +330,35 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Enter job type',
-                            hintStyle: TextStyle(color: Colors.grey),
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
                             suffixIcon: Icon(
                               Icons.arrow_drop_down,
                               size: 25,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.title_outlined,
                               size: 20,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -370,9 +369,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Required Experience',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Required Experience',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -389,30 +387,30 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Experience Required',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
                               Icons.title_outlined,
                               size: 20,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -423,9 +421,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Job Salary',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Salary',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -442,30 +439,30 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Enter job Salary',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
                               Icons.title_outlined,
                               size: 20,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -476,9 +473,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Job Location',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Location',
+                            style:Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -495,30 +491,30 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                             hintText: 'Enter job location',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
                               Icons.title_outlined,
                               size: 20,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
@@ -529,9 +525,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          'Job Description',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                            'Job Description',
+                            style: Theme.of(context).textTheme.labelSmall
                         ),
                         SizedBox(
                           height: 8.h,
@@ -540,8 +535,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                           textInputAction: TextInputAction.none,
                           keyboardType: TextInputType.none,
                           controller: _jobdescription,
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 15.sp),
+                          style: Theme.of(context).textTheme.titleSmall,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return 'Job description should not be empty!';
@@ -549,86 +543,87 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               return null;
                             }
                           },
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             isCollapsed: true,
                             hintText: 'Enter Job Description',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            contentPadding: EdgeInsets.all(15),
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
-                            prefixIcon: Icon(
+                            fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
+                            prefixIcon: const Icon(
                               Icons.description_outlined,
                               color: Colors.grey,
                             ),
-                            enabledBorder: UnderlineInputBorder(
+                            enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
+                            focusedErrorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color(0xff5800FF),
                                 )),
-                            errorBorder: OutlineInputBorder(
+                            errorBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.redAccent,
                                 )),
                           ),
                           onTap: () {
                             showModalBottomSheet(
-                                backgroundColor: const Color(0xff1D1D2F),
+                                showDragHandle: true,
+                                isScrollControlled: true,
+                                useSafeArea: false,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20)
+                                    )
+                                ),
+                                backgroundColor:Theme.of(context).colorScheme.background,
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                  return ListView(
                                     children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          maxLines: 50,
-                                          maxLength: 1000,
-                                          textInputAction: TextInputAction.done,
-                                          // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
-                                          keyboardType: TextInputType.text,
-                                          controller: _jobdescription,
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return 'Job description should not be empty!';
-                                            } else {
-                                              return null;
-                                            }
-                                          },
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                          decoration: const InputDecoration(
-                                            isCollapsed: true,
-                                            contentPadding: EdgeInsets.all(15),
-                                            filled: true,
-                                            fillColor: Color(0xff282837),
-                                            hintText: 'Enter job title',
-                                            hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                            enabledBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide.none),
-                                            focusedErrorBorder:
-                                            OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.redAccent,
-                                                )),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Color(0xff5800FF),
-                                                )),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors.redAccent,
-                                                )),
-                                          ),
+                                      TextFormField(
+                                        minLines: 10,
+                                        maxLines: 14,
+                                        textInputAction: TextInputAction.done,
+                                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
+                                        keyboardType: TextInputType.text,
+                                        controller: _jobdescription,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'Job description should not be empty!';
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                        style: Theme.of(context).textTheme.titleSmall,
+                                        decoration: InputDecoration(
+                                          isCollapsed: true,
+                                          contentPadding: const EdgeInsets.all(15),
+                                          filled: true,
+                                          fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
+                                          hintText: 'Enter job title',
+                                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                                          enabledBorder: const UnderlineInputBorder(
+                                              borderSide: BorderSide.none),
+                                          focusedErrorBorder:
+                                          const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.redAccent,
+                                              )),
+                                          focusedBorder: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Color(0xff5800FF),
+                                              )),
+                                          errorBorder: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Colors.redAccent,
+                                              )),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10,),
                                       SizedBox(
                                         width: double.infinity,
                                         height: 53.h,
@@ -659,9 +654,6 @@ class _PostJobScreenState extends State<PostJobScreen> {
                                                   FontWeight.bold),
                                             )),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      )
                                     ],
                                   );
                                 });

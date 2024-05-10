@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Home/view_profile_screen.dart';
@@ -10,6 +14,7 @@ import '../job/job_detail_page.dart';
 import '../job/new_hiring.dart';
 import '../job/recommended_jobs.dart';
 import 'notification_list.dart';
+import 'other_view_profile.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -23,9 +28,56 @@ class _HomeScreenState extends State<HomeScreen> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String userImage = '';
   String userName = '';
+  initInfo(){
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin=FlutterLocalNotificationsPlugin();
+    var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationsSettings = InitializationSettings(android: androidInitialize);
+    flutterLocalNotificationsPlugin.initialize(initializationsSettings,onSelectNotification: (String? payload)async {
+      try{
+        if(payload !=null && payload.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>OthersViewProfileScreen(id: uid)));
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+          //   return OtherViewProfileScreen(id: widget.uid,);
+          // }));
+        } else{
+
+        }
+      }catch(e){
+        SnackBar(
+          content: Text(e.toString()),
+        );
+      }
+      return;
+    },
+    );
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
+      if (kDebugMode) {
+        print('*************** onMessage **************');
+      }
+      if (kDebugMode) {
+        print('onMessage: ${message.notification!.title}/${message.notification!.body}');
+      }
+
+      BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
+          message.notification!.body.toString(), htmlFormatBigText: true,
+          contentTitle: message.notification!.title.toString(),htmlFormatContentTitle: true
+      );
+      AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'fyp', 'fyp', importance: Importance.max,
+        styleInformation: bigTextStyleInformation,priority: Priority.max,playSound: false,
+        // sound: RowResourceAndroidNotificationSound('notification'),
+      );
+      NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+      await flutterLocalNotificationsPlugin.show(0, message.notification!.title,
+          message.notification!.body, platformChannelSpecifics,
+          payload: message.data['title']);
+    });
+  }
   @override
   initState() {
     super.initState();
+    initInfo();
     getUserData();
   }
   getUserData()async{
@@ -48,10 +100,16 @@ class _HomeScreenState extends State<HomeScreen> {
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Theme.of(context).colorScheme.onSurface,
+                  statusBarIconBrightness: Theme.of(context).brightness
+              ),
+              backgroundColor: Colors.transparent,
+              scrolledUnderElevation: 0,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
+              elevation: 0,
               floating: true,
               toolbarHeight: 50,
-              backgroundColor: const Color(0xff1D1D2F),
-              elevation: 0,
               leadingWidth: 80,
               titleSpacing: 0,
               leading: Padding(
@@ -73,11 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userName,
-                    style: GoogleFonts.dmSans(
-                        fontSize: 16.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
+                      userName,
+                      style: Theme.of(context).textTheme.headlineLarge
                   ),
                   Text(
                     'Find your job here',
@@ -95,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationListScreen()));
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.notifications_none_sharp,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.outline,
                         size: 22,
                       )),
                 )
@@ -105,8 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
           body: RefreshIndicator(
-            backgroundColor: const Color(0xff1D1D2F),
-            color: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.onSurface,
+            color: Theme.of(context).colorScheme.onSecondary,
             onRefresh: () => refreshData(),
             child: SingleChildScrollView(
               child: Column(
@@ -122,22 +177,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'New Hiring',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
+                            'New Hiring',
+                            style: Theme.of(context).textTheme.labelMedium
                         ),
                         TextButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewHiring()));
                             },
                             child: Text(
-                              'View All',
-                              style: GoogleFonts.dmSans(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
+                                'View All',
+                                style: Theme.of(context).textTheme.headlineSmall
                             ))
                       ],
                     ),
@@ -170,187 +219,184 @@ class _HomeScreenState extends State<HomeScreen> {
                           return SizedBox(
                             height: 240.h,
                             child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 5.w),
-                                    child: SizedBox(
-                                      width: 202.w,
-                                      child: ElevatedButton(
-                                        onPressed: (){
-                                          String id=snapshot.data!.docs[index]['id'];
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
-                                            id: id,
-                                            uid: snapshot.data.docs[index]['uid'],
-                                            ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
-                                            jobDescription: snapshot.data.docs[index]['JobDescription'],
-                                            jobExperience: snapshot.data.docs[index]['JobExperience'],
-                                            jobType: snapshot.data.docs[index]['JobType'],
-                                            jobLocation: snapshot.data.docs[index]['JobLocation'],
-                                            userImage: snapshot.data.docs[index]['UserImage'],
-                                            userName: snapshot.data.docs[index]['UserName'],
-                                            jobTitle: snapshot.data.docs[index]['JobTitle'],
-                                            postDate: snapshot.data.docs[index]['PostedAt'],
-                                            jobSalary: snapshot.data.docs[index]['JobSalary'],
-                                          )));
-                                        },
-                                        style: ButtonStyle(
-                                          overlayColor: const MaterialStatePropertyAll(Color(
-                                              0xff1a288a)),
-                                          splashFactory:InkRipple.splashFactory,
-                                          elevation: const MaterialStatePropertyAll(0),
-                                          padding: const MaterialStatePropertyAll(EdgeInsets.zero),
-                                          backgroundColor: const MaterialStatePropertyAll(Color(0xff5800FF)),
-                                          shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                                        ),
-                                        child: SizedBox(
-                                          width: 202.w,
-                                          child: Card(
-                                            color: Colors.transparent,
-                                            elevation: 0,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                              itemCount: snapshot.data.docs.length>5 ? 5 : snapshot.data.docs.length,
+                              physics: const BouncingScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                                  child: SizedBox(
+                                    width: 202.w,
+                                    child: ElevatedButton(
+                                      onPressed: (){
+                                        String id=snapshot.data!.docs[index]['id'];
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
+                                          id: id,
+                                          uid: snapshot.data.docs[index]['uid'],
+                                          ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
+                                          jobDescription: snapshot.data.docs[index]['JobDescription'],
+                                          jobExperience: snapshot.data.docs[index]['JobExperience'],
+                                          jobType: snapshot.data.docs[index]['JobType'],
+                                          jobLocation: snapshot.data.docs[index]['JobLocation'],
+                                          userImage: snapshot.data.docs[index]['UserImage'],
+                                          userName: snapshot.data.docs[index]['UserName'],
+                                          jobTitle: snapshot.data.docs[index]['JobTitle'],
+                                          postDate: snapshot.data.docs[index]['PostedAt'],
+                                          jobSalary: snapshot.data.docs[index]['JobSalary'],
+                                        )));
+                                      },
+                                      style: ButtonStyle(
+                                        overlayColor: const MaterialStatePropertyAll(Color(
+                                            0xff1a288a)),
+                                        splashFactory:InkRipple.splashFactory,
+                                        elevation: const MaterialStatePropertyAll(0),
+                                        padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                        backgroundColor: const MaterialStatePropertyAll(Color(0xff5800FF)),
+                                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                                      ),
+                                      child: SizedBox(
+                                        width: 202.w,
+                                        child: Card(
+                                          color: Colors.transparent,
+                                          elevation: 0,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10.w, top: 10.h),
+                                                child: CircleAvatar(
+                                                    radius: 22.r,
+                                                    child: ClipRRect(
+                                                        borderRadius: BorderRadius.circular(22.r),
+                                                        child:snapshot.data.docs[index]['UserImage']=='' ?
+                                                        const Icon(Icons.person,size:25,color:Colors.grey,) :
+                                                        Image.network(snapshot.data.docs[index]['UserImage']))),
+                                              ),
+                                              SizedBox(
+                                                height: 15.h,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                EdgeInsets.symmetric(horizontal: 5.w),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                                   children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 10.w, top: 10.h),
-                                                      child: CircleAvatar(
-                                                          radius: 22.r,
-                                                          child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(22.r),
-                                                              child:snapshot.data.docs[index]['UserImage']=='' ?
-                                                              const Icon(Icons.person,size:25,color:Colors.grey,) :
-                                                              Image.network(snapshot.data.docs[index]['UserImage']))),
+                                                    Text(
+                                                      '${snapshot.data.docs[index]['UserName']}',
+                                                      style: GoogleFonts.dmSans(
+                                                        color: const Color(0xffF6F8FE),
+                                                        fontSize: 13.sp,
+                                                      ),
                                                     ),
-                                                    IconButton(
-                                                      onPressed: () {},
-                                                      icon: const Icon(Icons.bookmark_border_sharp),
-                                                      style: const ButtonStyle(
-                                                        splashFactory: InkSplash.splashFactory,
-                                                        overlayColor: MaterialStatePropertyAll(
-                                                            Color(0xff292c47)),
-                                                        padding: MaterialStatePropertyAll(
-                                                            EdgeInsets.zero),
-                                                        iconColor: MaterialStatePropertyAll(
-                                                            Colors.white),
+                                                    SizedBox(
+                                                      height: 8.h,
+                                                    ),
+                                                    Text(
+                                                      '${snapshot.data.docs[index]['JobTitle']}',
+                                                      style: GoogleFonts.dmSans(
+                                                          color: Colors.white,
+                                                          fontSize: 15.sp,
+                                                          fontWeight: FontWeight.w600),
+                                                    ),
+                                                    Text(
+                                                      "\$ ${snapshot.data.docs[index]['JobSalary']}",
+                                                      style: GoogleFonts.dmSans(
+                                                        color: const Color(0xffF6F8FE),
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15.h,
+                                                    ),
+                                                    Container(
+                                                      width: 70.w,
+                                                      height: 28.h,
+                                                      decoration: BoxDecoration(
+                                                          color: const Color(0xff9333FF),
+                                                          borderRadius:
+                                                          BorderRadius.circular(8.r)),
+                                                      child: Center(
+                                                        child: Text(
+                                                          '${snapshot.data.docs[index]['JobType']}',
+                                                          style: GoogleFonts.dmSans(
+                                                              color: Colors.white,
+                                                              fontSize: 12.sp),
+                                                        ),
                                                       ),
                                                     )
                                                   ],
                                                 ),
-                                                SizedBox(
-                                                  height: 15.h,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                  EdgeInsets.symmetric(horizontal: 5.w),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        '${snapshot.data.docs[index]['UserName']}',
-                                                        style: GoogleFonts.dmSans(
-                                                          color: const Color(0xffF6F8FE),
-                                                          fontSize: 13.sp,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8.h,
-                                                      ),
-                                                      Text(
-                                                        '${snapshot.data.docs[index]['JobTitle']}',
-                                                        style: GoogleFonts.dmSans(
-                                                            color: Colors.white,
-                                                            fontSize: 15.sp,
-                                                            fontWeight: FontWeight.w600),
-                                                      ),
-                                                      Text(
-                                                        "\$ ${snapshot.data.docs[index]['JobSalary']}",
-                                                        style: GoogleFonts.dmSans(
-                                                          color: const Color(0xffF6F8FE),
-                                                          fontSize: 12.sp,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 15.h,
-                                                      ),
-                                                      Container(
-                                                        width: 70.w,
-                                                        height: 28.h,
-                                                        decoration: BoxDecoration(
-                                                            color: const Color(0xff9333FF),
-                                                            borderRadius:
-                                                            BorderRadius.circular(8.r)),
-                                                        child: Center(
+                                              ),
+                                              SizedBox(
+                                                height: 15.h,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                EdgeInsets.symmetric(horizontal: 10.w),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${snapshot.data.docs[index]['PostedAt']}',
+                                                      style: GoogleFonts.dmSans(
+                                                          color: Colors.white,
+                                                          fontSize: 10.sp,
+                                                          fontWeight: FontWeight.w700),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 80.w,
+                                                      height: 30.h,
+                                                      child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                              splashFactory: InkRipple.splashFactory,
+                                                              padding: EdgeInsets.zero,
+                                                              backgroundColor: Colors.white,
+                                                              foregroundColor:
+                                                              const Color(0xff292c47),
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      12.r))),
+                                                          onPressed: (){
+                                                            String id=snapshot.data!.docs[index]['id'];
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
+                                                              id: id,
+                                                              uid: snapshot.data.docs[index]['uid'],
+                                                              ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
+                                                              jobDescription: snapshot.data.docs[index]['JobDescription'],
+                                                              jobExperience: snapshot.data.docs[index]['JobExperience'],
+                                                              jobType: snapshot.data.docs[index]['JobType'],
+                                                              jobLocation: snapshot.data.docs[index]['JobLocation'],
+                                                              userImage: snapshot.data.docs[index]['UserImage'],
+                                                              userName: snapshot.data.docs[index]['UserName'],
+                                                              jobTitle: snapshot.data.docs[index]['JobTitle'],
+                                                              postDate: snapshot.data.docs[index]['PostedAt'],
+                                                              jobSalary: snapshot.data.docs[index]['JobSalary'],
+                                                            )));
+                                                          },
                                                           child: Text(
-                                                            '${snapshot.data.docs[index]['JobType']}',
+                                                            'Apply',
                                                             style: GoogleFonts.dmSans(
-                                                                color: Colors.white,
-                                                                fontSize: 12.sp),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
+                                                                color: const Color(0xff5800FF),
+                                                                fontSize: 13,
+                                                                fontWeight: FontWeight.w700),
+                                                          )),
+                                                    )
+                                                  ],
                                                 ),
-                                                SizedBox(
-                                                  height: 15.h,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                  EdgeInsets.symmetric(horizontal: 10.w),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        '${snapshot.data.docs[index]['PostedAt']}',
-                                                        style: GoogleFonts.dmSans(
-                                                            color: Colors.white,
-                                                            fontSize: 10.sp,
-                                                            fontWeight: FontWeight.w700),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 80.w,
-                                                        height: 30.h,
-                                                        child: ElevatedButton(
-                                                            style: ElevatedButton.styleFrom(
-                                                                splashFactory: InkRipple.splashFactory,
-                                                                padding: EdgeInsets.zero,
-                                                                backgroundColor: Colors.white,
-                                                                foregroundColor:
-                                                                const Color(0xff292c47),
-                                                                shape: RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                    BorderRadius.circular(
-                                                                        12.r))),
-                                                            onPressed: () {},
-                                                            child: Text(
-                                                              'Apply',
-                                                              style: GoogleFonts.dmSans(
-                                                                  color: const Color(0xff5800FF),
-                                                                  fontSize: 13,
-                                                                  fontWeight: FontWeight.w700),
-                                                            )),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                              )
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                                scrollDirection: Axis.horizontal,
-                                // itemCount: snapshot.data.docs.length,
-                                itemCount: snapshot.data.docs.length
+                                  ),
+                                );
+                              },
+                              scrollDirection: Axis.horizontal,
+                              // itemCount: snapshot.data.docs.length,
                             ),
                           );
                         }
@@ -379,22 +425,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Recommended',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
+                            'Recommended',
+                            style: Theme.of(context).textTheme.labelMedium
                         ),
                         TextButton(
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>const RecommendedJobScreen()));
                             },
                             child: Text(
-                              'View All',
-                              style: GoogleFonts.dmSans(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
+                                'View All',
+                                style: Theme.of(context).textTheme.headlineSmall
                             ))
                       ],
                     ),
@@ -417,28 +457,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                       else if(snapshot.connectionState==ConnectionState.active){
                         if(snapshot.data?.docs.isNotEmpty ==true){
-                          return SizedBox(height: 600.h,
-                            child: ListView.separated(
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context,index){
-                                return SizedBox(
-                                  width: double.infinity,
-                                  height: 107.h,
-                                  child: ElevatedButton(
-                                    style: const ButtonStyle(
-                                        splashFactory: InkRipple.splashFactory,
-                                        // splashColor: Color(0xff5800FF),
-                                        overlayColor: MaterialStatePropertyAll(Color(
-                                            0x4d5800ff)),
-                                        padding: MaterialStatePropertyAll(
-                                            EdgeInsets.zero),
-                                        backgroundColor: MaterialStatePropertyAll(
-                                            Color(0xff282837)),
-                                        shape: MaterialStatePropertyAll(
-                                            ContinuousRectangleBorder())
-                                    ),
-                                    onPressed: (){
+                          return ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data.docs.length>5 ? 5 :snapshot.data.docs.length,
+                            itemBuilder: (context,index){
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 107.h,
+                                child: Card(
+                                  color:Theme.of(context).colorScheme.onPrimaryContainer,
+                                  child: InkWell(
+                                    splashFactory: InkRipple.splashFactory,
+                                    // splashColor: Color(0xff5800FF),
+                                    overlayColor: const MaterialStatePropertyAll(Color(
+                                        0x4d5800ff)),
+                                    onTap: (){
                                       String id=snapshot.data!.docs[index]['id'];
                                       Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
                                         id: id,
@@ -467,32 +502,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   const Icon(Icons.person,size:25,color:Colors.grey,) :
                                                   Image.network(snapshot.data.docs[index]['UserImage']))),
                                           title: Text(
-                                            '${snapshot.data.docs[index]['JobTitle']}',
-                                            style: GoogleFonts.dmSans(
-                                                color: Colors.white,
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w600),
-                                          ),
+                                              '${snapshot.data.docs[index]['JobTitle']}',
+                                              style: Theme.of(context).textTheme.headlineMedium),
                                           subtitle: Text(
                                             '${snapshot.data.docs[index]['UserName']} - ${snapshot.data.docs[index]['PostedAt']}',
-                                            style: GoogleFonts.dmSans(
-                                              color: const Color(0xffF6F8FE),
-                                              fontSize: 12.sp,
-                                            ),
+                                            style: Theme.of(context).textTheme.labelLarge,
                                           ),
                                           trailing: Padding(
-                                            padding: EdgeInsets.only(bottom: 15.h,),
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.bookmark_border_sharp),
-                                              style: const ButtonStyle(
-                                                overlayColor: MaterialStatePropertyAll(
-                                                    Color(0xff292c47)),
-                                                padding:
-                                                MaterialStatePropertyAll(EdgeInsets.zero),
-                                                iconColor:
-                                                MaterialStatePropertyAll(Colors.white),
-                                              ),
+                                            padding: EdgeInsets.only(right: 10.w),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios_sharp,
+                                              color: Theme.of(context).colorScheme.outline,
                                             ),
                                           ),
                                         ),
@@ -500,22 +520,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                           padding: EdgeInsets.symmetric(horizontal: 15.w),
                                           child: Row(
                                             children: [
-                                              const Icon(Icons.location_on_outlined,color: Color(0xffd1d1d1),size: 18,),
+                                              Icon(Icons.location_on_outlined,color:Theme.of(context).colorScheme.outline,size: 18,),
                                               Text(
                                                 '${snapshot.data.docs[index]['JobLocation']}',
-                                                style: GoogleFonts.dmSans(
-                                                  color: const Color(0xffd1d1d1),
-                                                  fontSize: 14.sp,
-                                                ),
+                                                style: Theme.of(context).textTheme.headlineSmall,
                                               ),
                                               SizedBox(width: 10.w,),
-                                              const Icon(Icons.currency_exchange_outlined,color: Color(0xffd1d1d1),size: 15,),
+                                              Icon(Icons.currency_exchange_outlined,color: Theme.of(context).colorScheme.outline,size: 15,),
                                               Text(
                                                 ' ${snapshot.data.docs[index]['JobSalary']}',
-                                                style: GoogleFonts.dmSans(
-                                                  color: const Color(0xffd1d1d1),
-                                                  fontSize: 14.sp,
-                                                ),
+                                                style: Theme.of(context).textTheme.headlineSmall,
                                               ),
                                             ],
                                           ),
@@ -523,10 +537,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                );
-                              },
-                              separatorBuilder: (context, index) => SizedBox(height: 15.h,),
-                            ),
+                                ),
+                              );
+                            },
                           );
                         }
                         else{

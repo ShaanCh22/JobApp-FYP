@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +10,6 @@ import 'package:jobseek/profile/setting_page.dart';
 import 'package:jobseek/profile/skill_screen.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
 import 'package:page_transition/page_transition.dart';
-
 import 'aboutme_screen.dart';
 import 'edit_profile.dart';
 import 'education_screen.dart';
@@ -49,20 +49,23 @@ class _ProfilePageState extends State<ProfilePage> {
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
-                automaticallyImplyLeading: false,
-                floating: true,
-                toolbarHeight: 50,
-                // backgroundColor: Color(0xff282837),
-                backgroundColor: const Color(0xff1D1D2F),
+                systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Theme.of(context).colorScheme.onSurface,
+                    statusBarIconBrightness: Theme.of(context).brightness
+                ),
+                backgroundColor: Colors.transparent,
+                scrolledUnderElevation: 0,
+                foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 elevation: 0,
+                floating: true,
+                automaticallyImplyLeading: false,
+                toolbarHeight: 50,
+                centerTitle: true,
                 title: Padding(
                   padding: EdgeInsets.only(left: 10.w),
                   child: Text(
-                    'Profile',
-                    style: GoogleFonts.dmSans(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w500),
+                      'Profile',
+                      style:  Theme.of(context).textTheme.displayMedium
                   ),
                 ),
                 actions: [
@@ -77,9 +80,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   type: PageTransitionType.rightToLeft,
                                   duration: const Duration(milliseconds: 300)));
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.settings_outlined,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.outline,
                           size: 22,
                         )),
                   )
@@ -87,13 +90,13 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
             body: RefreshIndicator(
-              backgroundColor: const Color(0xff1D1D2F),
-              color: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).colorScheme.onSecondary,
               onRefresh: () => refreshData(),
               child: ListView(
                 children: [
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                       child: Column(
@@ -119,11 +122,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           const Icon(Icons.camera_alt_outlined,size:25,color:Colors.white,) :
                                           Image.network('${snapshot.data!.get('User Image')}'))),
                                   title: Text(
-                                    '${snapshot.data!.get('Name')}',
-                                    style: GoogleFonts.dmSans(
-                                        fontSize: 18.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white),
+                                      '${snapshot.data!.get('Name')}',
+                                      style: Theme.of(context).textTheme.labelMedium
                                   ),
                                   subtitle: Text(
                                     '${snapshot.data!.get('Email')}',
@@ -133,37 +133,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 );
                               }
                           ),
-                          // ListTile(
-                          //   contentPadding: EdgeInsets.zero,
-                          //   leading: CircleAvatar(
-                          //     radius: 30.r,
-                          //   ),
-                          //   title: StreamBuilder(
-                          //     stream: FirebaseFirestore.instance.collection("Users").doc(uid).snapshots(),
-                          //     builder: (context,snapshot) {
-                          //       if(snapshot.connectionState==ConnectionState.waiting){
-                          //         return const Center(
-                          //           child: CircularProgressIndicator(),
-                          //         );
-                          //       }
-                          //       if(snapshot.hasError){
-                          //         return Center(child: Text(snapshot.hasError.toString()));
-                          //       }
-                          //       return Text(
-                          //         '${snapshot.data!.get('Name')}',
-                          //         style: GoogleFonts.dmSans(
-                          //             fontSize: 18.sp,
-                          //             fontWeight: FontWeight.w500,
-                          //             color: Colors.white),
-                          //       );
-                          //     }
-                          //   ),
-                          //   subtitle: Text(
-                          //     user!.email.toString(),
-                          //     style: GoogleFonts.dmSans(
-                          //         fontSize: 16.sp, color: Colors.grey),
-                          //   ),
-                          // ),
                           SizedBox(
                             height: 15.h,
                           ),
@@ -201,6 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 45.h,
                                 child: OutlinedButton(
                                     style: ElevatedButton.styleFrom(
+                                        elevation: 0,
                                         splashFactory: InkRipple.splashFactory,
                                         backgroundColor: Colors.transparent,
                                         foregroundColor: const Color(0xff5800FF),
@@ -218,68 +188,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                               const Duration(milliseconds: 300)));
                                     },
                                     child: Text('Create job post',
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                        ))),
+                                        style: Theme.of(context).textTheme.bodyMedium)),
                               ),
                             ],
                           ),
-                          // ListTile(
-                          //   contentPadding: EdgeInsets.zero,
-                          //   leading: SizedBox(
-                          //     width: 160.w,
-                          //     height: 45.h,
-                          //     child: ElevatedButton(
-                          //         style: ElevatedButton.styleFrom(
-                          //             splashFactory: InkRipple.splashFactory,
-                          //             backgroundColor: const Color(0xff5800FF),
-                          //             foregroundColor: Colors.black,
-                          //             shape: RoundedRectangleBorder(
-                          //                 borderRadius: BorderRadius.circular(8.r))),
-                          //         onPressed: () {
-                          //           Navigator.push(
-                          //               context,
-                          //               PageTransition(
-                          //                   child: const EditProfilePage(),
-                          //                   type: PageTransitionType.rightToLeft,
-                          //                   duration:
-                          //                   const Duration(milliseconds: 300)));
-                          //         },
-                          //         child: Text('Edit Profile',
-                          //             style: GoogleFonts.dmSans(
-                          //               color: Colors.white,
-                          //               fontSize: 14.sp,
-                          //             ))),
-                          //   ),
-                          //   trailing: SizedBox(
-                          //     width: 160.w,
-                          //     height: 45.h,
-                          //     child: OutlinedButton(
-                          //         style: ElevatedButton.styleFrom(
-                          //             splashFactory: InkRipple.splashFactory,
-                          //             backgroundColor: Colors.transparent,
-                          //             foregroundColor: const Color(0xff5800FF),
-                          //             side: const BorderSide(
-                          //                 color: Color(0xff5800FF), width: 1),
-                          //             shape: RoundedRectangleBorder(
-                          //                 borderRadius: BorderRadius.circular(8.r))),
-                          //         onPressed: () {
-                          //           Navigator.push(
-                          //               context,
-                          //               PageTransition(
-                          //                   child: const UploadResumePage(),
-                          //                   type: PageTransitionType.rightToLeft,
-                          //                   duration:
-                          //                   const Duration(milliseconds: 300)));
-                          //         },
-                          //         child: Text('Add Resume',
-                          //             style: GoogleFonts.dmSans(
-                          //               color: Colors.white,
-                          //               fontSize: 14.sp,
-                          //             ))),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -289,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //Resumesection
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 20.w,
@@ -299,11 +211,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Text(
-                              'Resume',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500),
+                                'Resume',
+                                style: Theme.of(context).textTheme.labelMedium
                             ),
                             trailing: IconButton(
                               onPressed: () {
@@ -314,12 +223,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         type: PageTransitionType.rightToLeft,
                                         duration: const Duration(milliseconds: 300)));
                               },
-                              icon: SvgPicture.asset(
-                                theme: const SvgTheme(currentColor: Colors.white),
-                                'assets/svg/img_icon_line_onprimary_24x24.svg',
-                                width: 24,
-                                height: 24,
-                              ),
+                              icon: Icon(Icons.edit_outlined,size: 22,color: Theme.of(context).colorScheme.outline,),
                             ),
                           ),
                           resumeUrl==''
@@ -337,16 +241,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             contentPadding: EdgeInsets.zero,
                             leading: SvgPicture.asset(
                               'assets/svg/img_frame_primary.svg',
-                              theme: const SvgTheme(currentColor: Colors.white),
+                              theme: const SvgTheme(currentColor:Color(0xff8F00FF)),
                               width: 24,
                               height: 24,
                             ),
                             title: Text(
-                              resumeName,
-                              style: GoogleFonts.dmSans(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                              ),
+                                resumeName,
+                                style: Theme.of(context).textTheme.titleSmall
                             ),
                           ),
                         ],
@@ -358,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //Aboutmesection
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 20.w,
@@ -369,11 +270,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Text(
-                              'About Me',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500),
+                                'About Me',
+                                style: Theme.of(context).textTheme.labelMedium
                             ),
                             trailing: IconButton(
                               onPressed: () {
@@ -383,12 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: const AboutMeScreen(),
                                         type: PageTransitionType.rightToLeft));
                               },
-                              icon: SvgPicture.asset(
-                                'assets/svg/img_icon_line_onprimary_24x24.svg',
-                                theme: const SvgTheme(currentColor: Colors.white),
-                                width: 24,
-                                height: 24,
-                              ),
+                              icon: Icon(Icons.edit_outlined,size: 22,color: Theme.of(context).colorScheme.outline,),
                             ),
                           ),
                           StreamBuilder(
@@ -404,8 +297,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 }
                                 return Text(
                                   '${snapshot.data!.get('About Me')}',
-                                  style: GoogleFonts.dmSans(
-                                      fontSize: 16.sp, color: Colors.grey),
+                                  style: GoogleFonts.dmSans(fontWeight: FontWeight.normal,
+                                      fontSize: 15.sp, color: Theme.of(context).colorScheme.outline),
                                 );
                               }
                           )
@@ -418,7 +311,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //Expriencesection
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
                       child: Column(
@@ -427,11 +320,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Text(
-                              'Experience',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500),
+                                'Experience',
+                                style: Theme.of(context).textTheme.labelMedium
                             ),
                             trailing: IconButton(
                               onPressed: () {
@@ -441,12 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: const ExperienceScreen(),
                                         type: PageTransitionType.rightToLeft));
                               },
-                              icon: SvgPicture.asset(
-                                'assets/svg/img_icon_line_onprimary_24x24.svg',
-                                theme: const SvgTheme(currentColor: Colors.white),
-                                width: 24,
-                                height: 24,
-                              ),
+                              icon: Icon(Icons.edit_outlined,size: 22,color: Theme.of(context).colorScheme.outline,),
                             ),
                           ),
                           StreamBuilder(
@@ -479,26 +364,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                           height: 5.h,
                                         ),
                                         Text(
-                                          '${snapshot.data!.docs[index]['Title']}',
-                                          style: GoogleFonts.dmSans(
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.white),
+                                            '${snapshot.data!.docs[index]['Title']}',
+                                            style: Theme.of(context).textTheme.labelMedium
                                         ),
                                         Text(
                                           'At ${snapshot.data!.docs[index]['Company Name']}',
-                                          style: GoogleFonts.dmSans(
-                                              height: 1,
+                                          style: GoogleFonts.dmSans(fontWeight: FontWeight.normal,
                                               fontSize: 14.sp,
-                                              color: Colors.grey),
+                                              color: Theme.of(context).colorScheme.outline),
                                         ),
                                         SizedBox(
                                           height: 8.h,
                                         ),
                                         Text(
                                           '${snapshot.data!.docs[index]['Job Description']}',
-                                          style: GoogleFonts.dmSans(
-                                              fontSize: 16.sp, color: Colors.grey),
+                                          style: GoogleFonts.dmSans(fontWeight: FontWeight.normal,
+                                              fontSize: 15.sp, color: Theme.of(context).colorScheme.outline),
                                         ),
                                       ],
                                     );
@@ -518,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //Education-section
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
                       child: Column(
@@ -527,11 +408,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Text(
-                              'Education',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500),
+                                'Education',
+                                style: Theme.of(context).textTheme.labelMedium
                             ),
                             trailing: IconButton(
                               onPressed: () {
@@ -541,12 +419,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: const EducationScreen(),
                                         type: PageTransitionType.rightToLeft));
                               },
-                              icon: SvgPicture.asset(
-                                'assets/svg/img_icon_line_onprimary_24x24.svg',
-                                theme: const SvgTheme(currentColor: Colors.white),
-                                width: 24,
-                                height: 24,
-                              ),
+                              icon: Icon(Icons.edit_outlined,size: 22,color: Theme.of(context).colorScheme.outline,),
                             ),
                           ),
                           StreamBuilder(
@@ -579,18 +452,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                           height: 5.h,
                                         ),
                                         Text(
-                                          '${snapshot.data!.docs[index]['School']}',
-                                          style: GoogleFonts.dmSans(
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.white),
+                                            '${snapshot.data!.docs[index]['School']}',
+                                            style: Theme.of(context).textTheme.labelMedium
                                         ),
                                         Text(
                                           '${snapshot.data!.docs[index]['Degree']}',
                                           style: GoogleFonts.dmSans(
-                                              height: 1,
                                               fontSize: 14.sp,
-                                              color: Colors.grey),
+                                              color: Theme.of(context).colorScheme.outline),
                                         ),
                                       ],
                                     );
@@ -610,7 +479,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   //Skill-section
                   Container(
-                    color: const Color(0xff282837),
+                    color:Theme.of(context).colorScheme.tertiaryContainer,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
                       child: Column(
@@ -619,11 +488,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: Text(
-                              'Skill',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500),
+                                'Skills',
+                                style: Theme.of(context).textTheme.labelMedium
                             ),
                             trailing: IconButton(
                               onPressed: () {
@@ -633,12 +499,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         child: const SkillScreen(),
                                         type: PageTransitionType.rightToLeft));
                               },
-                              icon: SvgPicture.asset(
-                                'assets/svg/img_icon_line_onprimary_24x24.svg',
-                                theme: const SvgTheme(currentColor: Colors.white),
-                                width: 24,
-                                height: 24,
-                              ),
+                              icon: Icon(Icons.edit_outlined,size: 22,color: Theme.of(context).colorScheme.outline,),
                             ),
                           ),
                           StreamBuilder(
@@ -657,13 +518,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                   runSpacing: 10.h,
                                   children: List.generate(snapshot.data!.docs.length, (index) {
                                     return Chip(
+                                      color: MaterialStatePropertyAll(Theme.of(context).colorScheme.tertiaryContainer,),
                                       elevation: 0,
                                       label: Text(
-                                        '${snapshot.data!.docs[index]['Title']}',
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                        ),
+                                          '${snapshot.data!.docs[index]['Title']}',
+                                          style:Theme.of(context).textTheme.headlineSmall
                                       ),
                                       backgroundColor: const Color(0xff282837),
                                     );

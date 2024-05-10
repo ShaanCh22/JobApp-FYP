@@ -108,7 +108,6 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
   }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getJobData();
   }

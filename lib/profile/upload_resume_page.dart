@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../Services/global_methods.dart';
 
 class UploadResumePage extends StatefulWidget {
@@ -179,7 +178,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
             ),
           ),
           SizedBox(height: 30.h,),
-          Text('Queue',style: GoogleFonts.dmSans(
+          Text('Resume',style: GoogleFonts.dmSans(
               color: Colors.white,
               fontSize: 18.sp
           ),),

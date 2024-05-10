@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-
 import 'confirm_forget.dart';
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -32,10 +31,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             email: _forgetpassText.text.trim()
         );
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context,
-            PageTransition(child:const ConfirmForget(),
-                type: PageTransitionType.rightToLeft,
-                duration: const Duration(milliseconds: 300)));}
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const ConfirmForget()), (route) => false);
+      }
     }catch(error){
       setState(() {
         _isLoading= false;
@@ -51,9 +48,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -62,19 +63,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Forget Password',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30.sp,
-                        fontFamily: 'DMSans',
-                        fontWeight: FontWeight.bold)),
+                Text('Reset Password',
+                    style: Theme.of(context).textTheme.displayLarge),
                 SizedBox(
                   height: 8.h,
                 ),
                 Text(
-                  "Always keep your account secure and\ndon't forget to update it",
-                  style: GoogleFonts.dmSans(
-                      color: const Color(0xffD1D1D1), fontSize: 14.sp),
+                    "Always keep your account secure and\ndon't forget to update it",
+                    style: Theme.of(context).textTheme.titleMedium
                 ),
                 SizedBox(height: 30.h,),
                 Form(
@@ -82,9 +78,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Your Email Account',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Your Email Account',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -105,23 +100,23 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Your Email',
-                          hintStyle: TextStyle(color: Colors.white),
-                          prefixIcon: Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          prefixIcon: const Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
+                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
-                          focusedBorder:OutlineInputBorder(
+                          focusedBorder:const OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff5800FF),)
                           ),
-                          errorBorder: OutlineInputBorder(
+                          errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
                         ),

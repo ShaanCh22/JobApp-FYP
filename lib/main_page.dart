@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jobseek/profile/profile_page.dart';
-
+import 'package:jobseek/search_user.dart';
 import 'Home/home_screen.dart';
 import 'favorit/favorit_page.dart';
 import 'job/job_page.dart';
@@ -45,7 +45,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: IndexedStack(
         index: getPageIndex,
-        children: const [HomeScreen(), JobPage(), FavoritPage(), ProfilePage()],
+        children: const [HomeScreen(), JobPage(), FavoritPage(), SearchUser(),ProfilePage()],
       ),
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: getPageIndex,
@@ -54,9 +54,9 @@ class _MainPageState extends State<MainPage> {
             getPageIndex = value;
           });
         },
-        backgroundColor: const Color(0xff1D1D2F),
+        backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
         activeColor: const Color(0xff5800FF),
-        inactiveColor: Colors.white,
+        inactiveColor: Theme.of(context).colorScheme.secondaryContainer,
         iconSize: 22,
         items: [
           BottomNavigationBarItem(
@@ -73,6 +73,11 @@ class _MainPageState extends State<MainPage> {
             icon: SvgPicture.asset('assets/svg/img_nav_favorit.svg',),
             activeIcon: SvgPicture.asset('assets/svg/img_nav_favorit_primary.svg',),
             label: 'Favorit',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.person_search_outlined,size: 28,),
+            activeIcon: Icon(Icons.person_search_rounded,size: 28,),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset('assets/svg/img_nav_profile.svg',),

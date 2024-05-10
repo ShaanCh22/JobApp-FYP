@@ -3,8 +3,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
+import '../Home/notification_list.dart';
+import '../Login&Signup/ForgetPasswordScreen.dart';
 import '../Login&Signup/login_page.dart';
 import '../Services/global_methods.dart';
 
@@ -15,20 +17,14 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  bool theme=false;
   void logOut()async{
     try{
       await FirebaseAuth.instance.signOut();
-      Fluttertoast.showToast(
-          msg: 'Successfully Logout', toastLength: Toast.LENGTH_SHORT);
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const Login()), (route) => false);
     }catch(error){
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
     }
-  }
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -52,6 +48,20 @@ class _SettingPageState extends State<SettingPage> {
                     fontSize: 16.sp,
                     color: Colors.white
                 ),),
+                trailing: Switch(
+                  value: theme,
+                  inactiveTrackColor: Colors.white,
+                  onChanged: (value){
+                    setState(() {
+                      if(theme==false){
+                        theme=true;
+                      }
+                      else{
+                        theme=false;
+                      }
+                    });
+                  },
+                ),
               )
           ),
           ListTile(
@@ -86,31 +96,11 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
-                    style: const ButtonStyle(
-                        splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
-                        elevation: MaterialStatePropertyAll(0),
-                        padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
-                    child: ListTile(
-                      leading: Text('Language',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: Text('English',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 14.sp,
-                            color: Colors.grey
-                        ),),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context,
+                          PageTransition(child:const ForgetPasswordScreen(),
+                            type: PageTransitionType.rightToLeft,));
+                    },
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
                         overlayColor: MaterialStatePropertyAll(Color(
@@ -130,7 +120,11 @@ class _SettingPageState extends State<SettingPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.push(context,
+                          PageTransition(child:const NotificationListScreen(),
+                            type: PageTransitionType.rightToLeft,));
+                    },
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
                         overlayColor: MaterialStatePropertyAll(Color(

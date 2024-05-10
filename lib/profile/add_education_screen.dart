@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -65,13 +66,16 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
         centerTitle: true,
-        title: Text('Add Education',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text('Add Education',style:Theme.of(context).textTheme.labelMedium),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
@@ -85,9 +89,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                     children: [
                       // School
                       Text(
-                        'School',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'School',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -127,9 +130,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                       //Degree
                       SizedBox(height: 20.h,),
                       Text(
-                        'Degree',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Degree',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -171,9 +173,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                       //Field of Study
                       SizedBox(height: 20.h,),
                       Text(
-                        'Field of Study',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Field of Study',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -222,9 +223,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Start Date',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white, fontSize: 14.sp),
+                                  'Start Date',
+                                  style: Theme.of(context).textTheme.labelSmall
                               ),
                               SizedBox(
                                 height: 8.h,
@@ -283,9 +283,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'End Date',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white, fontSize: 14.sp),
+                                  'End Date',
+                                  style: Theme.of(context).textTheme.labelSmall
                               ),
                               SizedBox(
                                 height: 8.h,
@@ -345,9 +344,8 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                       //Description
                       SizedBox(height: 20.h,),
                       Text(
-                        'Description',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Description',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,

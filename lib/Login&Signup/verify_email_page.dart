@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:page_transition/page_transition.dart';
-
 import '../Services/global_methods.dart';
 import '../main_page.dart';
 
@@ -23,7 +21,7 @@ class Otp extends StatelessWidget {
       height: 50.h,
       child: TextFormField(
         cursorColor: const Color(0xff5800FF),
-        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20.sp),
+        style: Theme.of(context).textTheme.displayMedium,
         controller: otpController,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
@@ -40,10 +38,10 @@ class Otp extends StatelessWidget {
           }
         },
         decoration: InputDecoration(
-          hintStyle: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold,fontSize: 20.sp),
-          hintText: ('0'),
+          hintStyle: Theme.of(context).textTheme.displaySmall,
+          hintText: ('_'),
           enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white,)
+              borderSide: BorderSide(color: Colors.grey,)
           ),
           focusedErrorBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.redAccent,)
@@ -89,10 +87,10 @@ class _OtpScreenState extends State<OtpScreen> {
           email: widget.mail, password: widget.pass).then((
           signedInUser) async
       {
+        String uid = FirebaseAuth.instance.currentUser!.uid;
         FirebaseFirestore.instance.collection("Users").doc(
             signedInUser.user?.uid).set({
-          "Id":FirebaseFirestore.instance.collection("Users").doc(
-              signedInUser.user?.uid),
+          "Id":uid,
           "Name": widget.name,
           "Email": widget.mail,
           "Phone Number": widget.phone,
@@ -110,10 +108,7 @@ class _OtpScreenState extends State<OtpScreen> {
               'id' : uid
             });
           });
-          Navigator.pushReplacement(
-              context, PageTransition(child:const MainPage(),
-              type: PageTransitionType.rightToLeft,
-              duration: const Duration(milliseconds: 500)));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const MainPage()), (route) => false);
         });
       });
     } catch (e) {
@@ -131,9 +126,13 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -143,18 +142,13 @@ class _OtpScreenState extends State<OtpScreen> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Verification Code',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30.sp,
-                        fontFamily: 'DMSans',
-                        fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.displayLarge),
                 SizedBox(
                   height: 8.h,
                 ),
                 Text(
-                  'We send the Verification OTP code to your email account ${widget.mail} input to complete the last stage of registering',
-                  style: GoogleFonts.dmSans(
-                      color: const Color(0xffD1D1D1), fontSize: 14.sp),
+                    'We send the Verification OTP code to your email account ${widget.mail} input to complete the last stage of registering',
+                    style: Theme.of(context).textTheme.titleMedium
                 ),
                 SizedBox(height: 30.h,),
                 Center(

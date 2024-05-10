@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../Services/global_methods.dart';
 
 class AboutMeScreen extends StatefulWidget {
@@ -23,7 +25,6 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getAboutData();
   }
@@ -70,24 +71,23 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
         centerTitle: true,
-        title: Text('About Me',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text('About Me',style: Theme.of(context).textTheme.displayMedium),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
         children: [
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading:Text('Summary',style: GoogleFonts.dmSans(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500
-            ),),
+            leading:Text('Summary',style: Theme.of(context).textTheme.headlineMedium),
             trailing: Text('Maximum 150 words',style: GoogleFonts.dmSans(
                 color: Colors.grey,
                 fontSize: 15.sp
@@ -103,9 +103,7 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
               // focusNode: _passFocusNode,
               keyboardType: TextInputType.text,
               controller: _aboutmeController,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
+              style: Theme.of(context).textTheme.titleSmall,
               validator: (value) {
                 if (value!.isEmpty) {
                   return;
@@ -113,26 +111,25 @@ class _AboutMeScreenState extends State<AboutMeScreen> {
                   return null;
                 }
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                counterStyle: GoogleFonts.dmSans(color: Theme.of(context).colorScheme.outline),
                 isCollapsed: true,
-                contentPadding: EdgeInsets.all(15),
+                contentPadding: const EdgeInsets.all(15),
                 filled: true,
-                fillColor: Color(0xff282837),
+                fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                 hintText: 'Write your bio...',
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                ),
+                hintStyle: Theme.of(context).textTheme.bodySmall,
                 enabledBorder:
-                UnderlineInputBorder(borderSide: BorderSide.none),
-                focusedErrorBorder: OutlineInputBorder(
+                const UnderlineInputBorder(borderSide: BorderSide.none),
+                focusedErrorBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.redAccent,
                     )),
-                focusedBorder: OutlineInputBorder(
+                focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Color(0xff5800FF),
                     )),
-                errorBorder: OutlineInputBorder(
+                errorBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.redAccent,
                     )),

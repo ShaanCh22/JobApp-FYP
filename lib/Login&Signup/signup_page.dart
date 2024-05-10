@@ -2,6 +2,7 @@
 
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Login&Signup/verify_email_page.dart';
@@ -69,9 +70,13 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -81,18 +86,13 @@ class _SignupState extends State<Signup> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Register 👌',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30.sp,
-                        fontFamily: 'DMSans',
-                        fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.displayLarge),
                 SizedBox(
                   height: 8.h,
                 ),
                 Text(
-                  'Please enter few details below.',
-                  style: GoogleFonts.dmSans(
-                      color: const Color(0xffD1D1D1), fontSize: 14.sp),
+                    'Please enter few details below.',
+                    style: Theme.of(context).textTheme.titleMedium
                 ),
                 SizedBox(height: 30.h,),
                 Form(
@@ -101,9 +101,8 @@ class _SignupState extends State<Signup> {
                     children: [
                       //Name
                       Text(
-                        'Name',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Name',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -121,23 +120,23 @@ class _SignupState extends State<Signup> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Your Name/ Company Name',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.person_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          prefixIcon: const Icon(Icons.person_outline_sharp,size: 20,color: Colors.grey,),
+                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
-                          focusedBorder:OutlineInputBorder(
+                          focusedBorder:const OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff5800FF),)
                           ),
-                          errorBorder: OutlineInputBorder(
+                          errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
                         ),
@@ -146,9 +145,8 @@ class _SignupState extends State<Signup> {
                       //Email
                       SizedBox(height: 20.h,),
                       Text(
-                        'Email',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Email',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -169,23 +167,23 @@ class _SignupState extends State<Signup> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Email',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          prefixIcon: const Icon(Icons.mail_outline_sharp,size: 20,color: Colors.grey,),
+                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
-                          focusedBorder:OutlineInputBorder(
+                          focusedBorder:const OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff5800FF),)
                           ),
-                          errorBorder: OutlineInputBorder(
+                          errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
                         ),
@@ -194,9 +192,8 @@ class _SignupState extends State<Signup> {
                       //Phone Number
                       SizedBox(height: 20.h,),
                       Text(
-                        'Phone Number',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Phone Number',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -214,23 +211,23 @@ class _SignupState extends State<Signup> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Phone Number',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          prefixIcon: Icon(Icons.phone,size: 20,color: Colors.grey,),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          prefixIcon: const Icon(Icons.phone,size: 20,color: Colors.grey,),
+                          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
-                          focusedBorder:OutlineInputBorder(
+                          focusedBorder:const OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xff5800FF),)
                           ),
-                          errorBorder: OutlineInputBorder(
+                          errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.redAccent,)
                           ),
                         ),
@@ -239,9 +236,8 @@ class _SignupState extends State<Signup> {
                       //Password
                       SizedBox(height: 20.h,),
                       Text(
-                        'Password',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                          'Password',
+                          style: Theme.of(context).textTheme.labelSmall
                       ),
                       SizedBox(
                         height: 8.h,
@@ -263,7 +259,7 @@ class _SignupState extends State<Signup> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.titleSmall,
                         decoration: InputDecoration(
                           suffixIcon:GestureDetector(
                             onTap: (){
@@ -279,9 +275,9 @@ class _SignupState extends State<Signup> {
                           isCollapsed: true,
                           contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: const Color(0xff282837),
+                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Password',
-                          hintStyle: const TextStyle(color: Colors.grey),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
                           prefixIcon: const Icon(Icons.lock_outline_sharp,size: 20,color: Colors.grey,),
                           enabledBorder: const UnderlineInputBorder(borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(

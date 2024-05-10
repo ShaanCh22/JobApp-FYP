@@ -31,7 +31,6 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getExpData();
   }
@@ -84,7 +83,7 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
   void _deleteExperienceData(){
     CollectionReference ref = FirebaseFirestore.instance.collection('Users').doc(uid).collection('Experience');
     ref.doc(widget.id).delete();
-    Navigator.pushReplacement(context, PageTransition(child: const ExperienceScreen(), type: PageTransitionType.topToBottom));
+    Navigator.pushReplacement(context, PageTransition(child: ExperienceScreen(), type: PageTransitionType.topToBottom));
   }
 
   @override
@@ -420,9 +419,9 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
                   child: TextButton(
                     style: ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: const MaterialStatePropertyAll(Color(
+                        overlayColor: MaterialStatePropertyAll(Color(
                             0x4d5800ff)),
-                        padding: const MaterialStatePropertyAll(
+                        padding: MaterialStatePropertyAll(
                             EdgeInsets.all(15)),
 
                         shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)))

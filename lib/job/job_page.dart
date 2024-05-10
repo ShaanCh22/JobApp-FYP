@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/job/search_screen.dart';
-import 'package:page_transition/page_transition.dart';
-
 import '../Widgets/shimmer_jobcard.dart';
+import '../presistent/presestent.dart';
 import 'job_detail_page.dart';
-
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -18,12 +17,174 @@ class JobPage extends StatefulWidget {
 }
 
 class _JobPageState extends State<JobPage> {
+  int getPageIndex = 0;
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  refreshData(){
+  final TextEditingController _locationController =
+  TextEditingController(text: '');
+  String? selectedCategory = 'Categories';
+  String? selectedType = 'Job Type';
+  String searchQuery = 'Location';
+  void _clearSearchQuery(){
     setState(() {
-
+      _locationController.clear();
+      _updateSearchQuery('');
+      searchQuery='Location';
     });
   }
+  void _updateSearchQuery(String newQuery){
+    setState(() {
+      searchQuery=newQuery;
+    });
+  }
+  refreshData() {
+    setState(() {});
+  }
+
+  _showJobCategoryDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: const Color(0xff1D1D2F),
+              title: Center(
+                child: Text(
+                  'Job Categories',
+                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white,fontWeight: FontWeight.bold),
+                ),
+              ),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: Presistent.jobCateegoryList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedCategory =
+                            Presistent.jobCateegoryList[index];
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          Presistent.jobCateegoryList[index],
+                          style: GoogleFonts.dmSans(
+                              fontSize: 16.sp, color: Colors.white),
+                        ));
+                  },
+                  separatorBuilder: (context, index) => const Divider(
+                    color: Colors.grey,
+                    thickness: 0.3,
+                  ),
+                ),
+              ));
+        });
+  }
+
+  _showJobTypeDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: const Color(0xff1D1D2F),
+              title: Center(
+                child: Text(
+                  'Job Types',
+                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white,fontWeight: FontWeight.bold),
+                ),
+              ),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: Presistent.jobTypeList.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedType =
+                            Presistent.jobTypeList[index];
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Text(Presistent.jobTypeList[index],
+                          style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.white),
+                        )
+                    );
+                  },
+                  separatorBuilder: (context, index) => const Divider(
+                    color: Colors.grey,
+                    thickness: 0.3,
+                  ),
+                ),
+              ));
+        });
+  }
+
+  _showJobLocationDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: const Color(0xff1D1D2F),
+              title: Center(
+                child: Text(
+                  'Job Location',
+                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white),
+                ),
+              ),
+              content: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        autocorrect: true,
+                        controller: _locationController,
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: (){
+                                _clearSearchQuery();
+                              },
+                              icon: const Icon(Icons.close,color: Colors.grey,),
+                            ),
+                            hintText: 'Search for jobs',
+                            border: InputBorder.none,
+                            hintStyle: GoogleFonts.dmSans(color: Colors.grey)
+                        ),
+                        style: GoogleFonts.dmSans(
+                            color: Colors.white
+                        ),
+                        onChanged: (query)=>_updateSearchQuery(query),
+                      ),
+                      const SizedBox(height: 15,),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 53.h,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                splashFactory: InkRipple.splashFactory,
+                                backgroundColor: const Color(0xff5800FF),
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r))),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child:Text(
+                              'Show Result',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    ],
+                  )
+              ));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,166 +193,242 @@ class _JobPageState extends State<JobPage> {
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
-              floating: true,
-              toolbarHeight: 50,
-              centerTitle: true,
-              backgroundColor: const Color(0xff1D1D2F),
+              systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Theme.of(context).colorScheme.onSurface,
+                  statusBarIconBrightness: Theme.of(context).brightness
+              ),
+              backgroundColor: Colors.transparent,
+              scrolledUnderElevation: 0,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
               elevation: 0,
-              title:Text('Jobs',style: GoogleFonts.dmSans(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold
-              ),),
+              floating: true,
+              centerTitle: true,
+              title: Text(
+                  'Jobs',
+                  style: Theme.of(context).textTheme.displayMedium
+              ),
               actions: [
                 IconButton(
-                  onPressed: (){
-                    showModalBottomSheet(
-                        backgroundColor: const Color(0xff1D1D2F),
-                        context: context,
-                        builder: (BuildContext context){
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 16.h),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('Filter',style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500
-                                ),),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Text('Job Category',style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500
-                                  ),),
-                                  trailing: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "UI/UX  Design ",
-                                          style: GoogleFonts.dmSans(
-                                            color: Colors.white,
-                                            fontSize: 16.sp,
-                                          ),
-                                        ),
-                                        const WidgetSpan(
-                                          child: Icon(Icons.arrow_forward_ios_sharp, size: 15,color: Colors.white,),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const Divider(color: Colors.grey,thickness: 0.3),
-                                ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Text('City/Location',style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500
-                                  ),),
-                                  trailing: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Jakarta ",
-                                          style: GoogleFonts.dmSans(
-                                            color: Colors.white,
-                                            fontSize: 16.sp,
-                                          ),
-                                        ),
-                                        const WidgetSpan(
-                                          child: Icon(Icons.arrow_forward_ios_sharp, size: 15,color: Colors.white,),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const Divider(color: Colors.grey,thickness: 0.3),
-                                Text('Job Types',style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500
-                                ),),
-                                SizedBox(height: 20.h,),
-                                Wrap(
-                                  children: [
-                                    Chip(
-                                      padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 15.h),
-                                      color: const MaterialStatePropertyAll(Color(0xff5800FF)),
-                                      side: BorderSide.none,
-                                      elevation: 0,
-                                      label: Text(
-                                        'Full Time',
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                        ),
-                                      ),
-                                      backgroundColor: const Color(0xff282837),
-                                    ),
-                                    SizedBox(width: 20.w,),
-                                    Chip(
-                                      padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 15.h),
-                                      elevation: 0,
-                                      color: const MaterialStatePropertyAll(Color(0xff1D1D2F)),
-                                      side: BorderSide.none,
-                                      label: Text(
-                                        'Part Time',
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                        ),
-                                      ),
-                                      backgroundColor: const Color(0xff282837),
-                                    ),
-                                    const Divider(color: Colors.grey,thickness: 0.3),
-                                  ],
-                                )
-                              ],
-                            ),
-                          );
-                        });
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SearchScreen()));
                   },
-                  icon: const Icon(Icons.filter_list,color: Colors.white,),
-                ),
-                IconButton(
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const SearchScreen()));
-                  },
-                  icon: const Icon(Icons.search,color: Colors.white,),
+                  icon: Icon(
+                    Icons.search,
+                    color:  Theme.of(context).colorScheme.outline,
+                  ),
                 )
               ],
+              bottom: PreferredSize(
+                preferredSize: const Size.square(40),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 40,
+                          width: 80,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: getPageIndex==0 ? Border.all(color:Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                getPageIndex = 0;
+                              });
+                            },
+                            style: const ButtonStyle(
+                              elevation: MaterialStatePropertyAll(0),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.transparent),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'All',
+                                style: getPageIndex==0 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: getPageIndex==1 ? Border.all(color: Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                getPageIndex = 1;
+                              });
+                              _showJobCategoryDialog();
+                            },
+                            style: const ButtonStyle(
+                              elevation: MaterialStatePropertyAll(0),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.transparent),
+                            ),
+                            child: Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "$selectedCategory  ",
+                                      style: getPageIndex==1 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                    ),
+                                    WidgetSpan(
+                                      child: Icon(
+                                          Icons.arrow_drop_down_sharp,
+                                          size: 20,
+                                          color:  getPageIndex==1 ? Theme.of(context).colorScheme.outline :Colors.grey
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: getPageIndex==2 ? Border.all(color: Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                getPageIndex = 2;
+                              });
+                              _showJobTypeDialog();
+                            },
+                            style: const ButtonStyle(
+                              elevation: MaterialStatePropertyAll(0),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.transparent),
+                            ),
+                            child: Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "$selectedType  ",
+                                      style:  getPageIndex==2 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                    ),
+                                    WidgetSpan(
+                                      child: Icon(
+                                          Icons.arrow_drop_down_sharp,
+                                          size: 20,
+                                          color:  getPageIndex==2 ? Theme.of(context).colorScheme.outline :Colors.grey
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              border: getPageIndex==3 ? Border.all(color:  Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                getPageIndex = 3;
+                              });
+                              _showJobLocationDialog();
+                            },
+                            style: const ButtonStyle(
+                              elevation: MaterialStatePropertyAll(0),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Colors.transparent),
+                            ),
+                            child: Center(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "$searchQuery  ",
+                                      style: getPageIndex==3 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                    ),
+                                    WidgetSpan(
+                                      child: Icon(
+                                          Icons.arrow_drop_down_sharp,
+                                          size: 20,
+                                          color: getPageIndex==3 ? Theme.of(context).colorScheme.outline :Colors.grey
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
-          body:StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('Jobs')
-                .snapshots(),
-            builder: (context, AsyncSnapshot snapshot){
-              if(snapshot.connectionState==ConnectionState.waiting){
+          body: StreamBuilder(
+            stream: getPageIndex==3 ? FirebaseFirestore.instance.collection('Jobs').where('JobLocation',isGreaterThanOrEqualTo: searchQuery.toLowerCase().toUpperCase())
+                .snapshots() :
+            getPageIndex==1 ? FirebaseFirestore.instance.collection('Jobs').where('JobCategory',isEqualTo: selectedCategory).snapshots() :
+            getPageIndex==2 ? FirebaseFirestore.instance.collection('Jobs').where('JobType',isEqualTo: selectedType).snapshots() :
+            FirebaseFirestore.instance.collection('Jobs').snapshots(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return ListView.separated(
                   itemCount: 7,
                   itemBuilder: (context, index) => const ShimmerJobCard(),
-                  separatorBuilder: (context, index) => SizedBox(height: 10.h,),
+                  separatorBuilder: (context, index) => SizedBox(
+                    height: 10.h,
+                  ),
                 );
-              }
-              else if(snapshot.connectionState==ConnectionState.active){
-                if(snapshot.data?.docs.isNotEmpty ==true){
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.data?.docs.isNotEmpty == true) {
                   return RefreshIndicator(
-                    backgroundColor: const Color(0xff1D1D2F),
-                    color: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSecondary,
                     onRefresh: () => refreshData(),
-                    child: ListView.separated(
-                      itemCount: snapshot.data.docs.length,
-                      itemBuilder: (context, index) {
-                        return ElevatedButton(
-                          onPressed: (){
-                            String id=snapshot.data!.docs[index]['id'];
-                            Navigator.push(context,
-                                PageTransition(child:JobDetailScreen(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data.docs.length>5 ? 5 :snapshot.data.docs.length,
+                      itemBuilder: (context,index){
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 107.h,
+                          child: Card(
+                            color:Theme.of(context).colorScheme.onPrimaryContainer,
+                            child: InkWell(
+                              splashFactory: InkRipple.splashFactory,
+                              // splashColor: Color(0xff5800FF),
+                              overlayColor: const MaterialStatePropertyAll(Color(
+                                  0x4d5800ff)),
+                              onTap: (){
+                                String id=snapshot.data!.docs[index]['id'];
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
                                   id: id,
                                   uid: snapshot.data.docs[index]['uid'],
                                   ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
@@ -204,80 +441,48 @@ class _JobPageState extends State<JobPage> {
                                   jobTitle: snapshot.data.docs[index]['JobTitle'],
                                   postDate: snapshot.data.docs[index]['PostedAt'],
                                   jobSalary: snapshot.data.docs[index]['JobSalary'],
-                                ),
-                                    type: PageTransitionType.rightToLeft));
-                          },
-                          style: const ButtonStyle(
-                              splashFactory: InkRipple.splashFactory,
-                              // splashColor: Color(0xff5800FF),
-                              overlayColor: MaterialStatePropertyAll(Color(
-                                  0x4d5800ff)),
-                              padding: MaterialStatePropertyAll(
-                                  EdgeInsets.zero),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Color(0xff282837)),
-                              shape: MaterialStatePropertyAll(
-                                  ContinuousRectangleBorder())
-                          ),
-                          child:Padding(
-                            padding: EdgeInsets.only(bottom: 10.h),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 107.h,
+                                )));
+                              },
                               child: Column(
                                 children: [
                                   ListTile(
                                     contentPadding: EdgeInsets.only(left: 15.w),
-                                    leading:CircleAvatar(
+                                    leading: CircleAvatar(
                                         radius: 22.r,
                                         child: ClipRRect(
                                             borderRadius: BorderRadius.circular(22.r),
                                             child:snapshot.data.docs[index]['UserImage']=="" ?
-                                            const Icon(Icons.error,size:25,color:Colors.red,) :
+                                            const Icon(Icons.person,size:25,color:Colors.grey,) :
                                             Image.network(snapshot.data.docs[index]['UserImage']))),
                                     title: Text(
-                                      '${snapshot.data.docs[index]['JobTitle']}',
-                                      style: GoogleFonts.dmSans(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600),
-                                    ),
+                                        '${snapshot.data.docs[index]['JobTitle']}',
+                                        style: Theme.of(context).textTheme.headlineMedium),
                                     subtitle: Text(
                                       '${snapshot.data.docs[index]['UserName']} - ${snapshot.data.docs[index]['PostedAt']}',
-                                      style: GoogleFonts.dmSans(
-                                        color: const Color(0xffF6F8FE),
-                                        fontSize: 12.sp,
-                                      ),
+                                      style: Theme.of(context).textTheme.labelLarge,
                                     ),
-                                    trailing:Padding(
-                                      padding:  EdgeInsets.only(right: 10.w),
-                                      child: const Icon(Icons.arrow_forward_ios_sharp,
-                                        color: Colors.white,),
+                                    trailing: Padding(
+                                      padding: EdgeInsets.only(right: 10.w),
+                                      child: Icon(
+                                        Icons.arrow_forward_ios_sharp,
+                                        color: Theme.of(context).colorScheme.outline,
+                                      ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15.w),
+                                    padding: EdgeInsets.symmetric(horizontal: 15.w),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.location_on_outlined,
-                                          color: Color(0xffd1d1d1), size: 18,),
+                                        Icon(Icons.location_on_outlined,color:Theme.of(context).colorScheme.outline,size: 18,),
                                         Text(
                                           '${snapshot.data.docs[index]['JobLocation']}',
-                                          style: GoogleFonts.dmSans(
-                                            color: const Color(0xffd1d1d1),
-                                            fontSize: 14.sp,
-                                          ),
+                                          style: Theme.of(context).textTheme.headlineSmall,
                                         ),
                                         SizedBox(width: 10.w,),
-                                        const Icon(Icons.currency_exchange_outlined,
-                                          color: Color(0xffd1d1d1), size: 15,),
+                                        Icon(Icons.currency_exchange_outlined,color: Theme.of(context).colorScheme.outline,size: 15,),
                                         Text(
-                                          '${snapshot.data.docs[index]['JobSalary']}',
-                                          style: GoogleFonts.dmSans(
-                                            color: const Color(0xffd1d1d1),
-                                            fontSize: 14.sp,
-                                          ),
+                                          ' ${snapshot.data.docs[index]['JobSalary']}',
+                                          style: Theme.of(context).textTheme.headlineSmall,
                                         ),
                                       ],
                                     ),
@@ -286,27 +491,25 @@ class _JobPageState extends State<JobPage> {
                               ),
                             ),
                           ),
-
                         );
-                      },
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 10.h,);
                       },
                     ),
                   );
-                }
-                else{
+                } else {
                   return Center(
-                    child: Text('There is no Job!',style: GoogleFonts.dmSans(
-                        color: Colors.white,fontSize: 16.sp
-                    ),),
+                    child: Text(
+                        'There is no Job!',
+                        style: Theme.of(context).textTheme.labelMedium
+                    ),
                   );
                 }
               }
               return Center(
-                child: Text('Something went wrong',style: GoogleFonts.dmSans(
-                    color: Colors.white,fontSize: 16.sp
-                ),),
+                child: Text(
+                    'Something went wrong',
+                    style:
+                    Theme.of(context).textTheme.labelMedium
+                ),
               );
             },
           ),
@@ -315,19 +518,3 @@ class _JobPageState extends State<JobPage> {
     );
   }
 }
-
-// Container(
-// color: Color(0xff1D1D2F),
-// child: ListTile(
-// leading: Text('102,548 Available',style: GoogleFonts.dmSans(
-// color: Colors.white,
-// fontSize: 16.sp
-// ),),
-// trailing: IconButton(
-// onPressed: (){},
-// icon: Icon(Icons.filter_list_outlined,color: Colors.white,),
-// ),
-// ),
-// ),
-// SizedBox(height: 10.h,),
-

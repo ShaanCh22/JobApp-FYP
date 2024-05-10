@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -49,7 +49,6 @@ class JobDetailScreen extends StatefulWidget {
 class _JobDetailScreenState extends State<JobDetailScreen> {
   String dt = DateFormat('MMM d, y').format(DateTime.now());
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin=FlutterLocalNotificationsPlugin();
   bool isFav=false;
   String? utoken = '';
   String? cuser = '';
@@ -118,7 +117,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': 'key=AAAAoweGA3E:APA91bH7dhtvuJ79BqQyC0fjCshsF8O673ZuVQleiRXRztXyEZ4UD0_v7Tp8KHg7-XCJOgYRsnCUgS_TUJWZ_FbAMqnjJekeTy1xzHURXXeUL1WQty5hnmgR4YyNOlfuLUMZKhzk6CgY',
+          'Authorization': 'key=AAAAp9E4QOU:APA91bFI1JRCbbkbF3I3waysKwzZP7kPV2h0zz5XSxEes3VnWCL5zeICMpfWbK8bLbCGu7ONEJobFtg7UMu9-y78kTfcomEZOZ6kT6tYGLorHPvxeMLpF6mQont5t2FmIPbAoQiLHqpO',
         },
         body: jsonEncode(
             <String, dynamic>{
@@ -142,23 +141,23 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       FirebaseFirestore.instance.collection('Users').doc(widget.uid).collection('Notification').doc(id).set({
         'title' :title.toString(),
         'id' : id,
+        'uid' : uid,
         'body' :body.toString(),
         'UserImage' : userImage,
         "Arrived": dt,
       });
     }catch(e){
-      SnackBar(
-        content: Text(e.toString()),
-      );
+      SnackBar(content: Text(e.toString()),);
     }
   }
   initInfo(){
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin=FlutterLocalNotificationsPlugin();
     var androidInitialize = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationsSettings = InitializationSettings(android: androidInitialize);
-    _flutterLocalNotificationsPlugin.initialize(initializationsSettings,onSelectNotification: (String? payload)async {
+    flutterLocalNotificationsPlugin.initialize(initializationsSettings,onSelectNotification: (String? payload)async {
       try{
         if(payload !=null && payload.isNotEmpty){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>OtherViewProfileScreen(id: ruid!)));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>OthersViewProfileScreen(id: ruid!)));
           // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
           //   return OtherViewProfileScreen(id: widget.uid,);
           // }));
@@ -166,29 +165,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
         }
       }catch(e){
-        SnackBar(
-          content: Text(e.toString()),
-        );
+        SnackBar(content: Text(e.toString()),);
       }
       return;
     },
     );
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async{
-      BigTextStyleInformation bigTextStyleInformation = BigTextStyleInformation(
-          message.notification!.body.toString(), htmlFormatBigText: true,
-          contentTitle: message.notification!.title.toString(),htmlFormatContentTitle: true
-      );
-      AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'fyp', 'fyp', importance: Importance.max,
-        styleInformation: bigTextStyleInformation,priority: Priority.max,playSound: false,
-        // sound: RowResourceAndroidNotificationSound('notification'),
-      );
-      NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-      await _flutterLocalNotificationsPlugin.show(0, message.notification!.title,
-          message.notification!.body, platformChannelSpecifics,
-          payload: message.data['title']);
-    });
   }
 
   @override
@@ -198,34 +179,23 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     initInfo();
     checkIsFav(widget.id);
   }
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _getExpData();
-  // }
-  // Future _getExpData() async{
-  //   DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Jobs').doc(widget.id).get();
-  //   setState(() {
-  //     _titletext.text=ref.get('Title');
-  //     _companytext.text=ref.get('Company Name');
-  //     _locationtext.text=ref.get('Location');
-  //     _startDateController.text=ref.get('Start Date');
-  //     _endDateController.text=ref.get('End Date');
-  //     _jobdescText.text=ref.get('Job Description');
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness
+        ),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
         centerTitle: true,
         title: Text(
-          'Detail Jobs',
-          style:
-          GoogleFonts.dmSans(fontSize: 18.sp, fontWeight: FontWeight.w500),
+            'Detail Jobs',
+            style:Theme.of(context).textTheme.labelMedium
         ),
         actions: [
           Padding(
@@ -238,7 +208,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               icon: Icon(
                 isFav ? Icons.bookmark :
                 Icons.bookmark_border_outlined,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.outline,
               ),
               iconSize: 24,
             ),
@@ -250,14 +220,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           child: Column(
             children: [
               Container(
-                color: const Color(0xff282837),
+                color:Theme.of(context).colorScheme.tertiaryContainer,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${widget.jobTitle}',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.outline,
                             fontSize: 24.sp,
                             fontFamily: 'DMSans',
                             fontWeight: FontWeight.bold)),
@@ -275,18 +245,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                               )
                                   : Image.network(widget.userImage!))),
                       title: Text(
-                        '${widget.userName}',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500),
+                          '${widget.userName}',
+                          style: Theme.of(context).textTheme.headlineMedium
                       ),
                       subtitle: Text(
-                        '${widget.jobLocation}',
-                        style: GoogleFonts.dmSans(
-                          color: const Color(0xffF6F8FE),
-                          fontSize: 14.sp,
-                        ),
+                          '${widget.jobLocation}',
+                          style: Theme.of(context).textTheme.titleMedium
                       ),
                     ),
                     SizedBox(
@@ -302,11 +266,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           size: 20,
                         ),
                         Text(
-                          '  ${widget.jobExperience} Years Experience',
-                          style: GoogleFonts.dmSans(
-                            color: const Color(0xffF6F8FE),
-                            fontSize: 16.sp,
-                          ),
+                            '  ${widget.jobExperience} Years Experience',
+                            style: Theme.of(context).textTheme.titleSmall
                         ),
                       ],
                     ),
@@ -323,11 +284,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           size: 20,
                         ),
                         Text(
-                          '  ${widget.jobType}',
-                          style: GoogleFonts.dmSans(
-                            color: const Color(0xffF6F8FE),
-                            fontSize: 16.sp,
-                          ),
+                            '  ${widget.jobType}',
+                            style: Theme.of(context).textTheme.titleSmall
                         ),
                       ],
                     ),
@@ -344,11 +302,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           size: 20,
                         ),
                         Text(
-                          '  ${widget.jobSalary}',
-                          style: GoogleFonts.dmSans(
-                            color: const Color(0xffF6F8FE),
-                            fontSize: 16.sp,
-                          ),
+                            '  ${widget.jobSalary}',
+                            style: Theme.of(context).textTheme.titleSmall
                         ),
                       ],
                     ),
@@ -387,20 +342,23 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         SizedBox(
                           height: 52.h,
                           width: 70.w,
-                          child: ElevatedButton(
+                          child: OutlinedButton(
                               style: ElevatedButton.styleFrom(
+                                  elevation: 0,
                                   splashFactory: InkRipple.splashFactory,
-                                  backgroundColor: const Color(0xff1D1D2F),
+                                  backgroundColor: Colors.transparent,
                                   foregroundColor: const Color(0xff5800FF),
+                                  side: const BorderSide(
+                                      color: Color(0xff5800FF), width: 1),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(5.r))),
+                                      borderRadius: BorderRadius.circular(8.r))),
                               onPressed: () {},
-                              child: const Icon(
+                              child:Icon(
                                 Icons.share_outlined,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.outline,
                                 size: 24,
-                              )),
+                              )
+                          ),
                         )
                       ],
                     )
@@ -411,26 +369,25 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 height: 20.h,
               ),
               Container(
-                color: const Color(0xff282837),
+                color:Theme.of(context).colorScheme.tertiaryContainer,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Job Responsibilities: ',
-                        style: TextStyle(
-                            color: Colors.white,
+                        style: GoogleFonts.dmSans(
+                            color:Theme.of(context).colorScheme.outline,
                             fontSize: 18.sp,
-                            fontFamily: 'DMSans',
                             fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 16.h,
                     ),
                     Text(
                         '${widget.jobDescription}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontFamily: 'DMSans',)),
+                        style: GoogleFonts.dmSans(
+                          color: Theme.of(context).colorScheme.outline,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16.sp, )),
                   ],
                 ),
               ),
@@ -438,26 +395,25 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 height: 20.h,
               ),
               Container(
-                color: const Color(0xff282837),
+                color:Theme.of(context).colorScheme.tertiaryContainer,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Recruitment: ',
-                        style: TextStyle(
-                            color: Colors.white,
+                        style: GoogleFonts.dmSans(
+                            color:Theme.of(context).colorScheme.outline,
                             fontSize: 18.sp,
-                            fontFamily: 'DMSans',
                             fontWeight: FontWeight.bold)),
                     SizedBox(
                       height: 16.h,
                     ),
                     Text(
                         'Create delightful user interface based on our design system. Create interface elements such as menus, tabs, widgets, etc. Collaborate closely with UX Researchers, Product Manager / Product Owner, & Software Engineer. Help build design system with other designers. Build UI Component on Design System',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontFamily: 'DMSans',)),
+                        style: GoogleFonts.dmSans(
+                          color:Theme.of(context).colorScheme.outline,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16.sp,)),
                   ],
                 ),
               ),
