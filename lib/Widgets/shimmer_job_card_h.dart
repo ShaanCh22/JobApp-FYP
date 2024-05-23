@@ -1,6 +1,5 @@
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShimmerJobCardH extends StatelessWidget {
   const ShimmerJobCardH({
@@ -10,94 +9,89 @@ class ShimmerJobCardH extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
-          width: 202.w,
-          height: 240.h,
+          width: 202,
+          height: 240,
           decoration: BoxDecoration(
-              color: const Color(0xff282837),
-              borderRadius: BorderRadius.circular(8.r)
-          ),
+              color: Theme.of(context).colorScheme.tertiaryContainer,
+              borderRadius: BorderRadius.circular(8)),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: FadeShimmer.round(
-                    size: 40.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
-                  ),
-                  trailing: const FadeShimmer(
-                    width: 20,
-                    height: 20,
-                    radius: 8,
-                    highlightColor: Color(0xff798EA5),
-                    baseColor: Color(0x27878787),
+                    size: 40,
+                    highlightColor: const Color(0xff798ea5c0),
+                    baseColor: Theme.of(context).colorScheme.tertiaryContainer,
                   ),
                 ),
-                SizedBox(height: 10.h,),
-                FadeShimmer(
-                  height: 10.h,
-                  width: 100.w,
-                  radius: 10.r,
-                  highlightColor: const Color(0xff798EA5),
-                  baseColor: const Color(0x27878787),
-                ),
-                SizedBox(
-                  height: 15.h,
+                const SizedBox(
+                  height: 10,
                 ),
                 FadeShimmer(
-                  height: 10.h,
-                  width: 150.w,
-                  radius: 10.r,
-                  highlightColor: const Color(0xff798EA5),
-                  baseColor: const Color(0x27878787),
+                  height: 10,
+                  width: 100,
+                  radius: 10,
+                  highlightColor: const Color(0xff798ea5c0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
                 ),
-                SizedBox(
-                  height: 15.h,
-                ),
-                FadeShimmer(
-                  height: 10.h,
-                  width: 50.w,
-                  radius: 10.r,
-                  highlightColor: const Color(0xff798EA5),
-                  baseColor: const Color(0x27878787),
-                ),
-                SizedBox(
-                  height: 15.h,
+                const SizedBox(
+                  height: 15,
                 ),
                 FadeShimmer(
-                  height: 28.h,
-                  width: 70.w,
-                  radius: 8.r,
-                  highlightColor: const Color(0xff798EA5),
-                  baseColor: const Color(0x27878787),
+                  height: 10,
+                  width: 150,
+                  radius: 10,
+                  highlightColor: const Color(0xff798ea5c0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
                 ),
-                SizedBox(height: 10.h,),
+                const SizedBox(
+                  height: 15,
+                ),
+                FadeShimmer(
+                  height: 10,
+                  width: 50,
+                  radius: 10,
+                  highlightColor: const Color(0xff798ea5c0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                FadeShimmer(
+                  height: 28,
+                  width: 70,
+                  radius: 8,
+                  highlightColor: const Color(0xff798ea5c0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: FadeShimmer(
-                    height: 10.h,
-                    width: 60.w,
-                    radius: 10.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
+                    height: 10,
+                    width: 60,
+                    radius: 10,
+                    highlightColor: const Color(0xff798ea5c0),
+                    baseColor: Theme.of(context).colorScheme.tertiaryContainer,
                   ),
                   trailing: FadeShimmer(
-                    width: 70.w,
-                    height: 30.h,
+                    width: 70,
+                    height: 30,
                     radius: 12,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
+                    highlightColor: const Color(0xff798ea5c0),
+                    baseColor: Theme.of(context).colorScheme.tertiaryContainer,
                   ),
                 ),
               ],
             ),
-          )
-      ),
+          )),
     );
   }
 }

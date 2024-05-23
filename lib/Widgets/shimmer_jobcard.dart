@@ -1,6 +1,5 @@
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShimmerJobCard extends StatelessWidget {
   const ShimmerJobCard({
@@ -9,71 +8,77 @@ class ShimmerJobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: double.infinity,
-        height: 107.h,
-        color: const Color(0xff282837),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              leading: FadeShimmer.round(
-                size: 50.r,
-                highlightColor: const Color(0xff798EA5),
-                baseColor: const Color(0x27878787),
+        height: 107,
+        child: Card(
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                leading: FadeShimmer.round(
+                  size: 50,
+                  highlightColor: const Color(0xff798EA5C0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
+                title: FadeShimmer(
+                  height: 15,
+                  width: 100,
+                  radius: 10,
+                  highlightColor: const Color(0xff798EA5C0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
+                subtitle: FadeShimmer(
+                  height: 10,
+                  width: 100,
+                  radius: 10,
+                  highlightColor: const Color(0xff798EA5C0),
+                  baseColor: Theme.of(context).colorScheme.tertiaryContainer,
+                ),
               ),
-              title: FadeShimmer(
-                height: 15.h,
-                width: 100.w,
-                radius: 10.r,
-                highlightColor: const Color(0xff798EA5),
-                baseColor: const Color(0x27878787),
-              ),
-              subtitle: FadeShimmer(
-                height: 10.h,
-                width: 100.w,
-                radius: 10.r,
-                highlightColor: const Color(0xff798EA5),
-                baseColor: const Color(0x27878787),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 15.w),
-              child: Wrap(
-                runSpacing: 10.h,
-                spacing: 10.w,
-                children: [
-                  FadeShimmer.round(
-                    size:10.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
-                  ),
-                  FadeShimmer(
-                    height: 10.h,
-                    width: 120.w,
-                    radius: 10.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
-                  ),
-                  const SizedBox(width: 10,),
-                  FadeShimmer.round(
-                    size:10.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
-                  ),
-                  FadeShimmer(
-                    height: 10.h,
-                    width: 100.w,
-                    radius: 10.r,
-                    highlightColor: const Color(0xff798EA5),
-                    baseColor: const Color(0x27878787),
-                  ),
-                ],
-              ),
-            )
-          ],
-        )
-    );
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Wrap(
+                  runSpacing: 10,
+                  spacing: 10,
+                  children: [
+                    FadeShimmer.round(
+                      size: 10,
+                      highlightColor: const Color(0xff798EA5C0),
+                      baseColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                    ),
+                    FadeShimmer(
+                      height: 10,
+                      width: 120,
+                      radius: 10,
+                      highlightColor: const Color(0xff798EA5C0),
+                      baseColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    FadeShimmer.round(
+                      size: 10,
+                      highlightColor: const Color(0xff798EA5C0),
+                      baseColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                    ),
+                    FadeShimmer(
+                      height: 10,
+                      width: 100,
+                      radius: 10,
+                      highlightColor: const Color(0xff798EA5C0),
+                      baseColor:
+                          Theme.of(context).colorScheme.tertiaryContainer,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }

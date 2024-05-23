@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../job/job_detail_page.dart';
 
 class FavoritPage extends StatefulWidget {
@@ -91,138 +89,168 @@ class _FavoritPageState extends State<FavoritPage> {
             SliverAppBar(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: Theme.of(context).colorScheme.onSurface,
-                  statusBarIconBrightness: Theme.of(context).brightness
-              ),
+                  statusBarIconBrightness: Theme.of(context).brightness),
               backgroundColor: Colors.transparent,
               scrolledUnderElevation: 0,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
               elevation: 0,
               floating: true,
               centerTitle: true,
-              title: Text(
-                  'Favorit Jobs',
-                  style: Theme.of(context).textTheme.displayMedium
-              ),
+              title: Text('Favorit Jobs',
+                  style: Theme.of(context).textTheme.displayMedium),
             ),
           ],
           body: favItemList.isEmpty
               ? RefreshIndicator(
-            backgroundColor: Theme.of(context).colorScheme.onSurface,
-            color: Theme.of(context).colorScheme.onSecondary,
-            onRefresh: () => refreshData(),
-            child: SingleChildScrollView(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 350,horizontal: 50),
-                  child: Text(
-                      'There is no Favorite job',
-                      style: Theme.of(context).textTheme.labelMedium
-                  ),
-                ),
-              ),
-            ),
-          )
-              : RefreshIndicator(
-            backgroundColor: Theme.of(context).colorScheme.onSurface,
-            color: Theme.of(context).colorScheme.onSecondary,
-            onRefresh: () => refreshData(),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: favItemList.length,
-              itemBuilder: (context,index){
-                return SizedBox(
-                  width: double.infinity,
-                  height: 107.h,
-                  child: Card(
-                    color:Theme.of(context).colorScheme.onPrimaryContainer,
-                    child: InkWell(
-                      splashFactory: InkRipple.splashFactory,
-                      // splashColor: Color(0xff5800FF),
-                      overlayColor: const MaterialStatePropertyAll(Color(
-                          0x4d5800ff)),
-                      onTap: (){
-                        String id = favItemList[index]['id'];
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
-                          id: id,
-                          uid: favItemList[index]['uid'],
-                          ownerEmail: favItemList[index]
-                          ['OwnerEmail'],
-                          jobDescription: favItemList[index]
-                          ['JobDescription'],
-                          jobExperience: favItemList[index]
-                          ['JobExperience'],
-                          jobType: favItemList[index]['JobType'],
-                          jobLocation: favItemList[index]
-                          ['JobLocation'],
-                          userImage: favItemList[index]['UserImage'],
-                          userName: favItemList[index]['UserName'],
-                          jobTitle: favItemList[index]['JobTitle'],
-                          postDate: favItemList[index]['PostedAt'],
-                          jobSalary: favItemList[index]['JobSalary'],
-                        )));
-                      },
-                      child: Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.only(left: 15.w),
-                            leading: CircleAvatar(
-                                radius: 22.r,
-                                child: ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(22.r),
-                                    child: favItemList[index]
-                                    ['UserImage'] ==
-                                        ""
-                                        ? const Icon(
-                                      Icons.error,
-                                      size: 25,
-                                      color: Colors.red,
-                                    )
-                                        : Image.network(favItemList[index]
-                                    ['UserImage']))),
-                            title: Text(
-                                '${favItemList[index]['JobTitle']}',
-                                style: Theme.of(context).textTheme.headlineMedium),
-                            subtitle: Text(
-                              '${favItemList[index]['UserName']} - ${favItemList[index]['PostedAt']}',
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            trailing: Padding(
-                              padding: EdgeInsets.only(right: 10.w),
-                              child: Icon(
-                                Icons.arrow_forward_ios_sharp,
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            child: Row(
-                              children: [
-                                Icon(Icons.location_on_outlined,color:Theme.of(context).colorScheme.outline,size: 18,),
-                                Text(
-                                  '${favItemList[index]['JobLocation']}',
-                                  style: Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                SizedBox(width: 10.w,),
-                                Icon(Icons.currency_exchange_outlined,color: Theme.of(context).colorScheme.outline,size: 15,),
-                                Text(
-                                  ' ${favItemList[index]['JobSalary']}',
-                                  style: Theme.of(context).textTheme.headlineSmall,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  onRefresh: () => refreshData(),
+                  child: SingleChildScrollView(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 350, horizontal: 50),
+                        child: Text('There is no Favorite job',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
+                )
+              : RefreshIndicator(
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  onRefresh: () => refreshData(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: favItemList.length,
+                    itemBuilder: (context, index) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 107,
+                        child: Card(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          child: InkWell(
+                            splashFactory: InkRipple.splashFactory,
+                            // splashColor: Color(0xff5800FF),
+                            overlayColor: const MaterialStatePropertyAll(
+                                Color(0x4d5800ff)),
+                            onTap: () {
+                              String id = favItemList[index]['id'];
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => JobDetailScreen(
+                                            id: id,
+                                            uid: favItemList[index]['uid'],
+                                            ownerEmail: favItemList[index]
+                                                ['OwnerEmail'],
+                                            jobDescription: favItemList[index]
+                                                ['JobDescription'],
+                                            jobExperience: favItemList[index]
+                                                ['JobExperience'],
+                                            jobType: favItemList[index]
+                                                ['JobType'],
+                                            jobLocation: favItemList[index]
+                                                ['JobLocation'],
+                                            userImage: favItemList[index]
+                                                ['UserImage'],
+                                            userName: favItemList[index]
+                                                ['UserName'],
+                                            jobTitle: favItemList[index]
+                                                ['JobTitle'],
+                                            postDate: favItemList[index]
+                                                ['PostedAt'],
+                                            jobSalary: favItemList[index]
+                                                ['JobSalary'],
+                                          )));
+                            },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  contentPadding:
+                                      const EdgeInsets.only(left: 15),
+                                  leading: CircleAvatar(
+                                      radius: 22,
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(22),
+                                          child: favItemList[index]
+                                                      ['UserImage'] ==
+                                                  ""
+                                              ? const Icon(
+                                                  Icons.error,
+                                                  size: 25,
+                                                  color: Colors.red,
+                                                )
+                                              : Image.network(favItemList[index]
+                                                  ['UserImage']))),
+                                  title: Text(
+                                      '${favItemList[index]['JobTitle']}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium),
+                                  subtitle: Text(
+                                    '${favItemList[index]['UserName']} - ${favItemList[index]['PostedAt']}',
+                                    style:
+                                        Theme.of(context).textTheme.labelLarge,
+                                  ),
+                                  trailing: Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_sharp,
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                        size: 18,
+                                      ),
+                                      Text(
+                                        '${favItemList[index]['JobLocation']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Icon(
+                                        Icons.currency_exchange_outlined,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                        size: 15,
+                                      ),
+                                      Text(
+                                        ' ${favItemList[index]['JobSalary']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
         ),
       ),
     );

@@ -1,63 +1,54 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
+import '../presistent/prefrence.dart';
 
-import '../Services/global_methods.dart';
-
-class GenderScreen extends StatefulWidget {
-  const GenderScreen({super.key});
+class ThemeScreen extends StatefulWidget {
+  const ThemeScreen({super.key});
 
   @override
-  State<GenderScreen> createState() => _GenderScreenState();
+  State<ThemeScreen> createState() => _ThemeScreenState();
 }
 
-class _GenderScreenState extends State<GenderScreen> {
+class _ThemeScreenState extends State<ThemeScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  String? gender;
-  final User? _user = FirebaseAuth.instance.currentUser;
+  var pref = SharedPref();
+  String? theme;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getGenderData();
+    getValue();
   }
 
-  Future _getGenderData() async {
-    DocumentSnapshot ref =
-        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  void restartApp() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MyApp(
+                  theme: theme!,
+                )),
+        (route) => false);
+  }
+
+  getValue() async {
+    var re = await SharedPreferences.getInstance();
     setState(() {
-      gender = ref.get('Gender');
+      theme = re.getString('theme');
     });
-  }
-
-  Future _submitExpData() async {
-    final isValid = _addExpFormKey.currentState!.validate();
-    if (isValid) {
-      try {
-        final uid = _user!.uid;
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(uid)
-            .update({'Gender': gender});
-        const SnackBar(
-          content: Text('Changes saved'),
-        );
-      } catch (error) {
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) {
-        if (gender != null) {
-          _submitExpData();
-        }
+        // if(gender!=null){
+        //   _submitExpData();
+        // }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -69,7 +60,7 @@ class _GenderScreenState extends State<GenderScreen> {
           elevation: 0,
           centerTitle: true,
           title:
-              Text('Gender', style: Theme.of(context).textTheme.displayMedium),
+              Text('$theme', style: Theme.of(context).textTheme.displayMedium),
         ),
         body: SingleChildScrollView(
           child: SafeArea(
@@ -87,18 +78,20 @@ class _GenderScreenState extends State<GenderScreen> {
                         RadioListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              'Male',
+                              'Light',
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                             activeColor: const Color(0xff5800FF),
                             fillColor: const MaterialStatePropertyAll(
                                 Color(0xff5800FF)),
-                            value: 'Male',
-                            groupValue: gender,
+                            value: 'Light',
+                            groupValue: theme,
                             onChanged: (value) {
                               setState(() {
-                                gender = value.toString();
+                                pref.setData(value);
+                                theme = value.toString();
                               });
+                              restartApp();
                             }),
                         RadioListTile(
                             activeColor: const Color(0xff5800FF),
@@ -106,15 +99,17 @@ class _GenderScreenState extends State<GenderScreen> {
                                 Color(0xff5800FF)),
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              'Female',
+                              'Dark',
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
-                            value: 'Female',
-                            groupValue: gender,
+                            value: 'Dark',
+                            groupValue: theme,
                             onChanged: (value) {
                               setState(() {
-                                gender = value.toString();
+                                pref.setData(value);
+                                theme = value.toString();
                               });
+                              restartApp();
                             }),
                         RadioListTile(
                             activeColor: const Color(0xff5800FF),
@@ -122,15 +117,17 @@ class _GenderScreenState extends State<GenderScreen> {
                                 Color(0xff5800FF)),
                             contentPadding: EdgeInsets.zero,
                             title: Text(
-                              'Others',
+                              'System Default',
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
-                            value: 'Others',
-                            groupValue: gender,
+                            value: 'System Default',
+                            groupValue: theme,
                             onChanged: (value) {
                               setState(() {
-                                gender = value.toString();
+                                pref.setData(value);
+                                theme = value.toString();
                               });
+                              restartApp();
                             }),
                       ],
                     ),

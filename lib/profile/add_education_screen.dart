@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../Services/global_methods.dart';
-
 
 class AddEducationScreen extends StatefulWidget {
   const AddEducationScreen({super.key});
@@ -18,47 +16,57 @@ class AddEducationScreen extends StatefulWidget {
 
 class _AddEducationScreenState extends State<AddEducationScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
-  final TextEditingController _schoolTextController = TextEditingController(text: '');
-  final TextEditingController _degreeTextController = TextEditingController(text: '');
-  final TextEditingController _fieldTextController = TextEditingController(text: '');
-  final TextEditingController _startDateController = TextEditingController(text: '');
-  final TextEditingController _endDateController = TextEditingController(text: '');
-  final TextEditingController _descriptionTextController = TextEditingController(text: '');
+  final TextEditingController _schoolTextController =
+      TextEditingController(text: '');
+  final TextEditingController _degreeTextController =
+      TextEditingController(text: '');
+  final TextEditingController _fieldTextController =
+      TextEditingController(text: '');
+  final TextEditingController _startDateController =
+      TextEditingController(text: '');
+  final TextEditingController _endDateController =
+      TextEditingController(text: '');
+  final TextEditingController _descriptionTextController =
+      TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user=FirebaseAuth.instance.currentUser;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
-  Future _submitEduData() async{
+  Future _submitEduData() async {
     final isValid = _addExpFormKey.currentState!.validate();
-    if(isValid) {
+    if (isValid) {
       setState(() {
-        _isLoading=true;
+        _isLoading = true;
       });
-      try{
-        String id=DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Education').doc(id).set({
-          'id':id,
-          'School':_schoolTextController.text,
-          'Degree':_degreeTextController.text,
-          'Field of Study':_fieldTextController.text,
-          'Start Date':_startDateController.text,
-          'End Date':_endDateController.text,
-          'Description':_descriptionTextController.text
+      try {
+        String id = DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance
+            .collection('Users')
+            .doc(_user?.uid)
+            .collection('Education')
+            .doc(id)
+            .set({
+          'id': id,
+          'School': _schoolTextController.text,
+          'Degree': _degreeTextController.text,
+          'Field of Study': _fieldTextController.text,
+          'Start Date': _startDateController.text,
+          'End Date': _endDateController.text,
+          'Description': _descriptionTextController.text
         });
         const SnackBar(
           content: Text('Education Added'),
         );
         Navigator.pop(context);
-      }catch(error){
+      } catch (error) {
         setState(() {
           _isLoading = false;
         });
         GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
-      Fluttertoast.showToast(
-          msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
     setState(() {
-      _isLoading=false;
+      _isLoading = false;
     });
   }
 
@@ -68,287 +76,337 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Theme.of(context).colorScheme.onSurface,
-            statusBarIconBrightness: Theme.of(context).brightness
-        ),
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
         centerTitle: true,
-        title: Text('Add Education',style:Theme.of(context).textTheme.labelMedium),
+        title: Text('Add Education',
+            style: Theme.of(context).textTheme.labelMedium),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w,right: 20.w,bottom: 25.h),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Form(
                   key: _addExpFormKey,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // School
-                      Text(
-                          'School',
-                          style: Theme.of(context).textTheme.labelSmall
-                      ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('School',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _schoolTextController,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'School is required!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Ex: Boston University',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                       //Degree
-                      SizedBox(height: 20.h,),
-                      Text(
-                          'Degree',
-                          style: Theme.of(context).textTheme.labelSmall
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Degree',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _degreeTextController,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Degree is required!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: "Ex: Bachelor's",
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Field of Study
-                      SizedBox(height: 20.h,),
-                      Text(
-                          'Field of Study',
-                          style: Theme.of(context).textTheme.labelSmall
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Field of Study',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _fieldTextController,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Field is required!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Ex: Computer Science',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Start & End Date
-                      SizedBox(height: 20.h,),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Wrap(
-                        spacing: 20.w,
-                        runSpacing: 20.h,
+                        spacing: 20,
+                        runSpacing: 20,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  'Start Date',
-                                  style: Theme.of(context).textTheme.labelSmall
+                              Text('Start Date',
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall),
+                              const SizedBox(
+                                height: 8,
                               ),
                               SizedBox(
-                                height: 8.h,
-                              ),
-                              SizedBox(width: 175.w,
+                                width: 175,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
-                                  style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 15.sp
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                   controller: _startDateController,
-                                  validator: (value){
-                                    if(value!.isEmpty){
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
                                       return 'Start date required!';
-                                    }
-                                    else{
+                                    } else {
                                       return null;
                                     }
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     isCollapsed: true,
                                     hintText: 'Select date',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    contentPadding: EdgeInsets.all(15),
+                                    hintStyle:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    contentPadding: const EdgeInsets.all(15),
                                     filled: true,
-                                    fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
-                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiaryContainer,
+                                    suffixIcon: const Icon(
+                                      Icons.date_range_outlined,
+                                      color: Colors.grey,
                                     ),
-                                    focusedBorder:OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff5800FF),)
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
-                                    ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedErrorBorder:
+                                        const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff5800FF),
+                                    )),
+                                    errorBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
                                   ),
-                                  onTap: ()async{
-                                    DateTime? pickedDate=await showDatePicker(
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
                                         context: context,
+                                        builder: (context, child) => Theme(
+                                              data: ThemeData().copyWith(
+                                                  colorScheme:
+                                                      ColorScheme.light(
+                                                          background:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background)),
+                                              child: child!,
+                                            ),
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if(pickedDate!=null){
+                                    if (pickedDate != null) {
                                       setState(() {
-                                        _startDateController.text=DateFormat('y').format(pickedDate);
+                                        _startDateController.text =
+                                            DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),)
+                                ),
+                              )
                             ],
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  'End Date',
-                                  style: Theme.of(context).textTheme.labelSmall
+                              Text('End Date',
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall),
+                              const SizedBox(
+                                height: 8,
                               ),
                               SizedBox(
-                                height: 8.h,
-                              ),
-                              SizedBox(width: 175.w,
+                                width: 175,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
-                                  style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 15.sp
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                   controller: _endDateController,
-                                  validator: (value){
-                                    if(value!.isEmpty){
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
                                       return 'End date required!';
-                                    }
-                                    else{
+                                    } else {
                                       return null;
                                     }
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     isCollapsed: true,
                                     hintText: 'Select date',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    contentPadding: EdgeInsets.all(15),
+                                    hintStyle:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    contentPadding: const EdgeInsets.all(15),
                                     filled: true,
-                                    fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
-                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiaryContainer,
+                                    suffixIcon: const Icon(
+                                      Icons.date_range_outlined,
+                                      color: Colors.grey,
                                     ),
-                                    focusedBorder:OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff5800FF),)
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
-                                    ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedErrorBorder:
+                                        const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff5800FF),
+                                    )),
+                                    errorBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
                                   ),
-                                  onTap: ()async{
-                                    DateTime? pickedDate=await showDatePicker(
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                        builder: (context, child) => Theme(
+                                              data: ThemeData().copyWith(
+                                                  colorScheme:
+                                                      ColorScheme.light(
+                                                          background:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background)),
+                                              child: child!,
+                                            ),
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if(pickedDate!=null){
+                                    if (pickedDate != null) {
                                       setState(() {
-                                        _endDateController.text=DateFormat('y').format(pickedDate);
+                                        _endDateController.text =
+                                            DateFormat('y').format(pickedDate);
                                       });
                                     }
                                   },
-                                ),)
+                                ),
+                              )
                             ],
                           ),
                         ],
                       ),
                       //Description
-                      SizedBox(height: 20.h,),
-                      Text(
-                          'Description',
-                          style: Theme.of(context).textTheme.labelSmall
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Description',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         maxLength: 150,
@@ -356,62 +414,68 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _descriptionTextController,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Please enter description!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'description',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                const SizedBox(
+                  height: 20,
+                ),
                 SizedBox(
                   width: double.infinity,
-                  height: 53.h,
+                  height: 53,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff5800FF),
                           foregroundColor: Colors.black,
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: (){
+                              borderRadius: BorderRadius.circular(8))),
+                      onPressed: () {
                         _submitEduData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Submit',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Submit',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
               ],
             ),
@@ -421,5 +485,3 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
     );
   }
 }
-
-

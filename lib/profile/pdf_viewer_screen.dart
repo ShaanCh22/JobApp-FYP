@@ -1,11 +1,12 @@
 import 'package:easy_pdf_viewer/easy_pdf_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   final String pdfUrl;
   final String resumeName;
-  const PdfViewerScreen({super.key,required this.pdfUrl,required this.resumeName});
+  const PdfViewerScreen(
+      {super.key, required this.pdfUrl, required this.resumeName});
 
   @override
   State<PdfViewerScreen> createState() => _PdfViewerScreenState();
@@ -14,11 +15,9 @@ class PdfViewerScreen extends StatefulWidget {
 class _PdfViewerScreenState extends State<PdfViewerScreen> {
   PDFDocument? document;
 
-  initializePDF() async{
+  initializePDF() async {
     document = await PDFDocument.fromURL(widget.pdfUrl);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -31,18 +30,23 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xff1D1D2F),
-        elevation: 1,
-        title: Text(widget.resumeName,style: GoogleFonts.dmSans(
-            color: Colors.white
-        ),),
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness),
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        centerTitle: true,
+        title: Text(widget.resumeName,
+            style: Theme.of(context).textTheme.displayMedium),
       ),
-      body: document == null ?
-      const Center(
-        child: CircularProgressIndicator(),
-      ) :
-      PDFViewer(document: document!,),
+      body: document == null
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : PDFViewer(
+              document: document!,
+            ),
     );
   }
 }

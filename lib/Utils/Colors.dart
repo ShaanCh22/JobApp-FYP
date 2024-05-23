@@ -34,32 +34,30 @@ const body5Color = Color(0xff0d0d0d);
 const body6Color = Color(0xff0b0b0b);
 
 const backgroundColor = Color(0xffFDFEFF);
-const DarkforegroundAppBarColor = Color(0xffFDFEFF);
-const LightforegroundAppBarColor = Colors.black;
-const GradientColor = Color(0xff8F00FF);
+const darkforegroundAppBarColor = Color(0xffFDFEFF);
+const lightforegroundAppBarColor = Colors.black;
+const gradientColor = Color(0xff8F00FF);
 const circleLightColor = Colors.grey;
 const circleDarkColor = Colors.white;
 const safeAreaDarkColor = Color(0xff1D1D2F);
 const safeAreaLightColor = Colors.white;
 const textInDarkTextField = Colors.white;
 const textInLightTextField = Colors.black;
-const LightTextField = Color(0xffe5e5e8);
-const DarkTextField = Color(0xff282837);
-const darkBottomBar= Color(0xff1D1D2F);
-const lightBottomBar= Colors.white;
-const iconDarkColor= Colors.white;
-const iconLightColor= Colors.black;
+const lightTextField = Color(0xffe5e5e8);
+const darkTextField = Color(0xff282837);
+const darkBottomBar = Color(0xff1D1D2F);
+const lightBottomBar = Colors.white;
+const iconDarkColor = Colors.white;
+const iconLightColor = Colors.black;
 const darkJobCardColor = Color(0xff282837);
 const lightJobCardColor = Colors.white;
-const lightFilterColor= Colors.black;
-const darkFilterColor= Colors.grey;
-const lightContainerColor=Color(0xffEAEAEAFF);
-const darkContainerColor=Color(0xff282837);
-const darkBackgroundColor= Color(0xff1D1D2F);
-const lightBackgroundColor= Colors.white;
-
-
-
+const lightFilterColor = Colors.black;
+const darkFilterColor = Colors.grey;
+const lightContainerColor = Color(0xffEAEAEAFF);
+const darkContainerColor = Color(0xff282837);
+const darkBackgroundColor = Color(0xff1D1D2F);
+const lightBackgroundColor = Colors.white;
+const shimLightColor = Color(0xff798EA5C0);
 
 const bPrimaryColor = Color(0xff5800FF);
 const bSecondaryColor = Colors.white;

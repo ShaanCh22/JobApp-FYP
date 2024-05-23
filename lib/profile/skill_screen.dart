@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'add_skill_screen.dart';
 
@@ -13,7 +12,7 @@ class SkillScreen extends StatefulWidget {
 }
 
 class _SkillScreenState extends State<SkillScreen> {
-  final ScrollController scController=ScrollController();
+  final ScrollController scController = ScrollController();
   final user = FirebaseAuth.instance.currentUser;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -21,62 +20,83 @@ class _SkillScreenState extends State<SkillScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
+        toolbarHeight: 50,
         centerTitle: true,
-        title: Text('Skills',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text('Skills', style: Theme.of(context).textTheme.displayMedium),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 5.w),
+            padding: const EdgeInsets.only(right: 5),
             child: IconButton(
-              onPressed: (){
-                Navigator.push(context,
-                    PageTransition(child: const AddSkillScreen(),
-                      type:PageTransitionType.bottomToTop,));
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                      child: const AddSkillScreen(),
+                      type: PageTransitionType.bottomToTop,
+                    ));
               },
-              icon: const Icon(Icons.add,color: Colors.white,),
+              icon: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.outline,
+              ),
               iconSize: 28,
             ),
           )
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 18.w),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("Users").doc(uid).collection("Skills").snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection("Users")
+                .doc(uid)
+                .collection("Skills")
+                .snapshots(),
             builder: (context, snapshot) {
-              if(snapshot.connectionState==ConnectionState.waiting){
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              if(snapshot.hasError){
+              if (snapshot.hasError) {
                 return Center(child: Text(snapshot.hasError.toString()));
               }
               return Wrap(
-                spacing: 10.w,
-                runSpacing: 5.h,
+                spacing: 10,
+                runSpacing: 5,
                 children: List.generate(snapshot.data!.docs.length, (index) {
-                  return
-                    Chip(
-                      deleteIcon: const Icon(Icons.close,color: Colors.white,size: 20,),
-                      onDeleted: (){
-                        CollectionReference ref=FirebaseFirestore.instance.collection("Users").doc(uid).collection("Skills");
-                        ref.doc(snapshot.data!.docs[index]['id'].toString()).delete();
-                      },
-                      label: Text('${snapshot.data!.docs[index]['Title']}',style: GoogleFonts.dmSans(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                      ),),
-                      backgroundColor: const Color(0xff282837),
-                    );
+                  return Chip(
+                    color: MaterialStatePropertyAll(
+                      Theme.of(context).colorScheme.tertiaryContainer,
+                    ),
+                    deleteIcon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.outline,
+                      size: 20,
+                    ),
+                    onDeleted: () {
+                      CollectionReference ref = FirebaseFirestore.instance
+                          .collection("Users")
+                          .doc(uid)
+                          .collection("Skills");
+                      ref
+                          .doc(snapshot.data!.docs[index]['id'].toString())
+                          .delete();
+                    },
+                    label: Text('${snapshot.data!.docs[index]['Title']}',
+                        style: Theme.of(context).textTheme.headlineSmall),
+                    backgroundColor: const Color(0xff282837),
+                  );
                 }),
               );
-            }
-        ),
+            }),
       ),
     );
   }

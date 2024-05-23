@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../Login&Signup/login_page.dart';
 import 'intro_contents.dart';
+
 class OnBoardScreen extends StatefulWidget {
   const OnBoardScreen({super.key});
 
@@ -29,21 +29,21 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double w= MediaQuery.of(context).size.width;
-    double h= MediaQuery.of(context).size.height;
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Theme.of(context).colorScheme.onSurface,
-            statusBarIconBrightness: Theme.of(context).brightness
-        ),
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
       ),
       body: SafeArea(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: PageView.builder(
@@ -57,16 +57,16 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                   itemBuilder: (_, i) {
                     return SingleChildScrollView(
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: w*0.065),
+                        margin: EdgeInsets.symmetric(horizontal: w * 0.065),
                         child: Column(
                           children: [
                             CircleAvatar(
                               backgroundImage: AssetImage(contents[i].image),
-                              radius: 150.r,
+                              radius: 150,
                               backgroundColor: Color(contents[i].color),
                             ),
                             SizedBox(
-                              height: h*0.061,
+                              height: h * 0.061,
                               // height: 50.h,
                             ),
                             Text(
@@ -74,13 +74,14 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                               style: Theme.of(context).textTheme.displayLarge,
                             ),
                             SizedBox(
-                              height: h*0.037,
+                              height: h * 0.037,
                               // height: 30.h,
                             ),
                             Text(
                               contents[i].description,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleSmall,),
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
                           ],
                         ),
                       ),
@@ -88,22 +89,25 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                   }),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: h*0.049,right: w*0.078),
+              padding: EdgeInsets.only(bottom: h * 0.049, right: w * 0.078),
               // padding: EdgeInsets.only(bottom: 40.h,right: 30.w),
-              child: Align(alignment: Alignment.bottomRight,
+              child: Align(
+                alignment: Alignment.bottomRight,
                 child: SmoothPageIndicator(
                   controller: _controller,
                   count: contents.length,
                   effect: WormEffect(
-                    dotWidth: w*0.026,
+                    dotWidth: w * 0.026,
                     // dotWidth: 10.w,
-                    dotHeight: h*0.013,
+                    dotHeight: h * 0.013,
                     // dotHeight: 10.h,
                     dotColor: Theme.of(context).colorScheme.secondaryContainer,
                     activeDotColor: const Color(0xff5800FF),
                   ),
-                  onDotClicked: (index){
-                    _controller.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+                  onDotClicked: (index) {
+                    _controller.animateToPage(index,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut);
                   },
                 ),
               ),
@@ -112,17 +116,20 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      floatingActionButton:Wrap(
+      floatingActionButton: Wrap(
         children: [
           SizedBox.fromSize(
             size: const Size.square(60),
             child: FloatingActionButton(
               onPressed: () {
-                if(currentIndex==contents.length-1){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
-                } else{
+                if (currentIndex == contents.length - 1) {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => const Login()));
+                } else {
                   _controller.nextPage(
-                      duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);}
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut);
+                }
               },
               shape: const CircleBorder(),
               backgroundColor: const Color(0xff5800FF),
@@ -133,17 +140,19 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: h*0.006),
+            padding: EdgeInsets.only(top: h * 0.006),
             // padding: EdgeInsets.only(top: 5.h),
             child: TextButton(
                 style: const ButtonStyle(
                   splashFactory: InkRipple.splashFactory,
                 ),
-                onPressed: (){
+                onPressed: () {
                   // _controller.animateToPage(3, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Login()));
-                }, child: Text('Skip',
-                style: Theme.of(context).textTheme.bodyMedium)),
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => const Login()));
+                },
+                child: Text('Skip',
+                    style: Theme.of(context).textTheme.bodyMedium)),
           )
         ],
       ),

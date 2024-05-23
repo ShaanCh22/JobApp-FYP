@@ -1,240 +1,237 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../profile/pdf_viewer_screen.dart';
 
-class OthersViewProfileScreen extends StatefulWidget {
-
-  String id;
-  OthersViewProfileScreen({super.key,required this.id});
+class OtherViewProfileScreen extends StatefulWidget {
+  final String id;
+  const OtherViewProfileScreen({super.key, required this.id});
 
   @override
-  State<OthersViewProfileScreen> createState() => _OthersViewProfileScreenState();
+  State<OtherViewProfileScreen> createState() => _OtherViewProfileScreenState();
 }
 
-class _OthersViewProfileScreenState extends State<OthersViewProfileScreen> {
+class _OtherViewProfileScreenState extends State<OtherViewProfileScreen> {
   final ScrollController scController = ScrollController();
   final user = FirebaseAuth.instance.currentUser;
   String? resumeUrl;
   String? resumeName;
+  String? name;
   @override
   void initState() {
     super.initState();
     _getResumeData();
   }
-  Future _getResumeData() async{
-    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Users').doc(widget.id).get();
+
+  Future _getResumeData() async {
+    DocumentSnapshot ref = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.id)
+        .get();
     setState(() {
-      resumeUrl=ref.get('Resume Url');
-      resumeName=ref.get('ResumeName');
+      resumeUrl = ref.get('Resume Url');
+      resumeName = ref.get('ResumeName');
+      name = ref.get('Name');
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Theme.of(context).colorScheme.onSurface,
+              statusBarIconBrightness: Theme.of(context).brightness),
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          foregroundColor: Theme.of(context).colorScheme.onSecondary,
+          elevation: 0,
           toolbarHeight: 50,
           centerTitle: true,
           // backgroundColor: Color(0xff282837),
-          foregroundColor: Colors.white,
-          backgroundColor: const Color(0xff1D1D2F),
-          elevation: 0,
           title: Padding(
-            padding: EdgeInsets.only(left: 10.w),
-            child: Text(
-              'Other Profile',
-              style: GoogleFonts.dmSans(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500),
-            ),
+            padding: const EdgeInsets.only(left: 10),
+            child:
+                Text('$name', style: Theme.of(context).textTheme.displayMedium),
           ),
         ),
         body: SafeArea(
           child: ListView(
             children: [
               Container(
-                color: const Color(0xff282837),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                  child: Column(
-                    children: [
-                      StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(widget.id).snapshots(),
-                          builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            if(snapshot.hasError){
-                              return Center(child: Text(snapshot.hasError.toString()));
-                            }
-                            return ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading:CircleAvatar(
-                                  radius: 30.r,
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(30.r),
-                                      child:snapshot.data!.get('User Image')=="" ?
-                                      const Icon(Icons.camera_alt_outlined,size:25,color:Colors.white,) :
-                                      Image.network('${snapshot.data!.get('User Image')}'))),
-                              title: Text(
-                                '${snapshot.data!.get('Name')}',
-                                style: GoogleFonts.dmSans(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
-                              subtitle: Text(
-                                '${snapshot.data!.get('Email')}',
-                                style: GoogleFonts.dmSans(
-                                    fontSize: 16.sp, color: Colors.grey),
-                              ),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+                child: Column(
+                  children: [
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('Users')
+                            .doc(widget.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
                             );
                           }
-                      ),
-                      SizedBox(
-                        height: 15.h,
-                      ),
-                    ],
-                  ),
+                          if (snapshot.hasError) {
+                            return Center(
+                                child: Text(snapshot.hasError.toString()));
+                          }
+                          return ListTile(
+                            leading: CircleAvatar(
+                                radius: 30,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: snapshot.data!.get('User Image') ==
+                                            ""
+                                        ? const Icon(
+                                            Icons.person,
+                                            size: 25,
+                                            color: Colors.grey,
+                                          )
+                                        : Image.network(
+                                            '${snapshot.data!.get('User Image')}'))),
+                            title: Text('${snapshot.data!.get('Name')}',
+                                style: Theme.of(context).textTheme.labelMedium),
+                            subtitle: Text(
+                              '${snapshot.data!.get('Email')}',
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 16, color: Colors.grey),
+                            ),
+                          );
+                        }),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 15.h,
+              const SizedBox(
+                height: 15,
               ),
               //Resumesection
               Container(
-                color: const Color(0xff282837),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
                   ),
                   child: Column(
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Text(
-                          'Resume',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        leading: Text('Resume',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
-                      resumeUrl==""
+                      resumeUrl == ""
                           ? const SizedBox()
                           : InkWell(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PdfViewerScreen(
-                            pdfUrl: resumeUrl.toString(),
-                            resumeName: resumeName.toString(),
-                          )
-                          )
-                          );
-                        },
-                        child: ListTile(
-                          horizontalTitleGap: 10,
-                          contentPadding: EdgeInsets.zero,
-                          leading: SvgPicture.asset(
-                            'assets/svg/img_frame_primary.svg',
-                            theme: const SvgTheme(currentColor: Colors.white),
-                            width: 24,
-                            height: 24,
-                          ),
-                          title: Text(
-                            '$resumeName',
-                            style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 16.sp,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PdfViewerScreen(
+                                              pdfUrl: resumeUrl.toString(),
+                                              resumeName: resumeName.toString(),
+                                            )));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 10,
+                                contentPadding: EdgeInsets.zero,
+                                leading: SvgPicture.asset(
+                                  'assets/svg/img_frame_primary.svg',
+                                  theme: const SvgTheme(
+                                      currentColor: Colors.white),
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                title: Text('$resumeName',
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
-              ),
+              const SizedBox(height: 15),
               //Aboutmesection
               Container(
-                color: const Color(0xff282837),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Text(
-                          'About Me',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        leading: Text('About Me',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(widget.id).snapshots(),
+                          stream: FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(widget.id)
+                              .snapshots(),
                           builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            if(snapshot.hasError){
-                              return Center(child: Text(snapshot.hasError.toString()));
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(snapshot.hasError.toString()));
                             }
                             return Text(
                               '${snapshot.data!.get('About Me')}',
                               style: GoogleFonts.dmSans(
-                                  fontSize: 16.sp, color: Colors.grey),
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.outline),
                             );
-                          }
-                      )
+                          })
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
+              const SizedBox(
+                height: 15,
               ),
               //Expriencesection
               Container(
-                color: const Color(0xff282837),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Text(
-                          'Experience',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        leading: Text('Experience',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Experience").snapshots(),
+                          stream: FirebaseFirestore.instance
+                              .collection("Users")
+                              .doc(widget.id)
+                              .collection("Experience")
+                              .snapshots(),
                           builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            if(snapshot.hasError){
-                              return Center(child: Text(snapshot.hasError.toString()));
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(snapshot.hasError.toString()));
                             }
                             return ListView.separated(
                               controller: scController,
@@ -247,79 +244,84 @@ class _OthersViewProfileScreenState extends State<OthersViewProfileScreen> {
                                     Text(
                                       "${snapshot.data!.docs[index]['Start Date']}-${snapshot.data!.docs[index]['End Date']}",
                                       style: GoogleFonts.dmSans(
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: const Color(0xff5800FF)),
                                     ),
-                                    SizedBox(
-                                      height: 5.h,
+                                    const SizedBox(
+                                      height: 5,
                                     ),
                                     Text(
-                                      '${snapshot.data!.docs[index]['Title']}',
-                                      style: GoogleFonts.dmSans(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white),
-                                    ),
+                                        '${snapshot.data!.docs[index]['Title']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium),
                                     Text(
                                       'At ${snapshot.data!.docs[index]['Company Name']}',
                                       style: GoogleFonts.dmSans(
                                           height: 1,
-                                          fontSize: 14.sp,
-                                          color: Colors.grey),
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline),
                                     ),
-                                    SizedBox(
-                                      height: 8.h,
+                                    const SizedBox(
+                                      height: 8,
                                     ),
                                     Text(
                                       '${snapshot.data!.docs[index]['Job Description']}',
                                       style: GoogleFonts.dmSans(
-                                          fontSize: 16.sp, color: Colors.grey),
+                                          fontSize: 16,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline),
                                     ),
                                   ],
                                 );
                               },
-                              separatorBuilder: (context, index) => SizedBox(
-                                height: 16.h,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(
+                                height: 16,
                               ),
                             );
-                          }
-                      )
+                          })
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
+              const SizedBox(
+                height: 15,
               ),
               //Education-section
               Container(
-                color: const Color(0xff282837),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Text(
-                          'Education',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        leading: Text('Education',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Education").snapshots(),
+                          stream: FirebaseFirestore.instance
+                              .collection("Users")
+                              .doc(widget.id)
+                              .collection("Education")
+                              .snapshots(),
                           builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            if(snapshot.hasError){
-                              return Center(child: Text(snapshot.hasError.toString()));
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(snapshot.hasError.toString()));
                             }
                             return ListView.separated(
                               controller: scController,
@@ -332,97 +334,102 @@ class _OthersViewProfileScreenState extends State<OthersViewProfileScreen> {
                                     Text(
                                       '${snapshot.data!.docs[index]['Start Date']}-${snapshot.data!.docs[index]['End Date']}',
                                       style: GoogleFonts.dmSans(
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: const Color(0xff5800FF)),
                                     ),
-                                    SizedBox(
-                                      height: 5.h,
+                                    const SizedBox(
+                                      height: 5,
                                     ),
                                     Text(
-                                      '${snapshot.data!.docs[index]['School']}',
-                                      style: GoogleFonts.dmSans(
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white),
-                                    ),
+                                        '${snapshot.data!.docs[index]['School']}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium),
                                     Text(
                                       '${snapshot.data!.docs[index]['Degree']}',
                                       style: GoogleFonts.dmSans(
                                           height: 1,
-                                          fontSize: 14.sp,
-                                          color: Colors.grey),
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline),
                                     ),
                                   ],
                                 );
                               },
-                              separatorBuilder: (context, index) => SizedBox(
-                                height: 16.h,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(
+                                height: 16,
                               ),
                             );
-                          }
-                      )
+                          })
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
+              const SizedBox(
+                height: 15,
               ),
-              //Skill section
+              //Skill-section
               Container(
-                color: const Color(0xff282837),
+                color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: Text(
-                          'Skill',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500),
-                        ),
+                        leading: Text('Skill',
+                            style: Theme.of(context).textTheme.labelMedium),
                       ),
                       StreamBuilder(
-                          stream: FirebaseFirestore.instance.collection("Users").doc(widget.id).collection("Skills").snapshots(),
+                          stream: FirebaseFirestore.instance
+                              .collection("Users")
+                              .doc(widget.id)
+                              .collection("Skills")
+                              .snapshots(),
                           builder: (context, snapshot) {
-                            if(snapshot.connectionState==ConnectionState.waiting){
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            if(snapshot.hasError){
-                              return Center(child: Text(snapshot.hasError.toString()));
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text(snapshot.hasError.toString()));
                             }
                             return Wrap(
-                              spacing: 16.w,
-                              runSpacing: 10.h,
-                              children: List.generate(snapshot.data!.docs.length, (index) {
+                              spacing: 16,
+                              runSpacing: 10,
+                              children: List.generate(
+                                  snapshot.data!.docs.length, (index) {
                                 return Chip(
+                                  color: MaterialStatePropertyAll(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .tertiaryContainer,
+                                  ),
                                   elevation: 0,
                                   label: Text(
-                                    '${snapshot.data!.docs[index]['Title']}',
-                                    style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
+                                      '${snapshot.data!.docs[index]['Title']}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall),
                                   backgroundColor: const Color(0xff282837),
                                 );
                               }),
                             );
-                          }
-                      ),
+                          }),
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15.h,
+              const SizedBox(
+                height: 15,
               ),
             ],
           ),

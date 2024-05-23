@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
@@ -14,47 +13,50 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _searchQueryController=TextEditingController();
+  final TextEditingController _searchQueryController = TextEditingController();
   String searchQuery = 'Search query';
-  void _clearSearchQuery(){
+  void _clearSearchQuery() {
     setState(() {
       _searchQueryController.clear();
       _updateSearchQuery('');
     });
   }
-  void _updateSearchQuery(String newQuery){
+
+  void _updateSearchQuery(String newQuery) {
     setState(() {
-      searchQuery=newQuery;
+      searchQuery = newQuery;
     });
   }
 
-  Widget _buildSearchField(){
+  Widget _buildSearchField() {
     return TextFormField(
       autocorrect: true,
       controller: _searchQueryController,
       decoration: InputDecoration(
           suffixIcon: IconButton(
-            onPressed: (){
+            onPressed: () {
               _clearSearchQuery();
             },
-            icon: const Icon(Icons.close,color: Colors.grey,),
+            icon: const Icon(
+              Icons.close,
+              color: Colors.grey,
+            ),
           ),
           hintText: 'Search for jobs',
           border: InputBorder.none,
-          hintStyle: GoogleFonts.dmSans(color: Colors.grey)
-      ),
+          hintStyle: GoogleFonts.dmSans(color: Colors.grey)),
       style: Theme.of(context).textTheme.titleSmall,
-      onChanged: (query)=>_updateSearchQuery(query),
+      onChanged: (query) => _updateSearchQuery(query),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Theme.of(context).colorScheme.onSurface,
-            statusBarIconBrightness: Theme.of(context).brightness
-        ),
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
         elevation: 0,
@@ -63,67 +65,91 @@ class _SearchScreenState extends State<SearchScreen> {
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
             .collection('Jobs')
-            .where('JobTitle',isGreaterThanOrEqualTo: searchQuery.toLowerCase().toUpperCase())
+            .where('JobTitle',
+                isGreaterThanOrEqualTo: searchQuery.toLowerCase().toUpperCase())
             .snapshots(),
-        builder: (context, AsyncSnapshot snapshot){
-          if(snapshot.connectionState==ConnectionState.waiting){
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const ShimmerJobCard();
-          }
-          else if(snapshot.connectionState==ConnectionState.active){
-            if(snapshot.data.docs.isNotEmpty==true){
+          } else if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.data.docs.isNotEmpty == true) {
               return ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data.docs.length>5 ? 5 :snapshot.data.docs.length,
-                itemBuilder: (context,index){
+                itemCount: snapshot.data.docs.length > 5
+                    ? 5
+                    : snapshot.data.docs.length,
+                itemBuilder: (context, index) {
                   return SizedBox(
                     width: double.infinity,
-                    height: 107.h,
+                    height: 107,
                     child: Card(
-                      color:Theme.of(context).colorScheme.onPrimaryContainer,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                       child: InkWell(
                         splashFactory: InkRipple.splashFactory,
                         // splashColor: Color(0xff5800FF),
-                        overlayColor: const MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
-                        onTap: (){
-                          String id=snapshot.data!.docs[index]['id'];
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
-                            id: id,
-                            uid: snapshot.data.docs[index]['uid'],
-                            ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
-                            jobDescription: snapshot.data.docs[index]['JobDescription'],
-                            jobExperience: snapshot.data.docs[index]['JobExperience'],
-                            jobType: snapshot.data.docs[index]['JobType'],
-                            jobLocation: snapshot.data.docs[index]['JobLocation'],
-                            userImage: snapshot.data.docs[index]['UserImage'],
-                            userName: snapshot.data.docs[index]['UserName'],
-                            jobTitle: snapshot.data.docs[index]['JobTitle'],
-                            postDate: snapshot.data.docs[index]['PostedAt'],
-                            jobSalary: snapshot.data.docs[index]['JobSalary'],
-                          )));
+                        overlayColor:
+                            const MaterialStatePropertyAll(Color(0x4d5800ff)),
+                        onTap: () {
+                          String id = snapshot.data!.docs[index]['id'];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => JobDetailScreen(
+                                        id: id,
+                                        uid: snapshot.data.docs[index]['uid'],
+                                        ownerEmail: snapshot.data.docs[index]
+                                            ['OwnerEmail'],
+                                        jobDescription: snapshot
+                                            .data.docs[index]['JobDescription'],
+                                        jobExperience: snapshot.data.docs[index]
+                                            ['JobExperience'],
+                                        jobType: snapshot.data.docs[index]
+                                            ['JobType'],
+                                        jobLocation: snapshot.data.docs[index]
+                                            ['JobLocation'],
+                                        userImage: snapshot.data.docs[index]
+                                            ['UserImage'],
+                                        userName: snapshot.data.docs[index]
+                                            ['UserName'],
+                                        jobTitle: snapshot.data.docs[index]
+                                            ['JobTitle'],
+                                        postDate: snapshot.data.docs[index]
+                                            ['PostedAt'],
+                                        jobSalary: snapshot.data.docs[index]
+                                            ['JobSalary'],
+                                      )));
                         },
                         child: Column(
                           children: [
                             ListTile(
-                              contentPadding: EdgeInsets.only(left: 15.w),
+                              contentPadding: const EdgeInsets.only(left: 15),
                               leading: CircleAvatar(
-                                  radius: 22.r,
+                                  radius: 22,
                                   child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(22.r),
-                                      child:snapshot.data.docs[index]['UserImage']=="" ?
-                                      const Icon(Icons.person,size:25,color:Colors.grey,) :
-                                      Image.network(snapshot.data.docs[index]['UserImage']))),
+                                      borderRadius: BorderRadius.circular(22),
+                                      child: snapshot.data.docs[index]
+                                                  ['UserImage'] ==
+                                              ""
+                                          ? const Icon(
+                                              Icons.person,
+                                              size: 25,
+                                              color: Colors.grey,
+                                            )
+                                          : Image.network(snapshot
+                                              .data.docs[index]['UserImage']))),
                               title: Text(
                                   '${snapshot.data.docs[index]['JobTitle']}',
-                                  style: Theme.of(context).textTheme.headlineMedium),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium),
                               subtitle: Text(
                                 '${snapshot.data.docs[index]['UserName']} - ${snapshot.data.docs[index]['PostedAt']}',
                                 style: Theme.of(context).textTheme.labelLarge,
                               ),
                               trailing: Padding(
-                                padding: EdgeInsets.only(right: 10.w),
+                                padding: const EdgeInsets.only(right: 10),
                                 child: Icon(
                                   Icons.arrow_forward_ios_sharp,
                                   color: Theme.of(context).colorScheme.outline,
@@ -131,19 +157,36 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.w),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               child: Row(
                                 children: [
-                                  Icon(Icons.location_on_outlined,color:Theme.of(context).colorScheme.outline,size: 18,),
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                    size: 18,
+                                  ),
                                   Text(
                                     '${snapshot.data.docs[index]['JobLocation']}',
-                                    style: Theme.of(context).textTheme.headlineSmall,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
                                   ),
-                                  SizedBox(width: 10.w,),
-                                  Icon(Icons.currency_exchange_outlined,color: Theme.of(context).colorScheme.outline,size: 15,),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(
+                                    Icons.currency_exchange_outlined,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                    size: 15,
+                                  ),
                                   Text(
                                     ' ${snapshot.data.docs[index]['JobSalary']}',
-                                    style: Theme.of(context).textTheme.headlineSmall,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall,
                                   ),
                                 ],
                               ),
@@ -155,15 +198,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 },
               );
-            }
-            else{
+            } else {
               return Center(
-                child: Text('There is no jobs',style: Theme.of(context).textTheme.labelMedium,),
+                child: Text(
+                  'There is no jobs',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
               );
             }
           }
           return Center(
-            child: Text('Something went wrong!',style: Theme.of(context).textTheme.labelMedium),
+            child: Text('Something went wrong!',
+                style: Theme.of(context).textTheme.labelMedium),
           );
         },
       ),

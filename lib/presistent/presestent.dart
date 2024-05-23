@@ -1,4 +1,4 @@
-class Presistent{
+class Presistent {
   static List<String> jobCateegoryList = [
     'Accounting',
     'Business',
@@ -12,12 +12,11 @@ class Presistent{
     'Medical',
     'Others'
   ];
-  static List<String> jobTypeList=[
+  static List<String> jobTypeList = [
     'Part Time',
     'Full Time',
     'Remote',
     'Contract',
     'Internship'
   ];
-
 }

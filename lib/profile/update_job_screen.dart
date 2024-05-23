@@ -1,31 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../Services/global_methods.dart';
 import '../presistent/presestent.dart';
 
-
 class UpdateJobScreen extends StatefulWidget {
-  String jobid;
-  UpdateJobScreen({super.key,required this.jobid});
+  final String jobid;
+  const UpdateJobScreen({super.key, required this.jobid});
 
   @override
   State<UpdateJobScreen> createState() => _UpdateJobScreenState();
 }
 
 class _UpdateJobScreenState extends State<UpdateJobScreen> {
-  final TextEditingController _jobcategorytext = TextEditingController(text: '');
+  final TextEditingController _jobcategorytext =
+      TextEditingController(text: '');
   final TextEditingController _jobtitletext = TextEditingController(text: '');
   final TextEditingController _jobtypetext = TextEditingController(text: '');
-  final TextEditingController _joblocationtext = TextEditingController(text: '');
+  final TextEditingController _joblocationtext =
+      TextEditingController(text: '');
   final TextEditingController _jobdescription = TextEditingController(text: '');
   final TextEditingController _jobsalarytext = TextEditingController(text: '');
-  final TextEditingController _jobexperiencetext = TextEditingController(text: '');
-  String dt=DateFormat('MMM d, y').format(DateTime.now());
+  final TextEditingController _jobexperiencetext =
+      TextEditingController(text: '');
+  String dt = DateFormat('MMM d, y').format(DateTime.now());
   final _jobdataformkey = GlobalKey<FormState>();
   bool _isLoading = false;
   String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -37,10 +39,10 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: const Color(0xff1D1D2F),
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Text(
                 'Job Category',
-                style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white),
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
@@ -52,14 +54,12 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                         onTap: () {
                           setState(() {
                             _jobcategorytext.text =
-                            Presistent.jobCateegoryList[index];
+                                Presistent.jobCateegoryList[index];
                           });
                           Navigator.pop(context);
                         },
                         child: Text(Presistent.jobCateegoryList[index],
-                          style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
-                        )
-                    );
+                            style: Theme.of(context).textTheme.titleSmall));
                   },
                   separatorBuilder: (context, index) => const Divider(
                     color: Colors.grey,
@@ -69,15 +69,16 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
               ));
         });
   }
+
   _showJobTypeDialog() {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: const Color(0xff1D1D2F),
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Text(
                 'Job Types',
-                style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white),
+                style: Theme.of(context).textTheme.displayMedium,
               ),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
@@ -88,15 +89,12 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                     return InkWell(
                         onTap: () {
                           setState(() {
-                            _jobtypetext.text =
-                            Presistent.jobTypeList[index];
+                            _jobtypetext.text = Presistent.jobTypeList[index];
                           });
                           Navigator.pop(context);
                         },
                         child: Text(Presistent.jobTypeList[index],
-                          style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.grey),
-                        )
-                    );
+                            style: Theme.of(context).textTheme.titleSmall));
                   },
                   separatorBuilder: (context, index) => const Divider(
                     color: Colors.grey,
@@ -106,60 +104,64 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
               ));
         });
   }
+
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _getJobData();
   }
-  Future _getJobData() async{
-    DocumentSnapshot ref = await FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).get();
+
+  Future _getJobData() async {
+    DocumentSnapshot ref = await FirebaseFirestore.instance
+        .collection('Jobs')
+        .doc(widget.jobid)
+        .get();
     setState(() {
-      _jobtypetext.text=ref.get('JobType');
-      _jobtitletext.text=ref.get('JobTitle');
-      _jobsalarytext.text=ref.get('JobSalary');
-      _joblocationtext.text=ref.get('JobLocation');
-      _jobexperiencetext.text=ref.get('JobExperience');
-      _jobdescription.text=ref.get('JobDescription');
-      _jobcategorytext.text=ref.get('JobCategory');
+      _jobtypetext.text = ref.get('JobType');
+      _jobtitletext.text = ref.get('JobTitle');
+      _jobsalarytext.text = ref.get('JobSalary');
+      _joblocationtext.text = ref.get('JobLocation');
+      _jobexperiencetext.text = ref.get('JobExperience');
+      _jobdescription.text = ref.get('JobDescription');
+      _jobcategorytext.text = ref.get('JobCategory');
     });
   }
-  Future _updateJobData() async{
-    final isValid =_jobdataformkey.currentState!.validate();
-    if(isValid){
+
+  Future _updateJobData() async {
+    final isValid = _jobdataformkey.currentState!.validate();
+    if (isValid) {
       setState(() {
-        _isLoading=true;
+        _isLoading = true;
       });
-      try{
+      try {
         FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).update({
-          'JobType':_jobtypetext.text,
-          'JobTitle':_jobtitletext.text,
-          'JobSalary':_jobsalarytext.text,
-          'JobLocation':_joblocationtext.text,
-          'JobExperience':_jobexperiencetext.text,
-          'JobDescription':_jobdescription.text,
-          'JobCategory':_jobcategorytext.text,
+          'JobType': _jobtypetext.text,
+          'JobTitle': _jobtitletext.text,
+          'JobSalary': _jobsalarytext.text,
+          'JobLocation': _joblocationtext.text,
+          'JobExperience': _jobexperiencetext.text,
+          'JobDescription': _jobdescription.text,
+          'JobCategory': _jobcategorytext.text,
         });
-        Future.delayed(const Duration(seconds:1)).then((value) => {
-          setState(() {
-            _isLoading=false;
-            Fluttertoast.showToast(
-                msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
-          })
-        });
+        Future.delayed(const Duration(seconds: 1)).then((value) => {
+              setState(() {
+                _isLoading = false;
+                Fluttertoast.showToast(
+                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+              })
+            });
         Navigator.pop(context);
-      }catch(error){
+      } catch (error) {
         setState(() {
-          _isLoading=false;
+          _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(
-            error: error.toString(),
-            ctx: context);
+        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
     }
-
-
   }
-  void _deleteJobData(){
+
+  void _deleteJobData() {
     FirebaseFirestore.instance.collection('Jobs').doc(widget.jobid).delete();
     Navigator.pop(context);
   }
@@ -168,386 +170,434 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xff1D1D2F),
-          foregroundColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Theme.of(context).colorScheme.onSurface,
+              statusBarIconBrightness: Theme.of(context).brightness),
+          backgroundColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          foregroundColor: Theme.of(context).colorScheme.onSecondary,
+          elevation: 0,
           centerTitle: true,
-          title: Text('Edit Job Post',style: GoogleFonts.dmSans(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w500
-          ),),
+          title: Text('Edit Job Post',
+              style: Theme.of(context).textTheme.labelMedium),
           actions: [
             Padding(
-              padding: EdgeInsets.only(right: 10.w),
+              padding: const EdgeInsets.only(right: 10),
               child: IconButton(
-                onPressed: (){
+                onPressed: () {
                   _deleteJobData();
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.delete_outline,color: Colors.white,),
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
             )
           ],
         ),
-        body:SingleChildScrollView(
+        body: SingleChildScrollView(
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Tell us who you're hiring",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30.sp,
-                          fontFamily: 'DMSans',
-                          fontWeight: FontWeight.bold)),
-                  SizedBox(
-                    height: 8.h,
+                      style: Theme.of(context).textTheme.displayLarge),
+                  const SizedBox(
+                    height: 8,
                   ),
-                  Text(
-                    'Please enter few details below.',
-                    style: GoogleFonts.dmSans(
-                        color: const Color(0xffD1D1D1), fontSize: 14.sp),
+                  Text('Please enter few details below.',
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(
+                    height: 30,
                   ),
-                  SizedBox(height: 30.h,),
                   Form(
                     key: _jobdataformkey,
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //Job Category
-                        Text(
-                          'Job Category',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
-                        ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Category',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.none,
                           keyboardType: TextInputType.none,
                           readOnly: true,
                           controller: _jobcategorytext,
-                          onTap: (){
+                          onTap: () {
                             _showJobCategoryDialog();
                           },
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Please select job category!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Select job Category',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            suffixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            suffixIcon: const Icon(
                               Icons.arrow_drop_down,
                               size: 25,
                               color: Colors.grey,
                             ),
-                            prefixIcon: Icon(Icons.category_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            prefixIcon: const Icon(
+                              Icons.category_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Title
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Job Title',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Title',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.done,
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _jobtitletext,
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Job title should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Enter job title',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
+                              Icons.title_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Type
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Job Type',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Type',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.none,
                           keyboardType: TextInputType.none,
                           readOnly: true,
                           controller: _jobtypetext,
-                          onTap: (){
+                          onTap: () {
                             _showJobTypeDialog();
                           },
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Job Type should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Enter job type',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            suffixIcon: Icon(
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            suffixIcon: const Icon(
                               Icons.arrow_drop_down,
                               size: 25,
                               color: Colors.grey,
                             ),
-                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            prefixIcon: const Icon(
+                              Icons.title_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Experience
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Required Experience',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Required Experience',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.next,
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.number,
                           controller: _jobexperiencetext,
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Experience should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Experience Required',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
+                              Icons.title_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Salary
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Job Salary',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Salary',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.done,
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _jobsalarytext,
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Job Salary should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Enter job Salary',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
+                              Icons.title_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Location
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Job Location',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Location',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.done,
                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                           keyboardType: TextInputType.text,
                           controller: _joblocationtext,
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Job location should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: InputDecoration(
                             isCollapsed: true,
-                            contentPadding: EdgeInsets.all(15),
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
                             hintText: 'Enter job location',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(Icons.title_outlined,size: 20,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            prefixIcon: const Icon(
+                              Icons.title_outlined,
+                              size: 20,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-
                         ),
                         //Job Description
-                        SizedBox(height: 20.h,),
-                        Text(
-                          'Job Description',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 14.sp),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        SizedBox(
-                          height: 8.h,
+                        Text('Job Description',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
                         ),
                         TextFormField(
                           textInputAction: TextInputAction.none,
                           keyboardType: TextInputType.none,
                           controller: _jobdescription,
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 15.sp
-                          ),
-                          validator: (value){
-                            if(value!.isEmpty){
+                          style: Theme.of(context).textTheme.titleSmall,
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return 'Job description should not be empty!';
-                            }
-                            else{
+                            } else {
                               return null;
                             }
                           },
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             isCollapsed: true,
                             hintText: 'Enter Job Description',
-                            hintStyle: TextStyle(color: Colors.grey),
-                            contentPadding: EdgeInsets.all(15),
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            contentPadding: const EdgeInsets.all(15),
                             filled: true,
-                            fillColor: Color(0xff282837),
-                            prefixIcon: Icon(Icons.description_outlined,color: Colors.grey,),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                            focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
+                            prefixIcon: const Icon(
+                              Icons.description_outlined,
+                              color: Colors.grey,
                             ),
-                            focusedBorder:OutlineInputBorder(
-                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                            ),
-                            errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.redAccent,)
-                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
                           ),
-                          onTap: (){
+                          onTap: () {
                             showModalBottomSheet(
-                                backgroundColor: const Color(0xff1D1D2F),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.background,
                                 context: context,
-                                builder: (BuildContext context){
+                                builder: (BuildContext context) {
                                   return Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -559,63 +609,85 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                                           // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                                           keyboardType: TextInputType.text,
                                           controller: _jobdescription,
-                                          validator: (value){
-                                            if(value!.isEmpty){
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
                                               return 'Job description should not be empty!';
-                                            }
-                                            else{
+                                            } else {
                                               return null;
                                             }
                                           },
-                                          style: const TextStyle(color: Colors.white),
-                                          decoration: const InputDecoration(
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                          decoration: InputDecoration(
                                             isCollapsed: true,
-                                            contentPadding: EdgeInsets.all(15),
+                                            contentPadding:
+                                                const EdgeInsets.all(15),
                                             filled: true,
-                                            fillColor: Color(0xff282837),
+                                            fillColor: Theme.of(context)
+                                                .colorScheme
+                                                .onTertiaryContainer,
                                             hintText: 'Enter job title',
-                                            hintStyle: TextStyle(color: Colors.grey),
-                                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                                            focusedErrorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.redAccent,)
-                                            ),
-                                            focusedBorder:OutlineInputBorder(
-                                                borderSide: BorderSide(color: Color(0xff5800FF),)
-                                            ),
-                                            errorBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: Colors.redAccent,)
-                                            ),
+                                            hintStyle: const TextStyle(
+                                                color: Colors.grey),
+                                            enabledBorder:
+                                                const UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide.none),
+                                            focusedErrorBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                              color: Colors.redAccent,
+                                            )),
+                                            focusedBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                              color: Color(0xff5800FF),
+                                            )),
+                                            errorBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                              color: Colors.redAccent,
+                                            )),
                                           ),
-
                                         ),
                                       ),
-                                      const SizedBox(height: 10,),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
                                       SizedBox(
                                         width: double.infinity,
-                                        height: 53.h,
+                                        height: 53,
                                         child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                                splashFactory: InkRipple.splashFactory,
-                                                backgroundColor: const Color(0xff5800FF),
+                                                splashFactory:
+                                                    InkRipple.splashFactory,
+                                                backgroundColor:
+                                                    const Color(0xff5800FF),
                                                 foregroundColor: Colors.black,
                                                 shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8.r))),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8))),
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
                                             child: _isLoading
                                                 ? const CircularProgressIndicator(
-                                              color: Colors.white,
-                                            )
+                                                    color: Colors.white,
+                                                  )
                                                 : Text(
-                                              'Save',
-                                              style: GoogleFonts.dmSans(
-                                                  color: Colors.white,
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.bold),
-                                            )),
+                                                    'Save',
+                                                    style: GoogleFonts.dmSans(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
                                       ),
-                                      const SizedBox(height: 10,)
+                                      const SizedBox(
+                                        height: 10,
+                                      )
                                     ],
                                   );
                                 });
@@ -624,39 +696,38 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.h,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   SizedBox(
                     width: double.infinity,
-                    height: 53.h,
+                    height: 53,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff5800FF),
                             foregroundColor: Colors.black,
                             splashFactory: InkRipple.splashFactory,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.r))),
-                        onPressed: (){
+                                borderRadius: BorderRadius.circular(8))),
+                        onPressed: () {
                           _updateJobData();
                         },
                         child: _isLoading
                             ? const CircularProgressIndicator(
-                          color: Colors.white,
-                        )
+                                color: Colors.white,
+                              )
                             : Text(
-                          'Save',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold),
-                        )),
+                                'Save',
+                                style: GoogleFonts.dmSans(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              )),
                   ),
                 ],
               ),
             ),
           ),
-        )
-    );
+        ));
   }
 }
-
-

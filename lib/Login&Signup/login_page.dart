@@ -3,9 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
@@ -25,9 +25,9 @@ class _LoginState extends State<Login> {
   final FocusNode _passFocusNode = FocusNode();
 
   final TextEditingController _emailTextControler =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   final TextEditingController _passTextControler =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   bool _obsecuretext = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -46,13 +46,18 @@ class _LoginState extends State<Login> {
         Fluttertoast.showToast(
             msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
         String uid = FirebaseAuth.instance.currentUser!.uid;
-        await FirebaseMessaging.instance.getToken().then((token)async{
-          await FirebaseFirestore.instance.collection('UserTokens').doc(uid).update({
-            'token' : token
+        if (kIsWeb != true) {
+          await FirebaseMessaging.instance.getToken().then((token) async {
+            await FirebaseFirestore.instance
+                .collection('UserTokens')
+                .doc(uid)
+                .update({'token': token});
           });
-        });
-        Navigator.pushReplacement(context,
-            PageTransition(child:const MainPage(),
+        }
+        Navigator.pushReplacement(
+            context,
+            PageTransition(
+                child: const MainPage(),
                 type: PageTransitionType.rightToLeft,
                 duration: const Duration(milliseconds: 500)));
       } catch (error) {
@@ -67,7 +72,7 @@ class _LoginState extends State<Login> {
     });
   }
 
-  void requestPermission()async{
+  void requestPermission() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     NotificationSettings settings = await messaging.requestPermission(
         alert: true,
@@ -76,17 +81,22 @@ class _LoginState extends State<Login> {
         carPlay: true,
         criticalAlert: true,
         provisional: true,
-        sound: true
-    );
+        sound: true);
 
-    if(settings.authorizationStatus==AuthorizationStatus.authorized){
-      print('User granted permissions');
-    } else if(settings.authorizationStatus==AuthorizationStatus.provisional){
-      print('User granted provisional permissions');
-    } else{
-      print('User denied permissions');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        print('User granted permissions');
+      }
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      if (kDebugMode) {
+        print('User granted provisional permissions');
+      }
+    } else {
+      if (kDebugMode) {
+        print('User denied permissions');
+      }
     }
-
   }
 
   @override
@@ -94,6 +104,7 @@ class _LoginState extends State<Login> {
     super.initState();
     requestPermission();
   }
+
   @override
   void dispose() {
     _emailTextControler.dispose();
@@ -104,15 +115,14 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    double w= MediaQuery.of(context).size.width;
-    double h= MediaQuery.of(context).size.height;
+    double w = MediaQuery.of(context).size.width;
+    double h = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: Theme.of(context).colorScheme.onSurface,
-              statusBarIconBrightness: Theme.of(context).brightness
-          ),
+              statusBarIconBrightness: Theme.of(context).brightness),
           backgroundColor: Colors.transparent,
           scrolledUnderElevation: 0,
           foregroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -120,7 +130,7 @@ class _LoginState extends State<Login> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(left: w*0.053,right: w*0.053),
+            padding: EdgeInsets.only(left: w * 0.053, right: w * 0.053),
             // padding: EdgeInsets.only(left: 20.w,right: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,15 +142,13 @@ class _LoginState extends State<Login> {
                 Text('Hey, There 👋\nfind your job here!',
                     style: Theme.of(context).textTheme.displayLarge),
                 SizedBox(
-                  height: h*0.01,
+                  height: h * 0.01,
                   // height: 8.h,
                 ),
-                Text(
-                    'Enter your email address and password\nto use the app',
-                    style: Theme.of(context).textTheme.titleMedium
-                ),
+                Text('Enter your email address and password\nto use the app',
+                    style: Theme.of(context).textTheme.titleMedium),
                 SizedBox(
-                  height: h*0.037,
+                  height: h * 0.037,
                   // height: 30.h,
                 ),
                 Form(
@@ -148,17 +156,16 @@ class _LoginState extends State<Login> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                          'Email',
-                          style: Theme.of(context).textTheme.labelSmall
-                      ),
+                      Text('Email',
+                          style: Theme.of(context).textTheme.labelSmall),
                       SizedBox(
-                        height: h*0.01,
+                        height: h * 0.01,
                         // height: 8.h,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        onEditingComplete: () => FocusScope.of(context).requestFocus(_passFocusNode),
+                        onEditingComplete: () =>
+                            FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailTextControler,
                         validator: (value) {
@@ -175,7 +182,8 @@ class _LoginState extends State<Login> {
                           isCollapsed: true,
                           contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Email',
                           hintStyle: Theme.of(context).textTheme.bodySmall,
                           prefixIcon: const Icon(
@@ -185,30 +193,28 @@ class _LoginState extends State<Login> {
                           ),
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Color(0xff5800FF),
-                              )),
-                          enabledBorder:
-                          const UnderlineInputBorder(borderSide: BorderSide.none),
+                            color: Color(0xff5800FF),
+                          )),
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                           errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.red,
-                              )),
+                            color: Colors.red,
+                          )),
                         ),
                       ),
                       SizedBox(
-                        height: h*0.037,
+                        height: h * 0.037,
                         // height: 30.h,
                       ),
-                      Text(
-                          'Password',
-                          style: Theme.of(context).textTheme.labelSmall
-                      ),
+                      Text('Password',
+                          style: Theme.of(context).textTheme.labelSmall),
                       SizedBox(
-                        height: h*0.01,
+                        height: h * 0.01,
                         // height: 8.h,
                       ),
                       TextFormField(
@@ -243,30 +249,31 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15.r),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Theme.of(context).colorScheme.onTertiaryContainer,
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Enter Password',
                           hintStyle: Theme.of(context).textTheme.bodySmall,
-                          prefixIcon: Icon(
+                          prefixIcon: const Icon(
                             Icons.lock_outline_sharp,
-                            size: 20.r,
+                            size: 20,
                             color: Colors.grey,
                           ),
-                          enabledBorder:
-                          const UnderlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
                           focusedErrorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Color(0xff5800FF),
-                              )),
+                            color: Color(0xff5800FF),
+                          )),
                           errorBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.redAccent,
-                              )),
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                     ],
@@ -279,7 +286,7 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                             context,
                             PageTransition(
-                                child:const ForgetPasswordScreen(),
+                                child: const ForgetPasswordScreen(),
                                 type: PageTransitionType.rightToLeft,
                                 duration: const Duration(milliseconds: 300)));
                       },
@@ -287,35 +294,36 @@ class _LoginState extends State<Login> {
                           style: Theme.of(context).textTheme.bodyMedium)),
                 ),
                 SizedBox(
-                  height: h*0.019,
+                  height: h * 0.019,
                   // height: 15.h,
                 ),
                 SizedBox(
                   width: double.infinity,
-                  height: h*0.065,
+                  height: h * 0.065,
                   // height: 53.h,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           splashFactory: InkRipple.splashFactory,
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r))),
+                              borderRadius: BorderRadius.circular(8))),
                       onPressed: () => _submitFormOnLogin(),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Login',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Login',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
                 SizedBox(
-                  height: h*0.245,
+                  height: h * 0.245,
                   // height: 200.h,
                 ),
                 Align(
@@ -324,12 +332,10 @@ class _LoginState extends State<Login> {
                     alignment: WrapAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: h*0.019),
+                        padding: EdgeInsets.only(top: h * 0.019),
                         // padding: EdgeInsets.only(top: 15.h),
-                        child: Text(
-                            "Don't have an account?",
-                            style: Theme.of(context).textTheme.titleMedium
-                        ),
+                        child: Text("Don't have an account?",
+                            style: Theme.of(context).textTheme.titleMedium),
                       ),
                       TextButton(
                           onPressed: () {
@@ -337,15 +343,13 @@ class _LoginState extends State<Login> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child:const Signup(),
+                                    child: const Signup(),
                                     type: PageTransitionType.rightToLeft,
-                                    duration: const Duration(milliseconds: 300)
-                                ));
+                                    duration:
+                                        const Duration(milliseconds: 300)));
                           },
-                          child: Text(
-                              'Register Now',
-                              style: Theme.of(context).textTheme.titleLarge
-                          ))
+                          child: Text('Register Now',
+                              style: Theme.of(context).textTheme.titleLarge))
                     ],
                   ),
                 )

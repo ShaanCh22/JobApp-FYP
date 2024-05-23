@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Services/global_methods.dart';
 import '../main_page.dart';
@@ -17,8 +16,8 @@ class Otp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 50.w,
-      height: 50.h,
+      width: 50,
+      height: 50,
       child: TextFormField(
         cursorColor: const Color(0xff5800FF),
         style: Theme.of(context).textTheme.displayMedium,
@@ -41,30 +40,40 @@ class Otp extends StatelessWidget {
           hintStyle: Theme.of(context).textTheme.displaySmall,
           hintText: ('_'),
           enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey,)
-          ),
+              borderSide: BorderSide(
+            color: Colors.grey,
+          )),
           focusedErrorBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.redAccent,)
-          ),
-          focusedBorder:const OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xff5800FF),)
-          ),
+              borderSide: BorderSide(
+            color: Colors.redAccent,
+          )),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+            color: Color(0xff5800FF),
+          )),
           errorBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.redAccent,)
-          ),
+              borderSide: BorderSide(
+            color: Colors.redAccent,
+          )),
         ),
       ),
     );
   }
 }
-class OtpScreen extends StatefulWidget {
 
+class OtpScreen extends StatefulWidget {
   final String name;
   final String mail;
   final String phone;
   final String pass;
-  final EmailOTP myauth ;
-  const OtpScreen({super.key, required this.myauth,required this.name, required this.mail,required this.pass,required this.phone});
+  final EmailOTP myauth;
+  const OtpScreen(
+      {super.key,
+      required this.myauth,
+      required this.name,
+      required this.mail,
+      required this.pass,
+      required this.phone});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -77,38 +86,42 @@ class _OtpScreenState extends State<OtpScreen> {
   TextEditingController otp4Controller = TextEditingController();
   bool _isLoading = false;
   String otpController = "1234";
-  final FirebaseAuth _auth =FirebaseAuth.instance;
-  Future submitDetail()async{
-    try{
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  Future submitDetail() async {
+    try {
       setState(() {
-        _isLoading=true;
+        _isLoading = true;
       });
-      await _auth.createUserWithEmailAndPassword(
-          email: widget.mail, password: widget.pass).then((
-          signedInUser) async
-      {
+      await _auth
+          .createUserWithEmailAndPassword(
+              email: widget.mail, password: widget.pass)
+          .then((signedInUser) async {
         String uid = FirebaseAuth.instance.currentUser!.uid;
-        FirebaseFirestore.instance.collection("Users").doc(
-            signedInUser.user?.uid).set({
-          "Id":uid,
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(signedInUser.user?.uid)
+            .set({
+          "Id": uid,
           "Name": widget.name,
           "Email": widget.mail,
           "Phone Number": widget.phone,
           "User Image": "",
-          "Gender":"",
-          "About Me":"",
-          "Resume Url":"",
+          "Gender": "",
+          "About Me": "",
+          "Resume Url": "",
           "Created At": Timestamp.now()
-        }).then((signedInUser) async
-        {
+        }).then((signedInUser) async {
           String uid = FirebaseAuth.instance.currentUser!.uid;
-          await FirebaseMessaging.instance.getToken().then((token)async{
-            await FirebaseFirestore.instance.collection('UserTokens').doc(uid).set({
-              'token' : token,
-              'id' : uid
-            });
+          await FirebaseMessaging.instance.getToken().then((token) async {
+            await FirebaseFirestore.instance
+                .collection('UserTokens')
+                .doc(uid)
+                .set({'token': token, 'id': uid});
           });
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const MainPage()), (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainPage()),
+              (route) => false);
         });
       });
     } catch (e) {
@@ -118,7 +131,7 @@ class _OtpScreenState extends State<OtpScreen> {
       GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
     }
     setState(() {
-      _isLoading=false;
+      _isLoading = false;
     });
   }
 
@@ -128,8 +141,7 @@ class _OtpScreenState extends State<OtpScreen> {
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Theme.of(context).colorScheme.onSurface,
-            statusBarIconBrightness: Theme.of(context).brightness
-        ),
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,
@@ -138,78 +150,92 @@ class _OtpScreenState extends State<OtpScreen> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w,vertical: 25.h),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Verification Code',
                     style: Theme.of(context).textTheme.displayLarge),
-                SizedBox(
-                  height: 8.h,
+                const SizedBox(
+                  height: 8,
                 ),
                 Text(
                     'We send the Verification OTP code to your email account ${widget.mail} input to complete the last stage of registering',
-                    style: Theme.of(context).textTheme.titleMedium
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(
+                  height: 30,
                 ),
-                SizedBox(height: 30.h,),
                 Center(
                   child: Wrap(
-                    runSpacing: 25.h,
+                    runSpacing: 25,
                     children: [
                       Otp(
                         otpController: otp1Controller,
                       ),
-                      SizedBox(width: 25.w,),
+                      const SizedBox(
+                        width: 25,
+                      ),
                       Otp(
                         otpController: otp2Controller,
                       ),
-                      SizedBox(width: 25.w,),
+                      const SizedBox(
+                        width: 25,
+                      ),
                       Otp(
                         otpController: otp3Controller,
                       ),
-                      SizedBox(width: 25.w,),
+                      const SizedBox(
+                        width: 25,
+                      ),
                       Otp(
                         otpController: otp4Controller,
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 30.h,),
+                const SizedBox(
+                  height: 30,
+                ),
                 SizedBox(
                   width: double.infinity,
-                  height: 53.h,
+                  height: 53,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff5800FF),
                           foregroundColor: Colors.black,
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: ()async{
-                        if (await widget.myauth.verifyOTP(otp: otp1Controller.text +
-                            otp2Controller.text +
-                            otp3Controller.text +
-                            otp4Controller.text) == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              borderRadius: BorderRadius.circular(8))),
+                      onPressed: () async {
+                        if (await widget.myauth.verifyOTP(
+                                otp: otp1Controller.text +
+                                    otp2Controller.text +
+                                    otp3Controller.text +
+                                    otp4Controller.text) ==
+                            true) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
                             content: Text("OTP is verified"),
                           ));
                           submitDetail();
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
                             content: Text("Invalid OTP"),
                           ));
                         }
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Confirm',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Confirm',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
               ],
             ),

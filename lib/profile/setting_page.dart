@@ -2,8 +2,9 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jobseek/profile/theme_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Home/notification_list.dart';
 import '../Login&Signup/ForgetPasswordScreen.dart';
@@ -17,239 +18,257 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool theme=false;
-  void logOut()async{
-    try{
+  bool theme = false;
+  void logOut() async {
+    try {
       await FirebaseAuth.instance.signOut();
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const Login()), (route) => false);
-    }catch(error){
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const Login()),
+          (route) => false);
+    } catch (error) {
       GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
         centerTitle: true,
-        title: Text('Setting',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title:
+            Text('Setting', style: Theme.of(context).textTheme.displayMedium),
       ),
       body: ListView(
         children: [
           //Dark mode
           Container(
-              color: const Color(0xff282837),
-              child: ListTile(
-                leading: Text('Dark Mode',style: GoogleFonts.dmSans(
-                    fontSize: 16.sp,
-                    color: Colors.white
-                ),),
-                trailing: Switch(
-                  value: theme,
-                  inactiveTrackColor: Colors.white,
-                  onChanged: (value){
-                    setState(() {
-                      if(theme==false){
-                        theme=true;
-                      }
-                      else{
-                        theme=false;
-                      }
-                    });
-                  },
-                ),
-              )
-          ),
+              color: Theme.of(context).colorScheme.tertiaryContainer,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ThemeScreen()));
+                },
+                style: const ButtonStyle(
+                    splashFactory: InkRipple.splashFactory,
+                    overlayColor: MaterialStatePropertyAll(Color(0x4d5800ff)),
+                    elevation: MaterialStatePropertyAll(0),
+                    padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor:
+                        MaterialStatePropertyAll(Colors.transparent),
+                    shape:
+                        MaterialStatePropertyAll(ContinuousRectangleBorder())),
+                child: ListTile(
+                    leading: Text(
+                      'Dark Mode',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Theme.of(context).colorScheme.outline,
+                    )),
+              )),
           ListTile(
-            leading: Text('General',style: GoogleFonts.dmSans(
-                fontSize: 16.sp,
-                color: Colors.grey
-            ),),
+            leading: Text(
+              'General',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
           ),
           //General Section
           Container(
-              color: const Color(0xff282837),
+              color: Theme.of(context).colorScheme.tertiaryContainer,
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
                       leading: Text('Application History',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){
-                      Navigator.push(context,
-                          PageTransition(child:const ForgetPasswordScreen(),
-                            type: PageTransitionType.rightToLeft,));
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                            child: const ForgetPasswordScreen(),
+                            type: PageTransitionType.rightToLeft,
+                          ));
                     },
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
                       leading: Text('Change Password',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){
-                      Navigator.push(context,
-                          PageTransition(child:const NotificationListScreen(),
-                            type: PageTransitionType.rightToLeft,));
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                            child: const NotificationListScreen(),
+                            type: PageTransitionType.rightToLeft,
+                          ));
                     },
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
                       leading: Text('Notifications',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                 ],
-              )
-          ),
+              )),
           ListTile(
-            leading: Text('Help',style: GoogleFonts.dmSans(
-                fontSize: 16.sp,
-                color: Colors.grey
-            ),),
+            leading: Text(
+              'Help',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
           ),
           Container(
-              margin: EdgeInsets.only(bottom: 20.h),
-              color: const Color(0xff282837),
+              margin: const EdgeInsets.only(bottom: 20),
+              color: Theme.of(context).colorScheme.tertiaryContainer,
               child: Column(
                 children: [
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
                       leading: Text('Give Feedback',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
-                      leading: Text('Privacy & Policy',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing: const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                      leading: Text(
+                        'Privacy & Policy',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: (){},
+                    onPressed: () {},
                     style: const ButtonStyle(
                         splashFactory: InkRipple.splashFactory,
-                        overlayColor: MaterialStatePropertyAll(Color(
-                            0x4d5800ff)),
+                        overlayColor:
+                            MaterialStatePropertyAll(Color(0x4d5800ff)),
                         elevation: MaterialStatePropertyAll(0),
                         padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                        backgroundColor: MaterialStatePropertyAll(Color(0xff282837)),
-                        shape: MaterialStatePropertyAll(ContinuousRectangleBorder())
-                    ),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        shape: MaterialStatePropertyAll(
+                            ContinuousRectangleBorder())),
                     child: ListTile(
                       leading: Text('Help Center',
-                        style: GoogleFonts.dmSans(
-                            fontSize: 16.sp,
-                            color: Colors.white
-                        ),),
-                      trailing:const Icon(Icons.arrow_forward_ios_sharp,color: Colors.white,),
+                          style: Theme.of(context).textTheme.titleSmall),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
                   ListTile(
                     leading: Text('Version',
-                      style: GoogleFonts.dmSans(
-                          fontSize: 16.sp,
-                          color: Colors.white
-                      ),),
+                        style: Theme.of(context).textTheme.titleSmall),
                     trailing: Text('v2.12',
-                      style: GoogleFonts.dmSans(
-                          fontSize: 14.sp,
-                          color: Colors.grey
-                      ),),
+                        style: Theme.of(context).textTheme.bodySmall),
                   ),
                 ],
-              )
-          ),
+              )),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SizedBox(
               width: double.infinity,
-              height: 53.h,
+              height: 53,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       splashFactory: InkRipple.splashFactory,
                       backgroundColor: const Color(0xff5800FF),
                       foregroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r))),
+                          borderRadius: BorderRadius.circular(8))),
                   onPressed: () => logOut(),
-                  child:Text(
+                  child: Text(
                     'Logout',
                     style: GoogleFonts.dmSans(
                         color: Colors.white,
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold),
                   )),
             ),

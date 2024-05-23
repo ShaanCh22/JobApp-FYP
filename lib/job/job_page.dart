@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/job/search_screen.dart';
 import '../Widgets/shimmer_jobcard.dart';
@@ -20,22 +19,24 @@ class _JobPageState extends State<JobPage> {
   int getPageIndex = 0;
   String uid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _locationController =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   String? selectedCategory = 'Categories';
   String? selectedType = 'Job Type';
   String searchQuery = 'Location';
-  void _clearSearchQuery(){
+  void _clearSearchQuery() {
     setState(() {
       _locationController.clear();
       _updateSearchQuery('');
-      searchQuery='Location';
+      searchQuery = 'Location';
     });
   }
-  void _updateSearchQuery(String newQuery){
+
+  void _updateSearchQuery(String newQuery) {
     setState(() {
-      searchQuery=newQuery;
+      searchQuery = newQuery;
     });
   }
+
   refreshData() {
     setState(() {});
   }
@@ -45,11 +46,11 @@ class _JobPageState extends State<JobPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: const Color(0xff1D1D2F),
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Center(
                 child: Text(
                   'Job Categories',
-                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white,fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
               content: SizedBox(
@@ -62,15 +63,12 @@ class _JobPageState extends State<JobPage> {
                         onTap: () {
                           setState(() {
                             selectedCategory =
-                            Presistent.jobCateegoryList[index];
+                                Presistent.jobCateegoryList[index];
                           });
                           Navigator.pop(context);
                         },
-                        child: Text(
-                          Presistent.jobCateegoryList[index],
-                          style: GoogleFonts.dmSans(
-                              fontSize: 16.sp, color: Colors.white),
-                        ));
+                        child: Text(Presistent.jobCateegoryList[index],
+                            style: Theme.of(context).textTheme.titleSmall));
                   },
                   separatorBuilder: (context, index) => const Divider(
                     color: Colors.grey,
@@ -86,11 +84,11 @@ class _JobPageState extends State<JobPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: const Color(0xff1D1D2F),
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Center(
                 child: Text(
                   'Job Types',
-                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white,fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
               content: SizedBox(
@@ -102,15 +100,12 @@ class _JobPageState extends State<JobPage> {
                     return InkWell(
                         onTap: () {
                           setState(() {
-                            selectedType =
-                            Presistent.jobTypeList[index];
+                            selectedType = Presistent.jobTypeList[index];
                           });
                           Navigator.pop(context);
                         },
                         child: Text(Presistent.jobTypeList[index],
-                          style: GoogleFonts.dmSans(fontSize: 16.sp, color: Colors.white),
-                        )
-                    );
+                            style: Theme.of(context).textTheme.titleSmall));
                   },
                   separatorBuilder: (context, index) => const Divider(
                     color: Colors.grey,
@@ -126,11 +121,11 @@ class _JobPageState extends State<JobPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-              backgroundColor: const Color(0xff1D1D2F),
+              backgroundColor: Theme.of(context).colorScheme.background,
               title: Center(
                 child: Text(
                   'Job Location',
-                  style: GoogleFonts.dmSans(fontSize: 20.sp, color: Colors.white),
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
               content: SizedBox(
@@ -142,46 +137,50 @@ class _JobPageState extends State<JobPage> {
                         autocorrect: true,
                         controller: _locationController,
                         decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              onPressed: (){
-                                _clearSearchQuery();
-                              },
-                              icon: const Icon(Icons.close,color: Colors.grey,),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              _clearSearchQuery();
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.grey,
                             ),
-                            hintText: 'Search for jobs',
-                            border: InputBorder.none,
-                            hintStyle: GoogleFonts.dmSans(color: Colors.grey)
+                          ),
+                          hintText: 'Search for jobs',
+                          border: InputBorder.none,
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
                         ),
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white
-                        ),
-                        onChanged: (query)=>_updateSearchQuery(query),
+                        style: Theme.of(context).textTheme.titleSmall,
+                        onChanged: (query) => _updateSearchQuery(query),
                       ),
-                      const SizedBox(height: 15,),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       SizedBox(
                         width: double.infinity,
-                        height: 53.h,
+                        height: 53,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 splashFactory: InkRipple.splashFactory,
                                 backgroundColor: const Color(0xff5800FF),
                                 foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.r))),
+                                    borderRadius: BorderRadius.circular(8))),
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child:Text(
+                            child: Text(
                               'Show Result',
                               style: GoogleFonts.dmSans(
                                   color: Colors.white,
-                                  fontSize: 16.sp,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             )),
                       ),
                     ],
-                  )
-              ));
+                  )));
         });
   }
 
@@ -195,18 +194,15 @@ class _JobPageState extends State<JobPage> {
             SliverAppBar(
               systemOverlayStyle: SystemUiOverlayStyle(
                   statusBarColor: Theme.of(context).colorScheme.onSurface,
-                  statusBarIconBrightness: Theme.of(context).brightness
-              ),
+                  statusBarIconBrightness: Theme.of(context).brightness),
               backgroundColor: Colors.transparent,
               scrolledUnderElevation: 0,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,
               elevation: 0,
               floating: true,
               centerTitle: true,
-              title: Text(
-                  'Jobs',
-                  style: Theme.of(context).textTheme.displayMedium
-              ),
+              title: Text('Jobs',
+                  style: Theme.of(context).textTheme.displayMedium),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -217,7 +213,7 @@ class _JobPageState extends State<JobPage> {
                   },
                   icon: Icon(
                     Icons.search,
-                    color:  Theme.of(context).colorScheme.outline,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 )
               ],
@@ -235,8 +231,12 @@ class _JobPageState extends State<JobPage> {
                           width: 80,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              border: getPageIndex==0 ? Border.all(color:Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
-                          ),
+                              border: getPageIndex == 0
+                                  ? Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      width: 2)
+                                  : Border.all(color: Colors.grey, width: 2)),
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -245,13 +245,18 @@ class _JobPageState extends State<JobPage> {
                             },
                             style: const ButtonStyle(
                               elevation: MaterialStatePropertyAll(0),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Colors.transparent),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.transparent),
                             ),
                             child: Center(
                               child: Text(
                                 'All',
-                                style: getPageIndex==0 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                style: getPageIndex == 0
+                                    ? Theme.of(context).textTheme.headlineMedium
+                                    : GoogleFonts.dmSans(
+                                        color: Colors.grey,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                               ),
                             ),
                           ),
@@ -263,8 +268,12 @@ class _JobPageState extends State<JobPage> {
                           height: 40,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              border: getPageIndex==1 ? Border.all(color: Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
-                          ),
+                              border: getPageIndex == 1
+                                  ? Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      width: 2)
+                                  : Border.all(color: Colors.grey, width: 2)),
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -274,8 +283,8 @@ class _JobPageState extends State<JobPage> {
                             },
                             style: const ButtonStyle(
                               elevation: MaterialStatePropertyAll(0),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Colors.transparent),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.transparent),
                             ),
                             child: Center(
                               child: RichText(
@@ -283,14 +292,23 @@ class _JobPageState extends State<JobPage> {
                                   children: [
                                     TextSpan(
                                       text: "$selectedCategory  ",
-                                      style: getPageIndex==1 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                      style: getPageIndex == 1
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium
+                                          : GoogleFonts.dmSans(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
                                     ),
                                     WidgetSpan(
-                                      child: Icon(
-                                          Icons.arrow_drop_down_sharp,
+                                      child: Icon(Icons.arrow_drop_down_sharp,
                                           size: 20,
-                                          color:  getPageIndex==1 ? Theme.of(context).colorScheme.outline :Colors.grey
-                                      ),
+                                          color: getPageIndex == 1
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .outline
+                                              : Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -305,8 +323,12 @@ class _JobPageState extends State<JobPage> {
                           height: 40,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              border: getPageIndex==2 ? Border.all(color: Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
-                          ),
+                              border: getPageIndex == 2
+                                  ? Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      width: 2)
+                                  : Border.all(color: Colors.grey, width: 2)),
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -316,8 +338,8 @@ class _JobPageState extends State<JobPage> {
                             },
                             style: const ButtonStyle(
                               elevation: MaterialStatePropertyAll(0),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Colors.transparent),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.transparent),
                             ),
                             child: Center(
                               child: RichText(
@@ -325,14 +347,23 @@ class _JobPageState extends State<JobPage> {
                                   children: [
                                     TextSpan(
                                       text: "$selectedType  ",
-                                      style:  getPageIndex==2 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                      style: getPageIndex == 2
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium
+                                          : GoogleFonts.dmSans(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
                                     ),
                                     WidgetSpan(
-                                      child: Icon(
-                                          Icons.arrow_drop_down_sharp,
+                                      child: Icon(Icons.arrow_drop_down_sharp,
                                           size: 20,
-                                          color:  getPageIndex==2 ? Theme.of(context).colorScheme.outline :Colors.grey
-                                      ),
+                                          color: getPageIndex == 2
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .outline
+                                              : Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -347,8 +378,12 @@ class _JobPageState extends State<JobPage> {
                           height: 40,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              border: getPageIndex==3 ? Border.all(color:  Theme.of(context).colorScheme.outline,width: 2) : Border.all(color: Colors.grey,width: 2)
-                          ),
+                              border: getPageIndex == 3
+                                  ? Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                      width: 2)
+                                  : Border.all(color: Colors.grey, width: 2)),
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -358,8 +393,8 @@ class _JobPageState extends State<JobPage> {
                             },
                             style: const ButtonStyle(
                               elevation: MaterialStatePropertyAll(0),
-                              backgroundColor: MaterialStatePropertyAll(
-                                  Colors.transparent),
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.transparent),
                             ),
                             child: Center(
                               child: RichText(
@@ -367,14 +402,23 @@ class _JobPageState extends State<JobPage> {
                                   children: [
                                     TextSpan(
                                       text: "$searchQuery  ",
-                                      style: getPageIndex==3 ? Theme.of(context).textTheme.headlineMedium : GoogleFonts.dmSans(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w600),
+                                      style: getPageIndex == 3
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium
+                                          : GoogleFonts.dmSans(
+                                              color: Colors.grey,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
                                     ),
                                     WidgetSpan(
-                                      child: Icon(
-                                          Icons.arrow_drop_down_sharp,
+                                      child: Icon(Icons.arrow_drop_down_sharp,
                                           size: 20,
-                                          color: getPageIndex==3 ? Theme.of(context).colorScheme.outline :Colors.grey
-                                      ),
+                                          color: getPageIndex == 3
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .outline
+                                              : Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -390,18 +434,33 @@ class _JobPageState extends State<JobPage> {
             ),
           ],
           body: StreamBuilder(
-            stream: getPageIndex==3 ? FirebaseFirestore.instance.collection('Jobs').where('JobLocation',isGreaterThanOrEqualTo: searchQuery.toLowerCase().toUpperCase())
-                .snapshots() :
-            getPageIndex==1 ? FirebaseFirestore.instance.collection('Jobs').where('JobCategory',isEqualTo: selectedCategory).snapshots() :
-            getPageIndex==2 ? FirebaseFirestore.instance.collection('Jobs').where('JobType',isEqualTo: selectedType).snapshots() :
-            FirebaseFirestore.instance.collection('Jobs').snapshots(),
+            stream: getPageIndex == 3
+                ? FirebaseFirestore.instance
+                    .collection('Jobs')
+                    .where('JobLocation',
+                        isGreaterThanOrEqualTo:
+                            searchQuery.toLowerCase().toUpperCase())
+                    .snapshots()
+                : getPageIndex == 1
+                    ? FirebaseFirestore.instance
+                        .collection('Jobs')
+                        .where('JobCategory', isEqualTo: selectedCategory)
+                        .snapshots()
+                    : getPageIndex == 2
+                        ? FirebaseFirestore.instance
+                            .collection('Jobs')
+                            .where('JobType', isEqualTo: selectedType)
+                            .snapshots()
+                        : FirebaseFirestore.instance
+                            .collection('Jobs')
+                            .snapshots(),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return ListView.separated(
                   itemCount: 7,
                   itemBuilder: (context, index) => const ShimmerJobCard(),
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: 10.h,
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 10,
                   ),
                 );
               } else if (snapshot.connectionState == ConnectionState.active) {
@@ -414,75 +473,130 @@ class _JobPageState extends State<JobPage> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data.docs.length>5 ? 5 :snapshot.data.docs.length,
-                      itemBuilder: (context,index){
+                      itemCount: snapshot.data.docs.length > 5
+                          ? 5
+                          : snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
                         return SizedBox(
                           width: double.infinity,
-                          height: 107.h,
+                          height: 107,
                           child: Card(
-                            color:Theme.of(context).colorScheme.onPrimaryContainer,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
                             child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
                               splashFactory: InkRipple.splashFactory,
                               // splashColor: Color(0xff5800FF),
-                              overlayColor: const MaterialStatePropertyAll(Color(
-                                  0x4d5800ff)),
-                              onTap: (){
-                                String id=snapshot.data!.docs[index]['id'];
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
-                                  id: id,
-                                  uid: snapshot.data.docs[index]['uid'],
-                                  ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
-                                  jobDescription: snapshot.data.docs[index]['JobDescription'],
-                                  jobExperience: snapshot.data.docs[index]['JobExperience'],
-                                  jobType: snapshot.data.docs[index]['JobType'],
-                                  jobLocation: snapshot.data.docs[index]['JobLocation'],
-                                  userImage: snapshot.data.docs[index]['UserImage'],
-                                  userName: snapshot.data.docs[index]['UserName'],
-                                  jobTitle: snapshot.data.docs[index]['JobTitle'],
-                                  postDate: snapshot.data.docs[index]['PostedAt'],
-                                  jobSalary: snapshot.data.docs[index]['JobSalary'],
-                                )));
+                              overlayColor: const MaterialStatePropertyAll(
+                                  Color(0x4d5800ff)),
+                              onTap: () {
+                                String id = snapshot.data!.docs[index]['id'];
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => JobDetailScreen(
+                                              id: id,
+                                              uid: snapshot.data.docs[index]
+                                                  ['uid'],
+                                              ownerEmail: snapshot.data
+                                                  .docs[index]['OwnerEmail'],
+                                              jobDescription:
+                                                  snapshot.data.docs[index]
+                                                      ['JobDescription'],
+                                              jobExperience: snapshot.data
+                                                  .docs[index]['JobExperience'],
+                                              jobType: snapshot.data.docs[index]
+                                                  ['JobType'],
+                                              jobLocation: snapshot.data
+                                                  .docs[index]['JobLocation'],
+                                              userImage: snapshot.data
+                                                  .docs[index]['UserImage'],
+                                              userName: snapshot
+                                                  .data.docs[index]['UserName'],
+                                              jobTitle: snapshot
+                                                  .data.docs[index]['JobTitle'],
+                                              postDate: snapshot
+                                                  .data.docs[index]['PostedAt'],
+                                              jobSalary: snapshot.data
+                                                  .docs[index]['JobSalary'],
+                                            )));
                               },
                               child: Column(
                                 children: [
                                   ListTile(
-                                    contentPadding: EdgeInsets.only(left: 15.w),
+                                    contentPadding:
+                                        const EdgeInsets.only(left: 15),
                                     leading: CircleAvatar(
-                                        radius: 22.r,
+                                        radius: 22,
                                         child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(22.r),
-                                            child:snapshot.data.docs[index]['UserImage']=="" ?
-                                            const Icon(Icons.person,size:25,color:Colors.grey,) :
-                                            Image.network(snapshot.data.docs[index]['UserImage']))),
+                                            borderRadius:
+                                                BorderRadius.circular(22),
+                                            child: snapshot.data.docs[index]
+                                                        ['UserImage'] ==
+                                                    ""
+                                                ? const Icon(
+                                                    Icons.person,
+                                                    size: 25,
+                                                    color: Colors.grey,
+                                                  )
+                                                : Image.network(
+                                                    snapshot.data.docs[index]
+                                                        ['UserImage']))),
                                     title: Text(
                                         '${snapshot.data.docs[index]['JobTitle']}',
-                                        style: Theme.of(context).textTheme.headlineMedium),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium),
                                     subtitle: Text(
                                       '${snapshot.data.docs[index]['UserName']} - ${snapshot.data.docs[index]['PostedAt']}',
-                                      style: Theme.of(context).textTheme.labelLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge,
                                     ),
                                     trailing: Padding(
-                                      padding: EdgeInsets.only(right: 10.w),
+                                      padding: const EdgeInsets.only(right: 10),
                                       child: Icon(
                                         Icons.arrow_forward_ios_sharp,
-                                        color: Theme.of(context).colorScheme.outline,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
                                       ),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 15.w),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.location_on_outlined,color:Theme.of(context).colorScheme.outline,size: 18,),
+                                        Icon(
+                                          Icons.location_on_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline,
+                                          size: 18,
+                                        ),
                                         Text(
                                           '${snapshot.data.docs[index]['JobLocation']}',
-                                          style: Theme.of(context).textTheme.headlineSmall,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall,
                                         ),
-                                        SizedBox(width: 10.w,),
-                                        Icon(Icons.currency_exchange_outlined,color: Theme.of(context).colorScheme.outline,size: 15,),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Icon(
+                                          Icons.currency_exchange_outlined,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline,
+                                          size: 15,
+                                        ),
                                         Text(
                                           ' ${snapshot.data.docs[index]['JobSalary']}',
-                                          style: Theme.of(context).textTheme.headlineSmall,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall,
                                         ),
                                       ],
                                     ),
@@ -497,19 +611,14 @@ class _JobPageState extends State<JobPage> {
                   );
                 } else {
                   return Center(
-                    child: Text(
-                        'There is no Job!',
-                        style: Theme.of(context).textTheme.labelMedium
-                    ),
+                    child: Text('There is no Job!',
+                        style: Theme.of(context).textTheme.labelMedium),
                   );
                 }
               }
               return Center(
-                child: Text(
-                    'Something went wrong',
-                    style:
-                    Theme.of(context).textTheme.labelMedium
-                ),
+                child: Text('Something went wrong',
+                    style: Theme.of(context).textTheme.labelMedium),
               );
             },
           ),

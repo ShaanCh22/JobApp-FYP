@@ -45,7 +45,13 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: IndexedStack(
         index: getPageIndex,
-        children: const [HomeScreen(), JobPage(), FavoritPage(), SearchUser(),ProfilePage()],
+        children: const [
+          HomeScreen(),
+          JobPage(),
+          FavoritPage(),
+          SearchUser(),
+          ProfilePage()
+        ],
       ),
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: getPageIndex,
@@ -60,28 +66,50 @@ class _MainPageState extends State<MainPage> {
         iconSize: 22,
         items: [
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/svg/img_nav_home_onprimary.svg',),
-            activeIcon: SvgPicture.asset('assets/svg/img_nav_home.svg',),
+            icon: SvgPicture.asset(
+              'assets/svg/img_nav_home_onprimary.svg',
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/svg/img_nav_home.svg',
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/svg/img_nav_jobs.svg',),
-            activeIcon: SvgPicture.asset('assets/svg/img_nav_jobs_primary.svg',),
+            icon: SvgPicture.asset(
+              'assets/svg/img_nav_jobs.svg',
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/svg/img_nav_jobs_primary.svg',
+            ),
             label: 'Jobs',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/svg/img_nav_favorit.svg',),
-            activeIcon: SvgPicture.asset('assets/svg/img_nav_favorit_primary.svg',),
+            icon: SvgPicture.asset(
+              'assets/svg/img_nav_favorit.svg',
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/svg/img_nav_favorit_primary.svg',
+            ),
             label: 'Favorit',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.person_search_outlined,size: 28,),
-            activeIcon: Icon(Icons.person_search_rounded,size: 28,),
+            icon: Icon(
+              Icons.person_search_outlined,
+              size: 28,
+            ),
+            activeIcon: Icon(
+              Icons.person_search_rounded,
+              size: 28,
+            ),
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/svg/img_nav_profile.svg',),
-            activeIcon: SvgPicture.asset('assets/svg/img_nav_profile_primary.svg',),
+            icon: SvgPicture.asset(
+              'assets/svg/img_nav_profile.svg',
+            ),
+            activeIcon: SvgPicture.asset(
+              'assets/svg/img_nav_profile_primary.svg',
+            ),
             label: 'Profile',
           )
         ],

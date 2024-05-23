@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../Services/global_methods.dart';
-
 
 class AddExperienceScreen extends StatefulWidget {
   const AddExperienceScreen({super.key});
@@ -20,44 +19,50 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
   final TextEditingController _titletext = TextEditingController(text: '');
   final TextEditingController _companytext = TextEditingController(text: '');
   final TextEditingController _locationtext = TextEditingController(text: '');
-  final TextEditingController _startDateController = TextEditingController(text: '');
-  final TextEditingController _endDateController = TextEditingController(text: '');
+  final TextEditingController _startDateController =
+      TextEditingController(text: '');
+  final TextEditingController _endDateController =
+      TextEditingController(text: '');
   final TextEditingController _jobdescText = TextEditingController(text: '');
   bool _isLoading = false;
-  final User? _user=FirebaseAuth.instance.currentUser;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
-  Future _submitExpData() async{
+  Future _submitExpData() async {
     final isValid = _addExpFormKey.currentState!.validate();
-    if(isValid) {
+    if (isValid) {
       setState(() {
-        _isLoading=true;
+        _isLoading = true;
       });
-      try{
-        String id=DateTime.now().millisecondsSinceEpoch.toString();
-        FirebaseFirestore.instance.collection('Users').doc(_user?.uid).collection('Experience').doc(id).set({
-          'id':id,
-          'Title':_titletext.text,
-          'Company Name':_companytext.text,
-          'Location':_locationtext.text,
-          'Start Date':_startDateController.text,
-          'End Date':_endDateController.text,
-          'Job Description':_jobdescText.text
+      try {
+        String id = DateTime.now().millisecondsSinceEpoch.toString();
+        FirebaseFirestore.instance
+            .collection('Users')
+            .doc(_user?.uid)
+            .collection('Experience')
+            .doc(id)
+            .set({
+          'id': id,
+          'Title': _titletext.text,
+          'Company Name': _companytext.text,
+          'Location': _locationtext.text,
+          'Start Date': _startDateController.text,
+          'End Date': _endDateController.text,
+          'Job Description': _jobdescText.text
         });
         const SnackBar(
           content: Text('Experience Added'),
         );
         Navigator.pop(context);
-      }catch(error){
+      } catch (error) {
         setState(() {
           _isLoading = false;
         });
         GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
       }
-      Fluttertoast.showToast(
-          msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
     setState(() {
-      _isLoading=false;
+      _isLoading = false;
     });
   }
 
@@ -65,292 +70,341 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.onSurface,
+            statusBarIconBrightness: Theme.of(context).brightness),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        scrolledUnderElevation: 0,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+        elevation: 0,
         centerTitle: true,
-        title: Text('Add Experience',style: GoogleFonts.dmSans(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w500
-        ),),
+        title: Text('Add Experience',
+            style: Theme.of(context).textTheme.labelMedium),
       ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.only(left: 20.w,right: 20.w,bottom: 25.h),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Form(
                   key: _addExpFormKey,
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Title
-                      Text(
-                        'Title',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
-                      ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Title',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _titletext,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Please enter title!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Ex: UI/UX Designer',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                       //Company Name
-                      SizedBox(height: 20.h,),
-                      Text(
-                        'Company',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Company',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _companytext,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Please enter company name!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Ex: Microsoft',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Location
-                      SizedBox(height: 20.h,),
-                      Text(
-                        'Location',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Location',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
                         // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _locationtext,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Please enter location!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'Ex: London, United Kingdom',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
-
                       ),
                       //Start & End Date
-                      SizedBox(height: 20.h,),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Wrap(
-                        spacing: 20.w,
-                        runSpacing: 20.h,
+                        spacing: 20,
+                        runSpacing: 20,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Start Date',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white, fontSize: 14.sp),
+                              Text('Start Date',
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall),
+                              const SizedBox(
+                                height: 8,
                               ),
                               SizedBox(
-                                height: 8.h,
-                              ),
-                              SizedBox(width: 175.w,
+                                width: 175,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
-                                  style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 15.sp
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                   controller: _startDateController,
-                                  validator: (value){
-                                    if(value!.isEmpty){
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
                                       return 'Start date required!';
-                                    }
-                                    else{
+                                    } else {
                                       return null;
                                     }
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     isCollapsed: true,
                                     hintText: 'Select date',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    contentPadding: EdgeInsets.all(15),
+                                    hintStyle:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    contentPadding: const EdgeInsets.all(15),
                                     filled: true,
-                                    fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
-                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiaryContainer,
+                                    suffixIcon: const Icon(
+                                      Icons.date_range_outlined,
+                                      color: Colors.grey,
                                     ),
-                                    focusedBorder:OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff5800FF),)
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
-                                    ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedErrorBorder:
+                                        const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff5800FF),
+                                    )),
+                                    errorBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
                                   ),
-                                  onTap: ()async{
-                                    DateTime? pickedDate=await showDatePicker(
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                        builder: (context, child) => Theme(
+                                              data: ThemeData().copyWith(
+                                                  colorScheme:
+                                                      ColorScheme.light(
+                                                          background:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background)),
+                                              child: child!,
+                                            ),
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if(pickedDate!=null){
+                                    if (pickedDate != null) {
                                       setState(() {
-                                        _startDateController.text=DateFormat('yMMMM').format(pickedDate);
+                                        _startDateController.text =
+                                            DateFormat('yMMMM')
+                                                .format(pickedDate);
                                       });
                                     }
                                   },
-                                ),)
+                                ),
+                              )
                             ],
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'End Date',
-                                style: GoogleFonts.dmSans(
-                                    color: Colors.white, fontSize: 14.sp),
+                              Text('End Date',
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall),
+                              const SizedBox(
+                                height: 8,
                               ),
                               SizedBox(
-                                height: 8.h,
-                              ),
-                              SizedBox(width: 175.w,
+                                width: 175,
                                 child: TextFormField(
                                   textInputAction: TextInputAction.done,
                                   keyboardType: TextInputType.none,
-                                  style: GoogleFonts.dmSans(
-                                      color: Colors.white,
-                                      fontSize: 15.sp
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                   controller: _endDateController,
-                                  validator: (value){
-                                    if(value!.isEmpty){
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
                                       return 'End date required!';
-                                    }
-                                    else{
+                                    } else {
                                       return null;
                                     }
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     isCollapsed: true,
                                     hintText: 'Select date',
-                                    hintStyle: TextStyle(color: Colors.grey),
-                                    contentPadding: EdgeInsets.all(15),
+                                    hintStyle:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    contentPadding: const EdgeInsets.all(15),
                                     filled: true,
-                                    fillColor: Color(0xff282837),
-                                    suffixIcon: Icon(Icons.date_range_outlined,color: Colors.grey,),
-                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
+                                    fillColor: Theme.of(context)
+                                        .colorScheme
+                                        .onTertiaryContainer,
+                                    suffixIcon: const Icon(
+                                      Icons.date_range_outlined,
+                                      color: Colors.grey,
                                     ),
-                                    focusedBorder:OutlineInputBorder(
-                                        borderSide: BorderSide(color: Color(0xff5800FF),)
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(color: Colors.redAccent,)
-                                    ),
+                                    enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide.none),
+                                    focusedErrorBorder:
+                                        const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
+                                    focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Color(0xff5800FF),
+                                    )),
+                                    errorBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                      color: Colors.redAccent,
+                                    )),
                                   ),
-                                  onTap: ()async{
-                                    DateTime? pickedDate=await showDatePicker(
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                        builder: (context, child) => Theme(
+                                              data: ThemeData().copyWith(
+                                                  colorScheme:
+                                                      ColorScheme.light(
+                                                          background:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .background)),
+                                              child: child!,
+                                            ),
                                         context: context,
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100));
-                                    if(pickedDate!=null){
+                                    if (pickedDate != null) {
                                       setState(() {
-                                        _endDateController.text=DateFormat('yMMMM').format(pickedDate);
+                                        _endDateController.text =
+                                            DateFormat('yMMMM')
+                                                .format(pickedDate);
                                       });
                                     }
                                   },
-                                ),)
+                                ),
+                              )
                             ],
                           ),
                         ],
                       ),
                       //Job Description
-                      SizedBox(height: 20.h,),
-                      Text(
-                        'Job Description',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white, fontSize: 14.sp),
+                      const SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(
-                        height: 8.h,
+                      Text('Job Description',
+                          style: Theme.of(context).textTheme.labelSmall),
+                      const SizedBox(
+                        height: 8,
                       ),
                       TextFormField(
                         maxLength: 150,
@@ -358,62 +412,68 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.text,
                         controller: _jobdescText,
-                        validator: (value){
-                          if(value!.isEmpty){
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return 'Please enter description!';
-                          }
-                          else{
+                          } else {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        style: Theme.of(context).textTheme.titleSmall,
+                        decoration: InputDecoration(
                           isCollapsed: true,
-                          contentPadding: EdgeInsets.all(15),
+                          contentPadding: const EdgeInsets.all(15),
                           filled: true,
-                          fillColor: Color(0xff282837),
+                          fillColor:
+                              Theme.of(context).colorScheme.onTertiaryContainer,
                           hintText: 'job description',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                          focusedErrorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
-                          focusedBorder:OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xff5800FF),)
-                          ),
-                          errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.redAccent,)
-                          ),
+                          hintStyle: Theme.of(context).textTheme.bodySmall,
+                          enabledBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide.none),
+                          focusedErrorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Color(0xff5800FF),
+                          )),
+                          errorBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.redAccent,
+                          )),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20.h,),
+                const SizedBox(
+                  height: 20,
+                ),
                 SizedBox(
                   width: double.infinity,
-                  height: 53.h,
+                  height: 53,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff5800FF),
                           foregroundColor: Colors.black,
                           splashFactory: InkRipple.splashFactory,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r))),
-                      onPressed: (){
+                              borderRadius: BorderRadius.circular(8))),
+                      onPressed: () {
                         _submitExpData();
                       },
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                              color: Colors.white,
+                            )
                           : Text(
-                        'Submit',
-                        style: GoogleFonts.dmSans(
-                            color: Colors.white,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold),
-                      )),
+                              'Submit',
+                              style: GoogleFonts.dmSans(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            )),
                 ),
               ],
             ),
@@ -423,5 +483,3 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
     );
   }
 }
-
-
