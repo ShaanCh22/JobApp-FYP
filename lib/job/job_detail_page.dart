@@ -6,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:http/http.dart' as http;
-import '../Home/other_view_profile.dart';
+import '../OtherProfiles/other_view_profile.dart';
+import '../Widgets/snackbar.dart';
 
 class JobDetailScreen extends StatefulWidget {
   const JobDetailScreen({
@@ -26,6 +26,7 @@ class JobDetailScreen extends StatefulWidget {
     required this.jobExperience,
     required this.jobType,
     required this.jobDescription,
+    required this.jobRecruitment,
     required this.ownerEmail,
     required this.uid,
   });
@@ -39,6 +40,7 @@ class JobDetailScreen extends StatefulWidget {
   final String? jobType;
   final String? jobExperience;
   final String? jobDescription;
+  final String? jobRecruitment;
   final String? ownerEmail;
   final String id;
   final String uid;
@@ -50,6 +52,7 @@ class JobDetailScreen extends StatefulWidget {
 class _JobDetailScreenState extends State<JobDetailScreen> {
   String dt = DateFormat('MMM d, y').format(DateTime.now());
   String uid = FirebaseAuth.instance.currentUser!.uid;
+  Snack snack = Snack();
   bool isFav = false;
   String? utoken = '';
   String? cuser = '';
@@ -109,8 +112,19 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           .collection("FavoriteJobs")
           .doc(jobid)
           .delete();
-      Fluttertoast.showToast(
-          msg: 'Removed from favorites', toastLength: Toast.LENGTH_SHORT);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.black87,
+        elevation: 20,
+        content: Text(
+          "Removed from favorites",
+          style: GoogleFonts.dmSans(
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+      ));
+      // Fluttertoast.showToast(
+      //     msg: 'Removed from favorites', toastLength: Toast.LENGTH_SHORT);
     } else {
       setState(() {
         isFav = true;
@@ -120,9 +134,22 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           .doc(uid)
           .collection("FavoriteJobs")
           .doc(jobid)
-          .set({});
-      Fluttertoast.showToast(
-          msg: 'Added to favorites', toastLength: Toast.LENGTH_SHORT);
+          .set({
+        'job id': jobid
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.black87,
+        elevation: 20,
+        content: Text(
+          "Added to favorites",
+          style: GoogleFonts.dmSans(
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+        ),
+      ));
+      // Fluttertoast.showToast(
+      //     msg: 'Added to favorites', toastLength: Toast.LENGTH_SHORT);
     }
   }
 
@@ -133,7 +160,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-              'key=AAAAp9E4QOU:APA91bFI1JRCbbkbF3I3waysKwzZP7kPV2h0zz5XSxEes3VnWCL5zeICMpfWbK8bLbCGu7ONEJobFtg7UMu9-y78kTfcomEZOZ6kT6tYGLorHPvxeMLpF6mQont5t2FmIPbAoQiLHqpO',
+              'key=AAAAoweGA3E:APA91bH7dhtvuJ79BqQyC0fjCshsF8O673ZuVQleiRXRztXyEZ4UD0_v7Tp8KHg7-XCJOgYRsnCUgS_TUJWZ_FbAMqnjJekeTy1xzHURXXeUL1WQty5hnmgR4YyNOlfuLUMZKhzk6CgY',
         },
         body: jsonEncode(<String, dynamic>{
           'priority': 'high',
@@ -165,10 +192,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         'UserImage': userImage,
         "Arrived": dt,
       });
-    } catch (e) {
-      SnackBar(
-        content: Text(e.toString()),
-      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(snack.errorSnackBar('On Error!', e.message.toString()));
     }
   }
 
@@ -193,10 +219,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             //   return OtherViewProfileScreen(id: widget.uid,);
             // }));
           } else {}
-        } catch (e) {
-          SnackBar(
-            content: Text(e.toString()),
-          );
+        } on FirebaseAuthException catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
         }
         return;
       },
@@ -220,6 +245,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     initInfo();
     checkIsFav(widget.id);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -337,53 +363,27 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     const SizedBox(
                       height: 24,
                     ),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 25,
-                      runSpacing: 10,
-                      children: [
-                        SizedBox(
-                          height: 52,
-                          width: 245,
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  splashFactory: InkRipple.splashFactory,
-                                  backgroundColor: const Color(0xff5800FF),
-                                  foregroundColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5))),
-                              onPressed: () {
-                                applyForJob();
-                                sendPushNotification(utoken!, '$cuser,',
-                                    'applied your ${widget.jobTitle} job.');
-                              },
-                              child: Text('ApplyNow',
-                                  style: GoogleFonts.dmSans(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ))),
-                        ),
-                        SizedBox(
-                          height: 52,
-                          width: 70,
-                          child: OutlinedButton(
-                              style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  splashFactory: InkRipple.splashFactory,
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: const Color(0xff5800FF),
-                                  side: const BorderSide(
-                                      color: Color(0xff5800FF), width: 1),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8))),
-                              onPressed: () {},
-                              child: Icon(
-                                Icons.share_outlined,
-                                color: Theme.of(context).colorScheme.outline,
-                                size: 24,
-                              )),
-                        )
-                      ],
+                    SizedBox(
+                      height: 52,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              splashFactory: InkRipple.splashFactory,
+                              backgroundColor: const Color(0xff5800FF),
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5))),
+                          onPressed: () {
+                            applyForJob();
+                            sendPushNotification(utoken!, '$cuser',
+                                'applied your ${widget.jobTitle} job.');
+                          },
+                          child: Text('Easy Apply Now',
+                              style: GoogleFonts.dmSans(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500
+                              ))),
                     )
                   ],
                 ),
@@ -434,7 +434,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       height: 16,
                     ),
                     Text(
-                        'Create delightful user interface based on our design system. Create interface elements such as menus, tabs, widgets, etc. Collaborate closely with UX Researchers, Product Manager / Product Owner, & Software Engineer. Help build design system with other designers. Build UI Component on Design System',
+                        '${widget.jobRecruitment}',
                         style: GoogleFonts.dmSans(
                           color: Theme.of(context).colorScheme.outline,
                           fontWeight: FontWeight.normal,

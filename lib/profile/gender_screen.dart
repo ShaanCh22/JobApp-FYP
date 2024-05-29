@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class GenderScreen extends StatefulWidget {
   const GenderScreen({super.key});
@@ -17,6 +17,7 @@ class _GenderScreenState extends State<GenderScreen> {
   String? gender;
   final User? _user = FirebaseAuth.instance.currentUser;
   String uid = FirebaseAuth.instance.currentUser!.uid;
+  final Snack snack = Snack();
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _GenderScreenState extends State<GenderScreen> {
     });
   }
 
-  Future _submitExpData() async {
+  Future _submitGenData() async {
     final isValid = _addExpFormKey.currentState!.validate();
     if (isValid) {
       try {
@@ -42,11 +43,17 @@ class _GenderScreenState extends State<GenderScreen> {
             .collection('Users')
             .doc(uid)
             .update({'Gender': gender});
-        const SnackBar(
-          content: Text('Changes saved'),
-        );
-      } catch (error) {
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.successSnackBar('Congrats!', 'Changes saved successfully'));
+      } on FirebaseAuthException catch (e) {
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
   }
@@ -56,7 +63,7 @@ class _GenderScreenState extends State<GenderScreen> {
     return PopScope(
       onPopInvoked: (didPop) {
         if (gender != null) {
-          _submitExpData();
+          _submitGenData();
         }
       },
       child: Scaffold(

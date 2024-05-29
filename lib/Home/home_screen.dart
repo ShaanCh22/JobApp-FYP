@@ -10,11 +10,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Home/view_profile_screen.dart';
 import '../Widgets/shimmer_job_card_h.dart';
 import '../Widgets/shimmer_jobcard.dart';
+import '../Widgets/snackbar.dart';
 import '../job/job_detail_page.dart';
 import '../job/new_hiring.dart';
 import '../job/recommended_jobs.dart';
 import 'notification_list.dart';
-import 'other_view_profile.dart';
+import '../OtherProfiles/other_view_profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,14 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => OtherViewProfileScreen(id: uid)));
-            // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-            //   return OtherViewProfileScreen(id: widget.uid,);
-            // }));
           } else {}
-        } catch (e) {
-          SnackBar(
-            content: Text(e.toString()),
-          );
+        } on FirebaseAuthException catch (e) {
+          Snack().errorSnackBar('On Snap!', e.message.toString());
         }
         return;
       },
@@ -127,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leadingWidth: 80,
               titleSpacing: 0,
               leading: Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 5),
+                  padding: const EdgeInsets.only(top: 5, bottom: 5),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -192,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   //New Hiring Buttons
                   const SizedBox(
-                    height: 35,
+                    height: 30,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -220,275 +216,225 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   StreamBuilder(
                     stream: FirebaseFirestore.instance
-                        .collection('Jobs')
-                        .orderBy('PostedAt', descending: true)
+                        .collection('Jobs').orderBy('PostedAt',descending: true)
                         .snapshots(),
-                    builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                    builder: (context, AsyncSnapshot snapshot){
+                      if(snapshot.connectionState==ConnectionState.waiting){
                         return SizedBox(
                           height: 240,
                           child: ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                return const ShimmerJobCardH();
+                                return ShimmerJobCardH();
                               },
                               scrollDirection: Axis.horizontal,
                               // itemCount: snapshot.data.docs.length,
-                              itemCount: 2),
+                              itemCount: 2
+                          ),
                         );
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.active) {
-                        if (snapshot.data?.docs.isNotEmpty == true) {
+                      }
+                      else if(snapshot.connectionState==ConnectionState.active){
+                        if(snapshot.data?.docs.isNotEmpty ==true){
                           return SizedBox(
-                            // height: 240,
+                            height: 240,
                             child: ListView.builder(
-                              itemCount: snapshot.data.docs.length > 5
-                                  ? 5
-                                  : snapshot.data.docs.length,
+                              itemCount: snapshot.data.docs.length>5 ? 5 : snapshot.data.docs.length,
                               physics: const BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
                                 return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
                                   child: SizedBox(
-                                    // width: 202,
+                                    width: 202,
                                     child: ElevatedButton(
-                                      onPressed: () {
-                                        String id =
-                                            snapshot.data!.docs[index]['id'];
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    JobDetailScreen(
-                                                      id: id,
-                                                      uid: snapshot.data
-                                                          .docs[index]['uid'],
-                                                      ownerEmail: snapshot
-                                                              .data.docs[index]
-                                                          ['OwnerEmail'],
-                                                      jobDescription: snapshot
-                                                              .data.docs[index]
-                                                          ['JobDescription'],
-                                                      jobExperience: snapshot
-                                                              .data.docs[index]
-                                                          ['JobExperience'],
-                                                      jobType: snapshot
-                                                              .data.docs[index]
-                                                          ['JobType'],
-                                                      jobLocation: snapshot
-                                                              .data.docs[index]
-                                                          ['JobLocation'],
-                                                      userImage: snapshot
-                                                              .data.docs[index]
-                                                          ['UserImage'],
-                                                      userName: snapshot
-                                                              .data.docs[index]
-                                                          ['UserName'],
-                                                      jobTitle: snapshot
-                                                              .data.docs[index]
-                                                          ['JobTitle'],
-                                                      postDate: snapshot
-                                                              .data.docs[index]
-                                                          ['PostedAt'],
-                                                      jobSalary: snapshot
-                                                              .data.docs[index]
-                                                          ['JobSalary'],
-                                                    )));
+                                      onPressed: (){
+                                        String id=snapshot.data!.docs[index]['id'];
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
+                                          id: id,
+                                          uid: snapshot.data.docs[index]
+                                          ['uid'],
+                                          ownerEmail:
+                                          snapshot.data.docs[index]
+                                          ['OwnerEmail'],
+                                          jobDescription:
+                                          snapshot.data.docs[index]
+                                          ['JobDescription'],
+                                          jobExperience:
+                                          snapshot.data.docs[index]
+                                          ['JobExperience'],
+                                          jobType: snapshot.data
+                                              .docs[index]['JobType'],
+                                          jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
+                                          jobLocation:
+                                          snapshot.data.docs[index]
+                                          ['JobLocation'],
+                                          userImage: snapshot.data
+                                              .docs[index]['UserImage'],
+                                          userName: snapshot.data
+                                              .docs[index]['UserName'],
+                                          jobTitle: snapshot.data
+                                              .docs[index]['JobTitle'],
+                                          postDate: snapshot.data
+                                              .docs[index]['PostedAt'],
+                                          jobSalary: snapshot.data
+                                              .docs[index]['JobSalary'],
+                                        )));
                                       },
                                       style: ButtonStyle(
-                                        overlayColor:
-                                            const MaterialStatePropertyAll(
-                                                Color(0xff1a288a)),
-                                        splashFactory: InkRipple.splashFactory,
-                                        elevation:
-                                            const MaterialStatePropertyAll(0),
-                                        padding: const MaterialStatePropertyAll(
-                                            EdgeInsets.zero),
-                                        backgroundColor:
-                                            const MaterialStatePropertyAll(
-                                                Color(0xff5800FF)),
-                                        shape: MaterialStatePropertyAll(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8))),
+                                        overlayColor: const MaterialStatePropertyAll(Color(
+                                            0xff1a288a)),
+                                        splashFactory:InkRipple.splashFactory,
+                                        elevation: const MaterialStatePropertyAll(0),
+                                        padding: const MaterialStatePropertyAll(EdgeInsets.zero),
+                                        backgroundColor: const MaterialStatePropertyAll(Color(0xff5800FF)),
+                                        shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                                       ),
                                       child: SizedBox(
-                                        width: 200,
-                                        // width: dwidth*0.521,
+                                        width: 202,
                                         child: Card(
                                           color: Colors.transparent,
                                           elevation: 0,
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: const EdgeInsets.only(
+                                                padding: EdgeInsets.only(
                                                     left: 10, top: 10),
                                                 child: CircleAvatar(
                                                     radius: 22,
                                                     child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(22),
-                                                        child: snapshot.data
-                                                                            .docs[
-                                                                        index][
-                                                                    'UserImage'] ==
-                                                                ''
-                                                            ? const Icon(
-                                                                Icons.person,
-                                                                size: 25,
-                                                                color:
-                                                                    Colors.grey,
-                                                              )
-                                                            : Image.network(snapshot
-                                                                    .data
-                                                                    .docs[index]
-                                                                [
-                                                                'UserImage']))),
+                                                        borderRadius: BorderRadius.circular(22),
+                                                        child:snapshot.data.docs[index]['UserImage']=='' ?
+                                                        Icon(Icons.person,size:25,color:Colors.grey,) :
+                                                        Image.network(snapshot.data.docs[index]['UserImage']))),
                                               ),
-                                              const SizedBox(
-                                                height: 15,
+                                              SizedBox(
+                                                height: 10,
                                               ),
                                               Padding(
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
+                                                EdgeInsets.symmetric(horizontal: 5),
                                                 child: Column(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                                   children: [
                                                     AutoSizeText(
                                                       '${snapshot.data.docs[index]['UserName']}',
+                                                      overflow: TextOverflow.ellipsis,
                                                       style: GoogleFonts.dmSans(
-                                                        color: const Color(
-                                                            0xffF6F8FE),
+                                                        color: const Color(0xffF6F8FE),
                                                         fontSize: 13,
+                                                        fontWeight: FontWeight.w500
                                                       ),
                                                     ),
-                                                    const SizedBox(
+                                                    SizedBox(
                                                       height: 8,
                                                     ),
-                                                    AutoSizeText(
+                                                    Text(
                                                       '${snapshot.data.docs[index]['JobTitle']}',
                                                       style: GoogleFonts.dmSans(
                                                           color: Colors.white,
                                                           fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w600),
+                                                          fontWeight: FontWeight.w600),
                                                     ),
-                                                    AutoSizeText(
+                                                    Text(
                                                       "\$ ${snapshot.data.docs[index]['JobSalary']}",
                                                       style: GoogleFonts.dmSans(
-                                                        color: const Color(
-                                                            0xffF6F8FE),
+                                                        color: const Color(0xffF6F8FE),
                                                         fontSize: 12,
                                                       ),
                                                     ),
-                                                    const SizedBox(
+                                                    SizedBox(
                                                       height: 15,
                                                     ),
                                                     Container(
                                                       width: 70,
                                                       height: 28,
                                                       decoration: BoxDecoration(
-                                                          color: const Color(
-                                                              0xff9333FF),
+                                                          color: const Color(0xff9333FF),
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8)),
+                                                          BorderRadius.circular(8)),
                                                       child: Center(
-                                                        child: AutoSizeText(
+                                                        child: Text(
                                                           '${snapshot.data.docs[index]['JobType']}',
-                                                          style: GoogleFonts
-                                                              .dmSans(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 12),
+                                                          style: GoogleFonts.dmSans(
+                                                              color: Colors.white,
+                                                              fontSize: 12),
                                                         ),
                                                       ),
                                                     )
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(
+                                              SizedBox(
                                                 height: 15,
                                               ),
                                               Padding(
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                child: Wrap(
-                                                  spacing: 10,
-                                                  runSpacing: 10,
-                                                  alignment: WrapAlignment
-                                                      .spaceBetween,
+                                                EdgeInsets.symmetric(horizontal: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    AutoSizeText(
+                                                    Text(
                                                       '${snapshot.data.docs[index]['PostedAt']}',
                                                       style: GoogleFonts.dmSans(
                                                           color: Colors.white,
                                                           fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w700),
+                                                          fontWeight: FontWeight.w700),
                                                     ),
                                                     SizedBox(
                                                       width: 80,
                                                       height: 30,
                                                       child: ElevatedButton(
                                                           style: ElevatedButton.styleFrom(
-                                                              splashFactory:
-                                                                  InkRipple
-                                                                      .splashFactory,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              backgroundColor:
-                                                                  Colors.white,
+                                                              splashFactory: InkRipple.splashFactory,
+                                                              padding: EdgeInsets.zero,
+                                                              backgroundColor: Colors.white,
                                                               foregroundColor:
-                                                                  const Color(
-                                                                      0xff292c47),
+                                                              const Color(0xff292c47),
                                                               shape: RoundedRectangleBorder(
                                                                   borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              12))),
-                                                          onPressed: () {
-                                                            String id = snapshot
-                                                                    .data!
-                                                                    .docs[index]
-                                                                ['id'];
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            JobDetailScreen(
-                                                                              id: id,
-                                                                              uid: snapshot.data.docs[index]['uid'],
-                                                                              ownerEmail: snapshot.data.docs[index]['OwnerEmail'],
-                                                                              jobDescription: snapshot.data.docs[index]['JobDescription'],
-                                                                              jobExperience: snapshot.data.docs[index]['JobExperience'],
-                                                                              jobType: snapshot.data.docs[index]['JobType'],
-                                                                              jobLocation: snapshot.data.docs[index]['JobLocation'],
-                                                                              userImage: snapshot.data.docs[index]['UserImage'],
-                                                                              userName: snapshot.data.docs[index]['UserName'],
-                                                                              jobTitle: snapshot.data.docs[index]['JobTitle'],
-                                                                              postDate: snapshot.data.docs[index]['PostedAt'],
-                                                                              jobSalary: snapshot.data.docs[index]['JobSalary'],
-                                                                            )));
+                                                                  BorderRadius.circular(
+                                                                      12))),
+                                                          onPressed: (){
+                                                            String id=snapshot.data!.docs[index]['id'];
+                                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>JobDetailScreen(
+                                                              id: id,
+                                                              uid: snapshot.data.docs[index]
+                                                              ['uid'],
+                                                              ownerEmail:
+                                                              snapshot.data.docs[index]
+                                                              ['OwnerEmail'],
+                                                              jobDescription:
+                                                              snapshot.data.docs[index]
+                                                              ['JobDescription'],
+                                                              jobExperience:
+                                                              snapshot.data.docs[index]
+                                                              ['JobExperience'],
+                                                              jobType: snapshot.data
+                                                                  .docs[index]['JobType'],
+                                                              jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
+                                                              jobLocation:
+                                                              snapshot.data.docs[index]
+                                                              ['JobLocation'],
+                                                              userImage: snapshot.data
+                                                                  .docs[index]['UserImage'],
+                                                              userName: snapshot.data
+                                                                  .docs[index]['UserName'],
+                                                              jobTitle: snapshot.data
+                                                                  .docs[index]['JobTitle'],
+                                                              postDate: snapshot.data
+                                                                  .docs[index]['PostedAt'],
+                                                              jobSalary: snapshot.data
+                                                                  .docs[index]['JobSalary'],
+                                                            )));
                                                           },
                                                           child: Text(
                                                             'Apply',
                                                             style: GoogleFonts.dmSans(
-                                                                color: const Color(
-                                                                    0xff5800FF),
+                                                                color: const Color(0xff5800FF),
                                                                 fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700),
+                                                                fontWeight: FontWeight.w700),
                                                           )),
                                                     )
                                                   ],
@@ -506,22 +452,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               // itemCount: snapshot.data.docs.length,
                             ),
                           );
-                        } else {
+                        }
+                        else{
                           return Center(
-                            child: AutoSizeText(
-                              'There is no Job!',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white, fontSize: 16),
-                            ),
+                            child: AutoSizeText('There is no Job!',style: GoogleFonts.dmSans(
+                                color: Theme.of(context).colorScheme.outline,fontSize: 16
+                            ),),
                           );
                         }
                       }
                       return Center(
-                        child: AutoSizeText(
-                          'Something went wrong',
-                          style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 16),
-                        ),
+                        child: AutoSizeText('Something went wrong',style: GoogleFonts.dmSans(
+                            color: Theme.of(context).colorScheme.outline,fontSize: 16
+                        ),),
                       );
                     },
                   ),
@@ -609,6 +552,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ['JobExperience'],
                                                   jobType: snapshot.data
                                                       .docs[index]['JobType'],
+                                                  jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
                                                   jobLocation:
                                                       snapshot.data.docs[index]
                                                           ['JobLocation'],
@@ -705,6 +649,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
                                       )
                                     ],
                                   ),
@@ -717,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: AutoSizeText(
                               'There is no Job!',
                               style: GoogleFonts.dmSans(
-                                  color: Colors.white, fontSize: 16),
+                                  color: Theme.of(context).colorScheme.outline, fontSize: 16),
                             ),
                           );
                         }
@@ -726,7 +673,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: AutoSizeText(
                           'Something went wrong',
                           style: GoogleFonts.dmSans(
-                              color: Colors.white, fontSize: 16),
+                              color: Theme.of(context).colorScheme.outline, fontSize: 16),
                         ),
                       );
                     },

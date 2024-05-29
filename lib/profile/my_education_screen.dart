@@ -2,18 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/update_education_screen.dart';
 import 'package:page_transition/page_transition.dart';
+
 import 'add_education_screen.dart';
 
-class EducationScreen extends StatefulWidget {
-  const EducationScreen({super.key});
+class MyEducationScreen extends StatefulWidget {
+  const MyEducationScreen({super.key});
   @override
-  State<EducationScreen> createState() => _EducationScreenState();
+  State<MyEducationScreen> createState() => _MyEducationScreenState();
 }
 
-class _EducationScreenState extends State<EducationScreen> {
+class _MyEducationScreenState extends State<MyEducationScreen> {
   final ScrollController scController = ScrollController();
+  String? gender;
+
   final user = FirebaseAuth.instance.currentUser;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -58,17 +62,17 @@ class _EducationScreenState extends State<EducationScreen> {
                 .collection('Education')
                 .snapshots(),
             builder: (context, snapshot) {
-              return ListView.separated(
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.hasError) {
+                return Center(child: Text(snapshot.hasError.toString()));
+              }
+              return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.hasError.toString()));
-                  }
                   return SizedBox(
                     width: double.infinity,
                     child: Card(
@@ -93,32 +97,27 @@ class _EducationScreenState extends State<EducationScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${snapshot.data!.docs[index]["School"]}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineLarge),
-                              Text('${snapshot.data!.docs[index]["Degree"]}',
+                              Text(
+                                '${snapshot.data!.docs[index]['Start Date']}-${snapshot.data!.docs[index]['End Date']}',
+                                style: GoogleFonts.dmSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xff5800FF)),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text('${snapshot.data!.docs[index]['School']}',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium),
+                              Text('At ${snapshot.data!.docs[index]['Degree']}',
                                   style:
                                       Theme.of(context).textTheme.titleSmall),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                  '${snapshot.data!.docs[index]["Field of Study"]}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                  '${snapshot.data!.docs[index]["Start Date"]}-${snapshot.data!.docs[index]["End Date"]}',
-                                  style: Theme.of(context).textTheme.bodySmall),
                               const SizedBox(
                                 height: 8,
                               ),
                               Text(
-                                  '${snapshot.data!.docs[index]["Description"]}',
+                                  '${snapshot.data!.docs[index]['Description']}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineSmall),
@@ -127,11 +126,6 @@ class _EducationScreenState extends State<EducationScreen> {
                         ),
                       ),
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 20,
                   );
                 },
               );

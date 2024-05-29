@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
@@ -77,9 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data.docs.length > 5
-                    ? 5
-                    : snapshot.data.docs.length,
+                itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
                     width: double.infinity,
@@ -98,6 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               MaterialPageRoute(
                                   builder: (context) => JobDetailScreen(
                                         id: id,
+                                    jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
                                         uid: snapshot.data.docs[index]['uid'],
                                         ownerEmail: snapshot.data.docs[index]
                                             ['OwnerEmail'],

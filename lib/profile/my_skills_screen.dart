@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'add_skill_screen.dart';
 
-class SkillScreen extends StatefulWidget {
-  const SkillScreen({super.key});
+class MySkillsScreen extends StatefulWidget {
+  const MySkillsScreen({super.key});
   @override
-  State<SkillScreen> createState() => _SkillScreenState();
+  State<MySkillsScreen> createState() => _MySkillsScreenState();
 }
 
-class _SkillScreenState extends State<SkillScreen> {
+class _MySkillsScreenState extends State<MySkillsScreen> {
   final ScrollController scController = ScrollController();
   final user = FirebaseAuth.instance.currentUser;
   String uid = FirebaseAuth.instance.currentUser!.uid;

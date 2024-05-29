@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 import '../main_page.dart';
 
 class Otp extends StatelessWidget {
@@ -84,51 +84,54 @@ class _OtpScreenState extends State<OtpScreen> {
   TextEditingController otp2Controller = TextEditingController();
   TextEditingController otp3Controller = TextEditingController();
   TextEditingController otp4Controller = TextEditingController();
+  final Snack snack = Snack();
   bool _isLoading = false;
   String otpController = "1234";
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   Future submitDetail() async {
     try {
       setState(() {
         _isLoading = true;
       });
-      await _auth
-          .createUserWithEmailAndPassword(
-              email: widget.mail, password: widget.pass)
-          .then((signedInUser) async {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      FirebaseFirestore.instance.collection("Users").doc(uid).set({
+        "Id": uid,
+        "Name": widget.name,
+        "Email": widget.mail,
+        "Phone Number": widget.phone,
+        "User Image": "",
+        "Gender": "",
+        "About Me": "",
+        "Resume Url": "",
+        "Created At": Timestamp.now()
+      }).then((signedInUser) async {
         String uid = FirebaseAuth.instance.currentUser!.uid;
-        FirebaseFirestore.instance
-            .collection("Users")
-            .doc(signedInUser.user?.uid)
-            .set({
-          "Id": uid,
-          "Name": widget.name,
-          "Email": widget.mail,
-          "Phone Number": widget.phone,
-          "User Image": "",
-          "Gender": "",
-          "About Me": "",
-          "Resume Url": "",
-          "Created At": Timestamp.now()
-        }).then((signedInUser) async {
-          String uid = FirebaseAuth.instance.currentUser!.uid;
-          await FirebaseMessaging.instance.getToken().then((token) async {
-            await FirebaseFirestore.instance
-                .collection('UserTokens')
-                .doc(uid)
-                .set({'token': token, 'id': uid});
-          });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const MainPage()),
-              (route) => false);
+        await FirebaseMessaging.instance.getToken().then((token) async {
+          await FirebaseFirestore.instance
+              .collection('UserTokens')
+              .doc(uid)
+              .set({'token': token, 'id': uid});
         });
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+            (route) => false);
       });
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = true;
       });
-      GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
+      if (e.message ==
+          'The email address is already in use by another account.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Snap!', 'This email is already exit'));
+      } else if (e.message ==
+          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', 'No Internet Connection'));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', e.message.toString()));
+      }
     }
     setState(() {
       _isLoading = false;
@@ -213,12 +216,13 @@ class _OtpScreenState extends State<OtpScreen> {
                                     otp3Controller.text +
                                     otp4Controller.text) ==
                             true) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text("OTP is verified"),
-                          ));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              snack.successSnackBar(
+                                  'Congratulations!', 'OTP is verified'));
                           submitDetail();
                         } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              snack.errorSnackBar('On Snap!', 'Invalid OTP'));
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text("Invalid OTP"),

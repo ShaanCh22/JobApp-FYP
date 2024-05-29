@@ -2,18 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/pdf_viewer_screen.dart';
 import 'package:jobseek/profile/setting_page.dart';
-import 'package:jobseek/profile/skill_screen.dart';
 import 'package:jobseek/profile/upload_resume_page.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'aboutme_screen.dart';
 import 'edit_profile.dart';
-import 'education_screen.dart';
-import 'experience_screen.dart';
+import 'my_education_screen.dart';
+import 'my_experience_screen.dart';
+import 'my_skills_screen.dart';
 import 'myjob_screen.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,6 +30,12 @@ class _ProfilePageState extends State<ProfilePage> {
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String resumeUrl = '';
   String resumeName = '';
+  @override
+  void initState() {
+    super.initState();
+    _getResumeData();
+  }
+
   Future _getResumeData() async {
     DocumentSnapshot ref =
         await FirebaseFirestore.instance.collection('Users').doc(uid).get();
@@ -151,6 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         runSpacing: 10,
                         children: [
                           SizedBox(
+                            // width: w*0.391,
                             width: 150,
                             height: 45,
                             child: ElevatedButton(
@@ -177,7 +185,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ))),
                           ),
                           SizedBox(
-                            width: 160,
+                            // width: w*0.417,
+                            width: 150,
                             height: 45,
                             child: OutlinedButton(
                                 style: ElevatedButton.styleFrom(
@@ -199,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           duration: const Duration(
                                               milliseconds: 300)));
                                 },
-                                child: Text('Create job post',
+                                child: Text('Create Job',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium)),
@@ -353,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: const ExperienceScreen(),
+                                    child: const MyExperienceScreen(),
                                     type: PageTransitionType.rightToLeft));
                           },
                           icon: Icon(
@@ -383,7 +392,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             return ListView.separated(
                               controller: scController,
                               shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
+                              itemCount: snapshot.data!.docs.length > 2
+                                  ? 2
+                                  : snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,7 +443,41 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 16,
                               ),
                             );
-                          })
+                          }),
+                      const Divider(
+                        thickness: 0.2,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          style: ButtonStyle(
+                              splashFactory: InkRipple.splashFactory,
+                              overlayColor: const MaterialStatePropertyAll(
+                                  Color(0x4d5800ff)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: const MyExperienceScreen(),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: Wrap(
+                            children: [
+                              Text('Show all experience  ',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -458,7 +503,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: const EducationScreen(),
+                                    child: const MyEducationScreen(),
                                     type: PageTransitionType.rightToLeft));
                           },
                           icon: Icon(
@@ -488,7 +533,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             return ListView.separated(
                               controller: scController,
                               shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
+                              itemCount: snapshot.data!.docs.length > 2
+                                  ? 2
+                                  : snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,7 +571,41 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 16,
                               ),
                             );
-                          })
+                          }),
+                      const Divider(
+                        thickness: 0.2,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          style: ButtonStyle(
+                              splashFactory: InkRipple.splashFactory,
+                              overlayColor: const MaterialStatePropertyAll(
+                                  Color(0x4d5800ff)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: const MyEducationScreen(),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: Wrap(
+                            children: [
+                              Text('Show all education  ',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -532,7 +613,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(
                 height: 15,
               ),
-              //Skill-section
+              //Skill section
               Container(
                 color: Theme.of(context).colorScheme.tertiaryContainer,
                 child: Padding(
@@ -550,7 +631,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Navigator.push(
                                 context,
                                 PageTransition(
-                                    child: const SkillScreen(),
+                                    child: const MySkillsScreen(),
                                     type: PageTransitionType.rightToLeft));
                           },
                           icon: Icon(
@@ -581,7 +662,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               spacing: 16,
                               runSpacing: 10,
                               children: List.generate(
-                                  snapshot.data!.docs.length, (index) {
+                                  snapshot.data!.docs.length > 3
+                                      ? 3
+                                      : snapshot.data!.docs.length, (index) {
                                 return Chip(
                                   color: MaterialStatePropertyAll(
                                     Theme.of(context)
@@ -599,6 +682,40 @@ class _ProfilePageState extends State<ProfilePage> {
                               }),
                             );
                           }),
+                      const Divider(
+                        thickness: 0.2,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          style: ButtonStyle(
+                              splashFactory: InkRipple.splashFactory,
+                              overlayColor: const MaterialStatePropertyAll(
+                                  Color(0x4d5800ff)),
+                              shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: const MySkillsScreen(),
+                                    type: PageTransitionType.rightToLeft));
+                          },
+                          child: Wrap(
+                            children: [
+                              Text('Show all skills  ',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.black,
+                                size: 18,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

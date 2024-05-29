@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _JobPageState extends State<JobPage> {
     });
   }
 
-  refreshData() {
+  Future<void> refreshData() async {
     setState(() {});
   }
 
@@ -466,26 +467,21 @@ class _JobPageState extends State<JobPage> {
               } else if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.data?.docs.isNotEmpty == true) {
                   return RefreshIndicator(
-                    backgroundColor: Theme.of(context).colorScheme.onSurface,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    onRefresh: () => refreshData(),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data.docs.length > 5
-                          ? 5
-                          : snapshot.data.docs.length,
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          width: double.infinity,
-                          height: 107,
-                          child: Card(
+                      backgroundColor: Theme.of(context).colorScheme.onSurface,
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      onRefresh: () => refreshData(),
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, index) {
+                          return Card(
                             color: Theme.of(context)
                                 .colorScheme
                                 .onPrimaryContainer,
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
                               splashFactory: InkRipple.splashFactory,
                               // splashColor: Color(0xff5800FF),
                               overlayColor: const MaterialStatePropertyAll(
@@ -504,6 +500,7 @@ class _JobPageState extends State<JobPage> {
                                               jobDescription:
                                                   snapshot.data.docs[index]
                                                       ['JobDescription'],
+                                          jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
                                               jobExperience: snapshot.data
                                                   .docs[index]['JobExperience'],
                                               jobType: snapshot.data.docs[index]
@@ -523,6 +520,7 @@ class _JobPageState extends State<JobPage> {
                                             )));
                               },
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ListTile(
                                     contentPadding:
@@ -543,12 +541,12 @@ class _JobPageState extends State<JobPage> {
                                                 : Image.network(
                                                     snapshot.data.docs[index]
                                                         ['UserImage']))),
-                                    title: Text(
+                                    title: AutoSizeText(
                                         '${snapshot.data.docs[index]['JobTitle']}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineMedium),
-                                    subtitle: Text(
+                                    subtitle: AutoSizeText(
                                       '${snapshot.data.docs[index]['UserName']} - ${snapshot.data.docs[index]['PostedAt']}',
                                       style: Theme.of(context)
                                           .textTheme
@@ -567,7 +565,7 @@ class _JobPageState extends State<JobPage> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15),
-                                    child: Row(
+                                    child: Wrap(
                                       children: [
                                         Icon(
                                           Icons.location_on_outlined,
@@ -576,7 +574,7 @@ class _JobPageState extends State<JobPage> {
                                               .outline,
                                           size: 18,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           '${snapshot.data.docs[index]['JobLocation']}',
                                           style: Theme.of(context)
                                               .textTheme
@@ -592,7 +590,7 @@ class _JobPageState extends State<JobPage> {
                                               .outline,
                                           size: 15,
                                         ),
-                                        Text(
+                                        AutoSizeText(
                                           ' ${snapshot.data.docs[index]['JobSalary']}',
                                           style: Theme.of(context)
                                               .textTheme
@@ -600,15 +598,16 @@ class _JobPageState extends State<JobPage> {
                                         ),
                                       ],
                                     ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
                                   )
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                          );
+                        },
+                      ));
                 } else {
                   return Center(
                     child: Text('There is no Job!',
@@ -627,3 +626,4 @@ class _JobPageState extends State<JobPage> {
     );
   }
 }
+

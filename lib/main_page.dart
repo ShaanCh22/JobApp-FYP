@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jobseek/profile/profile_page.dart';
-import 'package:jobseek/search_user.dart';
+
 import 'Home/home_screen.dart';
+import 'OtherProfiles/search_user.dart';
 import 'favorit/favorit_page.dart';
 import 'job/job_page.dart';
 
@@ -61,7 +62,7 @@ class _MainPageState extends State<MainPage> {
           });
         },
         backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-        activeColor: const Color(0xff5800FF),
+        activeColor: Color(0xff5800FF),
         inactiveColor: Theme.of(context).colorScheme.secondaryContainer,
         iconSize: 22,
         items: [
@@ -90,9 +91,9 @@ class _MainPageState extends State<MainPage> {
             activeIcon: SvgPicture.asset(
               'assets/svg/img_nav_favorit_primary.svg',
             ),
-            label: 'Favorit',
+            label: 'Favorite',
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(
               Icons.person_search_outlined,
               size: 28,

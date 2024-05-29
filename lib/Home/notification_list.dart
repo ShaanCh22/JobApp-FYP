@@ -3,9 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../OtherProfiles/other_view_profile.dart';
 import '../Widgets/shimmer_jobcard.dart';
-import 'other_view_profile.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});

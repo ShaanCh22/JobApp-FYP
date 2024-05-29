@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../Widgets/shimmer_jobcard.dart';
 import 'job_detail_page.dart';
 
@@ -53,10 +54,7 @@ class _RecommendedJobScreenState extends State<RecommendedJobScreen> {
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data.docs.length > 5
-                      ? 5
-                      : snapshot.data.docs.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
                     return SizedBox(
                       width: double.infinity,
@@ -74,6 +72,7 @@ class _RecommendedJobScreenState extends State<RecommendedJobScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => JobDetailScreen(
+                                      jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
                                           id: id,
                                           uid: snapshot.data.docs[index]['uid'],
                                           ownerEmail: snapshot.data.docs[index]

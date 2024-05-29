@@ -141,13 +141,11 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
           ),
           Padding(
             padding: EdgeInsets.only(top: h * 0.006),
-            // padding: EdgeInsets.only(top: 5.h),
             child: TextButton(
                 style: const ButtonStyle(
                   splashFactory: InkRipple.splashFactory,
                 ),
                 onPressed: () {
-                  // _controller.animateToPage(3, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => const Login()));
                 },

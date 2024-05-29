@@ -8,13 +8,13 @@ import 'package:page_transition/page_transition.dart';
 
 import 'add_experience_screen.dart';
 
-class ExperienceScreen extends StatefulWidget {
-  const ExperienceScreen({super.key});
+class MyExperienceScreen extends StatefulWidget {
+  const MyExperienceScreen({super.key});
   @override
-  State<ExperienceScreen> createState() => _ExperienceScreenState();
+  State<MyExperienceScreen> createState() => _MyExperienceScreenState();
 }
 
-class _ExperienceScreenState extends State<ExperienceScreen> {
+class _MyExperienceScreenState extends State<MyExperienceScreen> {
   final ScrollController scController = ScrollController();
   String? gender;
 
@@ -70,7 +70,7 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
               if (snapshot.hasError) {
                 return Center(child: Text(snapshot.hasError.toString()));
               }
-              return ListView.separated(
+              return ListView.builder(
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
@@ -127,11 +127,6 @@ class _ExperienceScreenState extends State<ExperienceScreen> {
                         ),
                       ),
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(
-                    height: 20,
                   );
                 },
               );

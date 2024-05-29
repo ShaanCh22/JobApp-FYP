@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Home/other_view_profile.dart';
+import 'OtherProfiles/other_view_profile.dart';
 import 'Widgets/shimmer_jobcard.dart';
 
 class SearchUser extends StatefulWidget {

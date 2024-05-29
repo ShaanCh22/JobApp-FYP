@@ -33,12 +33,22 @@ class _SplashScreenState extends State<SplashScreen> {
         automaticallyImplyLeading: false,
       ),
       body: Center(
-        child: AutoSizeText('JobBook',
-            style: GoogleFonts.dmSans(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onTertiary,
-                letterSpacing: 1)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/bd.png',
+              width: 100,
+              height: 100,
+            ),
+            AutoSizeText('JobBook',
+                style: GoogleFonts.dmSans(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onTertiary,
+                    letterSpacing: 1)),
+          ],
+        ),
       ),
     );
   }

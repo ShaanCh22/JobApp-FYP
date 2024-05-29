@@ -57,10 +57,7 @@ class _NewHiringState extends State<NewHiring> {
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data.docs.length > 5
-                      ? 5
-                      : snapshot.data.docs.length,
+                  itemCount: snapshot.data.docs.length,
                   itemBuilder: (context, index) {
                     return SizedBox(
                       width: double.infinity,
@@ -79,6 +76,7 @@ class _NewHiringState extends State<NewHiring> {
                                 MaterialPageRoute(
                                     builder: (context) => JobDetailScreen(
                                           id: id,
+                                      jobRecruitment:snapshot.data.docs[index]['JobRecruitment'],
                                           uid: snapshot.data.docs[index]['uid'],
                                           ownerEmail: snapshot.data.docs[index]
                                               ['OwnerEmail'],

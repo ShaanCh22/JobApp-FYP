@@ -34,24 +34,17 @@ Future<void> main() async {
   if (ref.getString('theme') != null) {
     theme = ref.getString('theme')!;
   } else {
-    theme = 'Light';
+    theme = 'System Default';
   }
   runApp(MyApp(
     theme: theme,
   ));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   final String theme;
-  const MyApp({super.key, required this.theme});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  var pref = SharedPref();
-
+  MyApp({super.key, required this.theme});
+  final pref = SharedPref();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -59,9 +52,9 @@ class _MyAppState extends State<MyApp> {
         title: 'Jobbook',
         theme: lightThemeData(context),
         darkTheme: darkThemeData(context),
-        themeMode: widget.theme == 'Light'
+        themeMode: theme == 'Light'
             ? ThemeMode.light
-            : widget.theme == 'Dark'
+            : theme == 'Dark'
                 ? ThemeMode.dark
                 : ThemeMode.system,
         home: const SplashScreen());

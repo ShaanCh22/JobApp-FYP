@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/update_job_screen.dart';
 import 'package:page_transition/page_transition.dart';
+
 import '../Post/post_job_screen.dart';
 import '../Widgets/shimmer_jobcard.dart';
 
@@ -43,7 +44,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                 Navigator.push(
                     context,
                     PageTransition(
-                        child: PostJobScreen(),
+                        child: const PostJobScreen(),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300)));
               },

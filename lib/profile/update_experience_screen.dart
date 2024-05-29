@@ -2,12 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
-import '../Services/global_methods.dart';
-import 'experience_screen.dart';
+import '../Widgets/snackbar.dart';
 
 class UpdateExperienceScreen extends StatefulWidget {
   final String id;
@@ -28,11 +25,12 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
       TextEditingController(text: '');
   final TextEditingController _jobdescText = TextEditingController(text: '');
   bool _isLoading = false;
+  final Snack snack = Snack();
+
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getExpData();
   }
@@ -77,16 +75,25 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
         Future.delayed(const Duration(seconds: 1)).then((value) => {
               setState(() {
                 _isLoading = false;
-                Fluttertoast.showToast(
-                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+                ScaffoldMessenger.of(context).showSnackBar(
+                    snack.successSnackBar(
+                        'Congrats!', 'Changes saved successfully'));
+
               })
             });
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
   }
@@ -97,11 +104,7 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
         .doc(uid)
         .collection('Experience');
     ref.doc(widget.id).delete();
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            child: const ExperienceScreen(),
-            type: PageTransitionType.topToBottom));
+    Navigator.pop(context);
   }
 
   @override
@@ -184,7 +187,6 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _companytext,
                         validator: (value) {
@@ -230,7 +232,6 @@ class _UpdateExperienceScreenState extends State<UpdateExperienceScreen> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _locationtext,
                         validator: (value) {

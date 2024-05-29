@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 import 'login_page.dart';
 
 class ConfirmForget extends StatefulWidget {
@@ -14,6 +14,8 @@ class ConfirmForget extends StatefulWidget {
 }
 
 class _ConfirmForgetState extends State<ConfirmForget> {
+  final Snack snack = Snack();
+
   void logOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -21,8 +23,15 @@ class _ConfirmForgetState extends State<ConfirmForget> {
           context,
           MaterialPageRoute(builder: (context) => const Login()),
           (route) => false);
-    } catch (error) {
-      GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+    } on FirebaseAuthException catch (e) {
+      if (e.message ==
+          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', 'No Internet Connection'));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Snap!', e.message.toString()));
+      }
     }
   }
 
@@ -35,7 +44,7 @@ class _ConfirmForgetState extends State<ConfirmForget> {
             statusBarIconBrightness: Theme.of(context).brightness),
         centerTitle: true,
         title:
-            Text('Jobseek', style: Theme.of(context).textTheme.displayMedium),
+            Text('Jobbook', style: Theme.of(context).textTheme.displayMedium),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         foregroundColor: Theme.of(context).colorScheme.onSecondary,

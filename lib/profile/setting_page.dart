@@ -7,9 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/profile/theme_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import '../Home/notification_list.dart';
-import '../Login&Signup/ForgetPasswordScreen.dart';
+import '../Login&Signup/forget_password_screen.dart';
 import '../Login&Signup/login_page.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -19,6 +19,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   bool theme = false;
+  final Snack snack = Snack();
   void logOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -26,8 +27,15 @@ class _SettingPageState extends State<SettingPage> {
           context,
           MaterialPageRoute(builder: (context) => const Login()),
           (route) => false);
-    } catch (error) {
-      GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+    } on FirebaseAuthException catch (e) {
+      if (e.message ==
+          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', 'No Internet Connection'));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', e.message.toString()));
+      }
     }
   }
 
@@ -246,7 +254,7 @@ class _SettingPageState extends State<SettingPage> {
                   ListTile(
                     leading: Text('Version',
                         style: Theme.of(context).textTheme.titleSmall),
-                    trailing: Text('v2.12',
+                    trailing: Text('v1.0',
                         style: Theme.of(context).textTheme.bodySmall),
                   ),
                 ],

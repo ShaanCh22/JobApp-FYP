@@ -1,17 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 import '../main_page.dart';
-import 'ForgetPasswordScreen.dart';
+import 'forget_password_screen.dart';
 import 'signup_page.dart';
 
 class Login extends StatefulWidget {
@@ -23,7 +21,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final _loginFormKey = GlobalKey<FormState>();
   final FocusNode _passFocusNode = FocusNode();
-
+  final Snack snack = Snack();
   final TextEditingController _emailTextControler =
       TextEditingController(text: '');
   final TextEditingController _passTextControler =
@@ -43,8 +41,6 @@ class _LoginState extends State<Login> {
         await _auth.signInWithEmailAndPassword(
             email: _emailTextControler.text.trim().toLowerCase(),
             password: _passTextControler.text.trim());
-        Fluttertoast.showToast(
-            msg: 'Successfully Login', toastLength: Toast.LENGTH_SHORT);
         String uid = FirebaseAuth.instance.currentUser!.uid;
         if (kIsWeb != true) {
           await FirebaseMessaging.instance.getToken().then((token) async {
@@ -60,11 +56,29 @@ class _LoginState extends State<Login> {
                 child: const MainPage(),
                 type: PageTransitionType.rightToLeft,
                 duration: const Duration(milliseconds: 500)));
-      } catch (error) {
+        ScaffoldMessenger.of(context).showMaterialBanner(snack.successBar(
+            'Oh Hey!',
+            'Welcome back to Jobbook. Lets continue to find desired jobs or talents'));
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'The supplied auth credential is incorrect, malformed or has expired.') {
+          ScaffoldMessenger.of(context).showSnackBar(snack.errorSnackBar(
+              'On Error!', 'Email and password are incorrect'));
+        } else if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else if (e.message ==
+            'We have blocked all requests from this device due to unusual activity. Try again later.') {
+          ScaffoldMessenger.of(context).showSnackBar(snack.errorSnackBar(
+              'On Error!', 'Too many attempts please try later'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
     setState(() {
@@ -135,21 +149,15 @@ class _LoginState extends State<Login> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // SizedBox(
-                //   height: h*0.049,
-                //   // height: 40.h,
-                // ),
                 Text('Hey, There 👋\nfind your job here!',
                     style: Theme.of(context).textTheme.displayLarge),
                 SizedBox(
                   height: h * 0.01,
-                  // height: 8.h,
                 ),
                 Text('Enter your email address and password\nto use the app',
                     style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(
-                  height: h * 0.037,
-                  // height: 30.h,
+                const SizedBox(
+                  height: 30
                 ),
                 Form(
                   key: _loginFormKey,
@@ -160,7 +168,6 @@ class _LoginState extends State<Login> {
                           style: Theme.of(context).textTheme.labelSmall),
                       SizedBox(
                         height: h * 0.01,
-                        // height: 8.h,
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
@@ -208,17 +215,15 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(
-                        height: h * 0.037,
-                        // height: 30.h,
+                        height: h * 0.037
                       ),
                       Text('Password',
                           style: Theme.of(context).textTheme.labelSmall),
                       SizedBox(
                         height: h * 0.01,
-                        // height: 8.h,
                       ),
                       TextFormField(
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
                         focusNode: _passFocusNode,
                         keyboardType: TextInputType.visiblePassword,
                         controller: _passTextControler,
@@ -295,12 +300,10 @@ class _LoginState extends State<Login> {
                 ),
                 SizedBox(
                   height: h * 0.019,
-                  // height: 15.h,
                 ),
                 SizedBox(
                   width: double.infinity,
-                  height: h * 0.065,
-                  // height: 53.h,
+                  height: 53,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           splashFactory: InkRipple.splashFactory,
@@ -324,7 +327,6 @@ class _LoginState extends State<Login> {
                 ),
                 SizedBox(
                   height: h * 0.245,
-                  // height: 200.h,
                 ),
                 Align(
                   alignment: Alignment.center,

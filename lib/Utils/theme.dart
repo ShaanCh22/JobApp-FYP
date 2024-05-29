@@ -3,16 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'Colors.dart';
 
-// This is our  main focus
-// Let's apply light and dark theme on our app
-// Now let's add dark theme on our app
-
 ThemeData lightThemeData(BuildContext context) {
   return ThemeData.light().copyWith(
     brightness: Brightness.dark,
     primaryColor: kPrimaryColor,
     scaffoldBackgroundColor: const Color(0xffFDFEFF),
-    appBarTheme: lightAppBarTheme,
+    appBarTheme: LightappBarTheme,
     iconTheme: const IconThemeData(color: iconLightColor, size: 22),
     textTheme: TextTheme(
       headlineLarge: GoogleFonts.dmSans(
@@ -40,8 +36,7 @@ ThemeData lightThemeData(BuildContext context) {
       titleSmall: GoogleFonts.dmSans(color: Colors.black, fontSize: 16),
       bodyMedium: GoogleFonts.dmSans(
           color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
-      bodySmall:
-          GoogleFonts.dmSans(color: const Color(0xff777777), fontSize: 15),
+      bodySmall: GoogleFonts.dmSans(color: const Color(0xff777777), fontSize: 15),
       labelMedium: GoogleFonts.dmSans(
           color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500),
       headlineSmall: GoogleFonts.dmSans(
@@ -57,7 +52,7 @@ ThemeData lightThemeData(BuildContext context) {
     ),
     colorScheme: const ColorScheme.light(
         onInverseSurface: lightBottomBar,
-        onSecondary: lightforegroundAppBarColor,
+        onSecondary: LightforegroundAppBarColor,
         onSurface: safeAreaLightColor,
         onTertiary: textInLightTextField,
         primary: bPrimaryColor,
@@ -65,7 +60,7 @@ ThemeData lightThemeData(BuildContext context) {
         error: kErrorColor,
         outline: iconLightColor,
         onPrimaryContainer: lightJobCardColor,
-        onTertiaryContainer: lightTextField,
+        onTertiaryContainer: LightTextField,
         onSecondaryContainer: lightFilterColor,
         tertiaryContainer: lightContainerColor,
         background: lightBackgroundColor,
@@ -86,7 +81,7 @@ ThemeData darkThemeData(BuildContext context) {
     primaryColor: kPrimaryColor,
     scaffoldBackgroundColor: kContentColorLightTheme,
     appBarTheme:
-        darkAppBarTheme.copyWith(backgroundColor: kContentColorLightTheme),
+        DarkappBarTheme.copyWith(backgroundColor: kContentColorLightTheme),
     iconTheme: const IconThemeData(color: iconDarkColor, size: 22),
     textTheme: TextTheme(
       headlineLarge: GoogleFonts.dmSans(
@@ -124,13 +119,13 @@ ThemeData darkThemeData(BuildContext context) {
     ),
     colorScheme: const ColorScheme.dark().copyWith(
         onInverseSurface: darkBottomBar,
-        onSecondary: darkforegroundAppBarColor,
+        onSecondary: DarkforegroundAppBarColor,
         onSurface: safeAreaDarkColor,
         primary: bPrimaryColor,
         secondary: kSecondaryColor,
         onTertiary: textInDarkTextField,
         error: kErrorColor,
-        onTertiaryContainer: darkTextField,
+        onTertiaryContainer: DarkTextField,
         outline: iconDarkColor,
         onPrimaryContainer: darkJobCardColor,
         onSecondaryContainer: darkFilterColor,
@@ -147,11 +142,11 @@ ThemeData darkThemeData(BuildContext context) {
   );
 }
 
-const darkAppBarTheme = AppBarTheme(
+const DarkappBarTheme = AppBarTheme(
     elevation: 0,
     foregroundColor: Colors.white,
     backgroundColor: Colors.transparent);
-const lightAppBarTheme = AppBarTheme(
+const LightappBarTheme = AppBarTheme(
     elevation: 0,
     foregroundColor: Colors.black,
     backgroundColor: Colors.transparent);

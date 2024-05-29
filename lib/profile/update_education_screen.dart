@@ -2,12 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:page_transition/page_transition.dart';
-import '../Services/global_methods.dart';
-import 'education_screen.dart';
+import '../Widgets/snackbar.dart';
 
 class UpdateEducationScreen extends StatefulWidget {
   final String id;
@@ -30,6 +27,8 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
       TextEditingController(text: '');
   final TextEditingController _descriptionTextController =
       TextEditingController(text: '');
+  final Snack snack = Snack();
+
   bool _isLoading = false;
   String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -80,16 +79,24 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
         Future.delayed(const Duration(seconds: 1)).then((value) => {
               setState(() {
                 _isLoading = false;
-                Fluttertoast.showToast(
-                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+                ScaffoldMessenger.of(context).showSnackBar(
+                    snack.successSnackBar(
+                        'Congrats!', 'Changes saved successfully'));
               })
             });
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
   }
@@ -100,11 +107,7 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
         .doc(uid)
         .collection('Education');
     ref.doc(widget.id).delete();
-    Navigator.pushReplacement(
-        context,
-        PageTransition(
-            child: const EducationScreen(),
-            type: PageTransitionType.topToBottom));
+    Navigator.pop(context);
   }
 
   @override
@@ -187,7 +190,6 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _degreeTextController,
                         validator: (value) {
@@ -233,7 +235,6 @@ class _UpdateEducationScreenState extends State<UpdateEducationScreen> {
                       ),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
                         keyboardType: TextInputType.text,
                         controller: _fieldTextController,
                         validator: (value) {

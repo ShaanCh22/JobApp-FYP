@@ -6,10 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class UploadResumePage extends StatefulWidget {
   const UploadResumePage({super.key});
@@ -22,8 +20,9 @@ class _UploadResumePageState extends State<UploadResumePage> {
   final bool _isLoading = false;
   PlatformFile? pickedFile;
   UploadTask? uploadTask;
-  String? resumeUrl;
+  String resumeUrl='';
   String? resumeName;
+  final Snack snack = Snack();
 
   @override
   void initState() {
@@ -57,17 +56,20 @@ class _UploadResumePageState extends State<UploadResumePage> {
         'Resume Url': urlDownload,
         'ResumeName': fileName,
       });
-      SnackBar(
-        content: Text(
-          'Resume uploaded',
-          style: GoogleFonts.dmSans(color: Colors.white),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(
+          snack.successSnackBar('Congrats!', 'Resume uploaded successfully'));
       setState(() {
         uploadTask = null;
       });
-    } catch (error) {
-      GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+    } on FirebaseAuthException catch (e) {
+      if (e.message ==
+          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', 'No Internet Connection'));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', e.message.toString()));
+      }
     }
   }
 
@@ -81,14 +83,15 @@ class _UploadResumePageState extends State<UploadResumePage> {
         resumeUrl = '';
         resumeName = '';
       });
-    } catch (e) {
-      GlobalMethod.showErrorDialog(error: e.toString(), ctx: context);
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          snack.errorSnackBar('On Error!', e.message.toString()));
     }
   }
 
   Future _getResumeData() async {
     DocumentSnapshot ref =
-        await FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    await FirebaseFirestore.instance.collection('Users').doc(uid).get();
     setState(() {
       resumeUrl = ref.get('Resume Url');
       resumeName = ref.get('ResumeName');
@@ -125,80 +128,82 @@ class _UploadResumePageState extends State<UploadResumePage> {
               width: 380,
               child: resumeUrl == ''
                   ? ElevatedButton(
-                      style: ButtonStyle(
-                          splashFactory: InkRipple.splashFactory,
-                          // splashColor: Color(0xff5800FF),
-                          padding:
-                              const MaterialStatePropertyAll(EdgeInsets.zero),
-                          backgroundColor: MaterialStatePropertyAll(
-                              Theme.of(context).colorScheme.tertiaryContainer),
-                          shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)))),
-                      onPressed: () {
-                        _selectFile();
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.upload_rounded,
-                            color: Theme.of(context).colorScheme.outline,
-                            size: 25,
-                          ),
-                          Text(
-                            'Drop Resume',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 16,
-                              height: 2,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                          )
-                        ],
+                style: ButtonStyle(
+                    splashFactory: InkRipple.splashFactory,
+                    // splashColor: Color(0xff5800FF),
+                    padding:
+                    const MaterialStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.tertiaryContainer),
+                    shape: MaterialStatePropertyAll(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)))),
+                onPressed: () {
+                  _selectFile();
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.upload_rounded,
+                      color: Theme.of(context).colorScheme.outline,
+                      size: 25,
+                    ),
+                    Text(
+                      'Drop Resume',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 16,
+                        height: 2,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                     )
+                  ],
+                ),
+              )
                   : ElevatedButton(
-                      style: ButtonStyle(
-                          splashFactory: InkRipple.splashFactory,
-                          // splashColor: Color(0xff5800FF),
-                          padding:
-                              const MaterialStatePropertyAll(EdgeInsets.zero),
-                          backgroundColor: MaterialStatePropertyAll(
-                              Theme.of(context).colorScheme.tertiaryContainer),
-                          shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)))),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: const Color(0xff1D1D2F),
-                          elevation: 20,
-                          content: Text(
-                            "Resume already uploaded",
-                            style: GoogleFonts.dmSans(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ));
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.upload_rounded,
-                            color: Theme.of(context).colorScheme.outline,
-                            size: 25,
-                          ),
-                          Text(
-                            'Drop Resume',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 16,
-                              height: 2,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                          )
-                        ],
+                style: ButtonStyle(
+                    splashFactory: InkRipple.splashFactory,
+                    // splashColor: Color(0xff5800FF),
+                    padding:
+                    const MaterialStatePropertyAll(EdgeInsets.zero),
+                    backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.tertiaryContainer),
+                    shape: MaterialStatePropertyAll(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)))),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor:
+                    Theme.of(context).colorScheme.tertiaryContainer,
+                    elevation: 20,
+                    content: Text(
+                      "Resume already uploaded",
+                      style: GoogleFonts.dmSans(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
+                  ));
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.upload_rounded,
+                      color: Theme.of(context).colorScheme.outline,
+                      size: 25,
+                    ),
+                    Text(
+                      'Drop Resume',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 16,
+                        height: 2,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
           const SizedBox(
@@ -212,92 +217,86 @@ class _UploadResumePageState extends State<UploadResumePage> {
             decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.tertiaryContainer,
                 borderRadius: BorderRadius.circular(8)),
-            child: pickedFile == null
-                ? resumeUrl == ''
-                    ? const SizedBox()
-                    : ListTile(
-                        contentPadding:
-                            const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                        title: Text('$resumeName',
-                            style: Theme.of(context).textTheme.titleSmall),
-                        trailing: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                pickedFile = null;
-                                _deletePdf();
-                              });
-                            },
-                            style: const ButtonStyle(
-                                shape: MaterialStatePropertyAll(CircleBorder()),
-                                backgroundColor: MaterialStatePropertyAll(
-                                    Colors.transparent),
-                                padding:
-                                    MaterialStatePropertyAll(EdgeInsets.zero),
-                                elevation: MaterialStatePropertyAll(0)),
-                            child: Icon(
-                              Icons.close,
-                              color: Theme.of(context).colorScheme.outline,
-                            )),
-                      )
-                : ListTile(
-                    contentPadding:
-                        const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-                    title: Text(
-                      '${pickedFile?.name}',
-                      style:
-                          GoogleFonts.dmSans(color: Colors.white, fontSize: 16),
-                    ),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          pickedFile = null;
-                          _deletePdf();
-                        });
-                      },
-                      style: const ButtonStyle(
-                          shape: MaterialStatePropertyAll(CircleBorder()),
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.transparent),
-                          padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                          elevation: MaterialStatePropertyAll(0)),
-                      child: SvgPicture.asset(
-                        'assets/svg/cross.svg',
-                        theme: const SvgTheme(currentColor: Colors.grey),
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
-                  ),
+            child: pickedFile != null
+                ? ListTile(
+              contentPadding:
+              const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              title: Text('${pickedFile?.name}',
+                  style: Theme.of(context).textTheme.titleSmall
+              ),
+              trailing: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      pickedFile = null;
+                      _deletePdf();
+                    });
+                  },
+                  style: const ButtonStyle(
+                      shape: MaterialStatePropertyAll(CircleBorder()),
+                      backgroundColor:
+                      MaterialStatePropertyAll(Colors.transparent),
+                      padding: MaterialStatePropertyAll(EdgeInsets.zero),
+                      elevation: MaterialStatePropertyAll(0)),
+                  child: Icon(Icons.close,color: Theme.of(context).colorScheme.outline,)
+              ),
+            )
+                : resumeUrl!='' ?
+                ListTile(
+              contentPadding:
+              const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              title: Text('$resumeName',
+                  style: Theme.of(context).textTheme.titleSmall
+              ),
+              trailing: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      pickedFile = null;
+                      _deletePdf();
+                    });
+                  },
+                  style: const ButtonStyle(
+                      shape: MaterialStatePropertyAll(CircleBorder()),
+                      backgroundColor: MaterialStatePropertyAll(
+                          Colors.transparent),
+                      padding:
+                      MaterialStatePropertyAll(EdgeInsets.zero),
+                      elevation: MaterialStatePropertyAll(0)),
+                  child: Icon(
+                    Icons.close,
+                    color: Theme.of(context).colorScheme.outline,
+                  )),
+            )
+                : SizedBox()
           ),
           const SizedBox(
             height: 250,
           ),
           uploadTask == null
               ? SizedBox(
-                  width: double.infinity,
-                  height: 53,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          splashFactory: InkRipple.splashFactory,
-                          backgroundColor: const Color(0xff5800FF),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
-                      onPressed: () {
-                        _uploadFile();
-                      },
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : Text(
-                              'Upload',
-                              style: GoogleFonts.dmSans(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            )),
+            width: double.infinity,
+            height: 53,
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    splashFactory: InkRipple.splashFactory,
+                    backgroundColor: const Color(0xff5800FF),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8))),
+                onPressed: () {
+                  _uploadFile();
+                },
+                child: _isLoading
+                    ? const CircularProgressIndicator(
+                  color: Colors.white,
                 )
+                    : Text(
+                  'Upload',
+                  style: GoogleFonts.dmSans(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                )),
+          )
               : buildProgress()
         ],
       ),
@@ -305,45 +304,60 @@ class _UploadResumePageState extends State<UploadResumePage> {
   }
 
   Widget buildProgress() => StreamBuilder<TaskSnapshot>(
-        stream: uploadTask?.snapshotEvents,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data;
-            double progress = data!.bytesTransferred / data.totalBytes;
-            return Container(
-              decoration: BoxDecoration(
-                  color: const Color(0xff1D1D2F),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: const Color(0xff5800FF),
-                    width: 2,
-                  )),
-              height: 50,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: const Color(0xff1D1D2F),
-                    color: const Color(0xff5800FF),
-                  ),
-                  Center(
-                    child: Text(
-                      '${(100 * progress).roundToDouble()}%',
-                      style: GoogleFonts.dmSans(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )
-                ],
+    stream: uploadTask?.snapshotEvents,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        final data = snapshot.data;
+        double progress = data!.bytesTransferred / data.totalBytes;
+        return Container(
+          decoration: BoxDecoration(
+              color: const Color(0xff1D1D2F),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: const Color(0xff5800FF),
+                width: 2,
+              )),
+          height: 50,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                color: const Color(0xff5800FF),
               ),
-            );
-          } else {
-            return const SizedBox(
-              height: 10,
-            );
-          }
-        },
-      );
+              Center(
+                child: Text(
+                  '${(100 * progress).roundToDouble()}%',
+                  style: GoogleFonts.dmSans(
+                      color: Theme.of(context).colorScheme.outline,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+        );
+      } else {
+        return const SizedBox(
+          height: 10,
+        );
+      }
+    },
+  );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

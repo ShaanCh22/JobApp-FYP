@@ -20,7 +20,6 @@ class _ThemeScreenState extends State<ThemeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getValue();
   }

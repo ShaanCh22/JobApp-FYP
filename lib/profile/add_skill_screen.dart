@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class AddSkillScreen extends StatefulWidget {
   const AddSkillScreen({super.key});
@@ -16,6 +16,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
   final _addExpFormKey = GlobalKey<FormState>();
   final TextEditingController _skilltext = TextEditingController(text: '');
   bool _isLoading = false;
+  final Snack snack = Snack();
   final User? _user = FirebaseAuth.instance.currentUser;
 
   Future _submitExpData() async {
@@ -35,15 +36,24 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
           'id': id,
           'Title': _skilltext.text,
         });
-        const SnackBar(
-          content: Text('Skill Added'),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.successSnackBar('Congrats!', 'Skill added successfully'));
+        // SnackBar(
+        //   content: Text('Skill Added'),
+        // );
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
     setState(() {
@@ -95,7 +105,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
                             return null;
                           }
                         },
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.titleSmall,
                         decoration: InputDecoration(
                           isCollapsed: true,
                           contentPadding: const EdgeInsets.all(15),

@@ -2,10 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class AddExperienceScreen extends StatefulWidget {
   const AddExperienceScreen({super.key});
@@ -24,6 +23,7 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
   final TextEditingController _endDateController =
       TextEditingController(text: '');
   final TextEditingController _jobdescText = TextEditingController(text: '');
+  final Snack snack = Snack();
   bool _isLoading = false;
   final User? _user = FirebaseAuth.instance.currentUser;
 
@@ -49,17 +49,22 @@ class _AddExperienceScreenState extends State<AddExperienceScreen> {
           'End Date': _endDateController.text,
           'Job Description': _jobdescText.text
         });
-        const SnackBar(
-          content: Text('Experience Added'),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(snack.successSnackBar(
+            'Congrats!', 'Experience added successfully'));
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
-      Fluttertoast.showToast(msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
     setState(() {
       _isLoading = false;

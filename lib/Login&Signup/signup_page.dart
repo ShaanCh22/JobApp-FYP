@@ -1,11 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:email_otp/email_otp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jobseek/Login&Signup/verify_email_page.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../Widgets/snackbar.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -17,7 +20,7 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   final _signupFormKey = GlobalKey<FormState>();
   final FocusNode _passFocusNode = FocusNode();
-
+  final Snack snack = Snack();
   final TextEditingController _nametext = TextEditingController(text: '');
   final TextEditingController _phonenumbertext =
       TextEditingController(text: '');
@@ -25,6 +28,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passText = TextEditingController(text: '');
   bool _obsecuretext = false;
   bool _isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   EmailOTP myauth = EmailOTP();
 
   Future _submitFormOnSignup() async {
@@ -33,32 +37,45 @@ class _SignupState extends State<Signup> {
       setState(() {
         _isLoading = true;
       });
-      myauth.setConfig(
-          appEmail: "contact@jobseek.com",
-          appName: "Email OTP",
-          userEmail: _emailText.text,
-          otpLength: 4,
-          otpType: OTPType.digitsOnly);
-      if (await myauth.sendOTP() == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("OTP has been sent"),
-        ));
-        Navigator.push(
-            context,
-            PageTransition(
-                child: OtpScreen(
-                  myauth: myauth,
-                  name: _nametext.text,
-                  mail: _emailText.text,
-                  phone: _phonenumbertext.text,
-                  pass: _passText.text,
-                ),
-                type: PageTransitionType.rightToLeft,
-                duration: const Duration(milliseconds: 500)));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Oops, OTP send failed"),
-        ));
+      try {
+        myauth.setConfig(
+            appEmail: "contact@jobbook.com",
+            appName: "Jobbook",
+            userEmail: _emailText.text,
+            otpLength: 4,
+            otpType: OTPType.digitsOnly);
+        if (await myauth.sendOTP() == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.helpSnackBar('Hi There!', 'OTP has been sent'));
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: OtpScreen(
+                    myauth: myauth,
+                    name: _nametext.text,
+                    mail: _emailText.text,
+                    phone: _phonenumbertext.text,
+                    pass: _passText.text,
+                  ),
+                  type: PageTransitionType.rightToLeft,
+                  duration: const Duration(milliseconds: 500)));
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(snack.errorSnackBar('On Snap!', 'OTP send failed'));
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.message ==
+            'The email address is already in use by another account.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Snap!', 'This email is already exit'));
+        } else if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
     setState(() {

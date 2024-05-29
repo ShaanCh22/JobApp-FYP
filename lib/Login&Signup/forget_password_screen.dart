@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../Widgets/snackbar.dart';
 import 'confirm_forget.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
@@ -19,6 +19,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final TextEditingController _forgetpassText = TextEditingController();
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final Snack snack = Snack();
 
   Future _forgetPassSubmitForm() async {
     final isValid = _forgetFormKey.currentState!.validate();
@@ -33,13 +34,21 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             context,
             MaterialPageRoute(builder: (context) => const ConfirmForget()),
             (route) => false);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(snack.helpSnackBar('Hi There!', 'Check mail box'));
       }
-    } catch (error) {
+    } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = false;
       });
-      Fluttertoast.showToast(
-          msg: error.toString(), toastLength: Toast.LENGTH_LONG);
+      if (e.message ==
+          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Error!', 'No Internet Connection'));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.errorSnackBar('On Snap!', e.message.toString()));
+      }
     }
     setState(() {
       _isLoading = false;

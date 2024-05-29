@@ -10,7 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 import 'gender_screen.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -25,6 +25,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       TextEditingController(text: '');
   final TextEditingController _phoneTextControler =
       TextEditingController(text: '');
+  final Snack snack = Snack();
   bool _isLoading = false;
   File? imageFile;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -35,14 +36,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getEditProfileData();
   }
 
   @override
   void setState(VoidCallback fn) {
-    // TODO: implement setState
     super.setState(fn);
     _getGender();
   }
@@ -53,7 +52,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (image == null) return;
       cropImage(image.path);
     } catch (e) {
-      return 'Failed to pick image';
+      ScaffoldMessenger.of(context).showSnackBar(
+          snack.errorSnackBar('On Error!', 'Failed to pick image'));
+      // return 'Failed to pick image';
     }
   }
 
@@ -63,7 +64,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (image == null) return;
       cropImage(image.path);
     } catch (e) {
-      return 'Failed to pick image';
+      ScaffoldMessenger.of(context).showSnackBar(
+          snack.errorSnackBar('On Error!', 'Failed to pick image'));
+      // return 'Failed to pick image';
     }
   }
 
@@ -102,24 +105,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
             'User Image': imageUrl,
             'Phone Number': _phoneTextControler.text,
           });
+          Future.delayed(const Duration(seconds: 1)).then((value) => {
+            setState(() {
+              _isLoading = false;
+              ScaffoldMessenger.of(context).showSnackBar(
+                  snack.successSnackBar(
+                      'Congrats!', 'Changes saved successfully'));
+            })
+          });
         }
-        FirebaseFirestore.instance.collection('Users').doc(uid).update({
-          'Phone Number': _phoneTextControler.text,
-        });
-        const SnackBar(
-          content: Text('Changes saved'),
-        );
-        Navigator.pop(context);
-      } catch (error) {
+        else{
+          FirebaseFirestore.instance.collection('Users').doc(uid).update({
+            'Phone Number': _phoneTextControler.text,
+          });
+          Future.delayed(const Duration(seconds: 1)).then((value) => {
+            setState(() {
+              _isLoading = false;
+              ScaffoldMessenger.of(context).showSnackBar(
+                  snack.successSnackBar(
+                      'Congrats!', 'Changes saved successfully'));
+            })
+          });
+        }
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void deletePF() {
@@ -485,7 +506,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ],
             ),
           ),
-          const SizedBox(height: 200),
+          const SizedBox(height: 180),
           SizedBox(
             width: double.infinity,
             height: 53,

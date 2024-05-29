@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../Services/global_methods.dart';
+
+import '../Widgets/snackbar.dart';
 import '../presistent/presestent.dart';
 
 class UpdateJobScreen extends StatefulWidget {
@@ -24,11 +24,14 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
   final TextEditingController _joblocationtext =
       TextEditingController(text: '');
   final TextEditingController _jobdescription = TextEditingController(text: '');
+  final TextEditingController _jobRecruitment = TextEditingController(text: '');
   final TextEditingController _jobsalarytext = TextEditingController(text: '');
   final TextEditingController _jobexperiencetext =
       TextEditingController(text: '');
   String dt = DateFormat('MMM d, y').format(DateTime.now());
   final _jobdataformkey = GlobalKey<FormState>();
+  final Snack snack = Snack();
+
   bool _isLoading = false;
   String uid = FirebaseAuth.instance.currentUser!.uid;
   String? userImage;
@@ -124,6 +127,7 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
       _joblocationtext.text = ref.get('JobLocation');
       _jobexperiencetext.text = ref.get('JobExperience');
       _jobdescription.text = ref.get('JobDescription');
+      _jobRecruitment.text = ref.get('JobRecruitment');
       _jobcategorytext.text = ref.get('JobCategory');
     });
   }
@@ -142,21 +146,31 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
           'JobLocation': _joblocationtext.text,
           'JobExperience': _jobexperiencetext.text,
           'JobDescription': _jobdescription.text,
+          'JobRecruitment': _jobRecruitment.text,
           'JobCategory': _jobcategorytext.text,
         });
         Future.delayed(const Duration(seconds: 1)).then((value) => {
               setState(() {
                 _isLoading = false;
-                Fluttertoast.showToast(
-                    msg: 'Changes saved', toastLength: Toast.LENGTH_SHORT);
+                ScaffoldMessenger.of(context).showSnackBar(
+                    snack.successSnackBar(
+                        'Congrats!', 'Changes saved successfully'));
+
               })
             });
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
     }
   }
@@ -688,6 +702,155 @@ class _UpdateJobScreenState extends State<UpdateJobScreen> {
                                       const SizedBox(
                                         height: 10,
                                       )
+                                    ],
+                                  );
+                                });
+                          },
+                        ),
+                        //Job recruitment
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text('Job Recruitment',
+                            style: Theme.of(context).textTheme.labelSmall),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                          textInputAction: TextInputAction.none,
+                          keyboardType: TextInputType.none,
+                          controller: _jobRecruitment,
+                          style: Theme.of(context).textTheme.titleSmall,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Job recruitment should not be empty!';
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            hintText: 'Enter Job recruitment',
+                            hintStyle: Theme.of(context).textTheme.bodySmall,
+                            contentPadding: const EdgeInsets.all(15),
+                            filled: true,
+                            fillColor: Theme.of(context)
+                                .colorScheme
+                                .onTertiaryContainer,
+                            prefixIcon: const Icon(
+                              Icons.description_outlined,
+                              color: Colors.grey,
+                            ),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide.none),
+                            focusedErrorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Color(0xff5800FF),
+                            )),
+                            errorBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                              color: Colors.redAccent,
+                            )),
+                          ),
+                          onTap: () {
+                            showModalBottomSheet(
+                                showDragHandle: true,
+                                isScrollControlled: true,
+                                useSafeArea: false,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20))),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.background,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ListView(
+                                    children: [
+                                      TextFormField(
+                                        minLines: 10,
+                                        maxLines: 14,
+                                        textInputAction: TextInputAction.done,
+                                        // onEditingComplete: ()=> FocusScope.of(context).requestFocus(_passFocusNode),
+                                        keyboardType: TextInputType.text,
+                                        controller: _jobRecruitment,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return 'Job recruitment should not be empty!';
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                        decoration: InputDecoration(
+                                          isCollapsed: true,
+                                          contentPadding:
+                                              const EdgeInsets.all(15),
+                                          filled: true,
+                                          fillColor: Theme.of(context)
+                                              .colorScheme
+                                              .onTertiaryContainer,
+                                          hintText: 'Enter job recruitment',
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                          enabledBorder:
+                                              const UnderlineInputBorder(
+                                                  borderSide: BorderSide.none),
+                                          focusedErrorBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                            color: Colors.redAccent,
+                                          )),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                            color: Color(0xff5800FF),
+                                          )),
+                                          errorBorder: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                            color: Colors.redAccent,
+                                          )),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        height: 53,
+                                        child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                splashFactory:
+                                                    InkRipple.splashFactory,
+                                                backgroundColor:
+                                                    const Color(0xff5800FF),
+                                                foregroundColor: Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8))),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: _isLoading
+                                                ? const CircularProgressIndicator(
+                                                    color: Colors.white,
+                                                  )
+                                                : Text(
+                                                    'Save',
+                                                    style: GoogleFonts.dmSans(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                      ),
                                     ],
                                   );
                                 });

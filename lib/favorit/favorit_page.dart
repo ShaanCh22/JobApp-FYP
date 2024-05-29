@@ -96,7 +96,7 @@ class _FavoritPageState extends State<FavoritPage> {
               elevation: 0,
               floating: true,
               centerTitle: true,
-              title: Text('Favorit Jobs',
+              title: Text('Favorite Jobs',
                   style: Theme.of(context).textTheme.displayMedium),
             ),
           ],
@@ -145,6 +145,7 @@ class _FavoritPageState extends State<FavoritPage> {
                                       builder: (context) => JobDetailScreen(
                                             id: id,
                                             uid: favItemList[index]['uid'],
+                                        jobRecruitment:favItemList[index]['JobRecruitment'],
                                             ownerEmail: favItemList[index]
                                                 ['OwnerEmail'],
                                             jobDescription: favItemList[index]

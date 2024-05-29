@@ -2,10 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../Services/global_methods.dart';
+import '../Widgets/snackbar.dart';
 
 class AddEducationScreen extends StatefulWidget {
   const AddEducationScreen({super.key});
@@ -28,6 +27,7 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
       TextEditingController(text: '');
   final TextEditingController _descriptionTextController =
       TextEditingController(text: '');
+  final Snack snack = Snack();
   bool _isLoading = false;
   final User? _user = FirebaseAuth.instance.currentUser;
 
@@ -53,17 +53,22 @@ class _AddEducationScreenState extends State<AddEducationScreen> {
           'End Date': _endDateController.text,
           'Description': _descriptionTextController.text
         });
-        const SnackBar(
-          content: Text('Education Added'),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(
+            snack.successSnackBar('Congrats!', 'Education added successfully'));
         Navigator.pop(context);
-      } catch (error) {
+      } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
         });
-        GlobalMethod.showErrorDialog(error: error.toString(), ctx: context);
+        if (e.message ==
+            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', 'No Internet Connection'));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              snack.errorSnackBar('On Error!', e.message.toString()));
+        }
       }
-      Fluttertoast.showToast(msg: 'Submitted', toastLength: Toast.LENGTH_SHORT);
     }
     setState(() {
       _isLoading = false;
