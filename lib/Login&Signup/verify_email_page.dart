@@ -87,56 +87,112 @@ class _OtpScreenState extends State<OtpScreen> {
   final Snack snack = Snack();
   bool _isLoading = false;
   String otpController = "1234";
-  Future submitDetail() async {
-    try {
+  final FirebaseAuth _auth =FirebaseAuth.instance;
+  Future submitDetail()async{
+    try{
       setState(() {
-        _isLoading = true;
+        _isLoading=true;
       });
-      String uid = FirebaseAuth.instance.currentUser!.uid;
-      FirebaseFirestore.instance.collection("Users").doc(uid).set({
-        "Id": uid,
-        "Name": widget.name,
-        "Email": widget.mail,
-        "Phone Number": widget.phone,
-        "User Image": "",
-        "Gender": "",
-        "About Me": "",
-        "Resume Url": "",
-        "Created At": Timestamp.now()
-      }).then((signedInUser) async {
+      await _auth.createUserWithEmailAndPassword(
+          email: widget.mail, password: widget.pass).then((
+          signedInUser) async
+      {
         String uid = FirebaseAuth.instance.currentUser!.uid;
-        await FirebaseMessaging.instance.getToken().then((token) async {
-          await FirebaseFirestore.instance
-              .collection('UserTokens')
-              .doc(uid)
-              .set({'token': token, 'id': uid});
+        FirebaseFirestore.instance.collection("Users").doc(
+            signedInUser.user?.uid).set({
+          "Id":uid,
+          "Name": widget.name,
+          "Email": widget.mail,
+          "Phone Number": widget.phone,
+          "User Image": "",
+          "Gender":"",
+          "About Me":"",
+          "Resume Url":"",
+          "Created At": Timestamp.now()
+        }).then((signedInUser) async
+        {
+          String uid = FirebaseAuth.instance.currentUser!.uid;
+          await FirebaseMessaging.instance.getToken().then((token)async{
+            await FirebaseFirestore.instance.collection('UserTokens').doc(uid).set({
+              'token' : token,
+              'id' : uid
+            });
+          });
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>MainPage()), (route) => false);
         });
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const MainPage()),
-            (route) => false);
       });
     } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = true;
       });
       if (e.message ==
-          'The email address is already in use by another account.') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            snack.errorSnackBar('On Snap!', 'This email is already exit'));
-      } else if (e.message ==
-          'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            snack.errorSnackBar('On Error!', 'No Internet Connection'));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            snack.errorSnackBar('On Error!', e.message.toString()));
-      }
+              'The email address is already in use by another account.') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                snack.errorSnackBar('On Snap!', 'This email is already exit'));
+          } else if (e.message ==
+              'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                snack.errorSnackBar('On Error!', 'No Internet Connection'));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                snack.errorSnackBar('On Error!', e.message.toString()));
+          }
     }
     setState(() {
-      _isLoading = false;
+      _isLoading=false;
     });
   }
+
+  // Future submitDetail() async {
+  //   try {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     String uid = FirebaseAuth.instance.currentUser!.uid;
+  //     FirebaseFirestore.instance.collection("Users").doc(uid).set({
+  //       "Id": uid,
+  //       "Name": widget.name,
+  //       "Email": widget.mail,
+  //       "Phone Number": widget.phone,
+  //       "User Image": "",
+  //       "Gender": "",
+  //       "About Me": "",
+  //       "Resume Url": "",
+  //       "Created At": Timestamp.now()
+  //     }).then((signedInUser) async {
+  //       String uid = FirebaseAuth.instance.currentUser!.uid;
+  //       await FirebaseMessaging.instance.getToken().then((token) async {
+  //         await FirebaseFirestore.instance
+  //             .collection('UserTokens')
+  //             .doc(uid)
+  //             .set({'token': token, 'id': uid});
+  //       });
+  //       Navigator.pushAndRemoveUntil(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const MainPage()),
+  //           (route) => false);
+  //     });
+  //   } on FirebaseAuthException catch (e) {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     if (e.message ==
+  //         'The email address is already in use by another account.') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //           snack.errorSnackBar('On Snap!', 'This email is already exit'));
+  //     } else if (e.message ==
+  //         'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //           snack.errorSnackBar('On Error!', 'No Internet Connection'));
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //           snack.errorSnackBar('On Error!', e.message.toString()));
+  //     }
+  //   }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

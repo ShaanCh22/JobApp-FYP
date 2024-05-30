@@ -31,57 +31,90 @@ class _SignupState extends State<Signup> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   EmailOTP myauth = EmailOTP();
 
-  Future _submitFormOnSignup() async {
+  Future _submitFormOnSignup() async{
     final isValid = _signupFormKey.currentState!.validate();
-    if (isValid) {
+    if(isValid) {
       setState(() {
         _isLoading = true;
       });
-      try {
-        myauth.setConfig(
-            appEmail: "contact@jobbook.com",
-            appName: "Jobbook",
-            userEmail: _emailText.text,
-            otpLength: 4,
-            otpType: OTPType.digitsOnly);
-        if (await myauth.sendOTP() == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              snack.helpSnackBar('Hi There!', 'OTP has been sent'));
-          Navigator.push(
-              context,
-              PageTransition(
-                  child: OtpScreen(
-                    myauth: myauth,
-                    name: _nametext.text,
-                    mail: _emailText.text,
-                    phone: _phonenumbertext.text,
-                    pass: _passText.text,
-                  ),
-                  type: PageTransitionType.rightToLeft,
-                  duration: const Duration(milliseconds: 500)));
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(snack.errorSnackBar('On Snap!', 'OTP send failed'));
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.message ==
-            'The email address is already in use by another account.') {
-          ScaffoldMessenger.of(context).showSnackBar(
-              snack.errorSnackBar('On Snap!', 'This email is already exit'));
-        } else if (e.message ==
-            'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
-          ScaffoldMessenger.of(context).showSnackBar(
-              snack.errorSnackBar('On Error!', 'No Internet Connection'));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              snack.errorSnackBar('On Error!', e.message.toString()));
-        }
+      myauth.setConfig(
+          appEmail: "contact@jobbook.com",
+          appName: "Jobbook",
+          userEmail: _emailText.text,
+          otpLength: 4,
+          otpType: OTPType.digitsOnly);
+      if (await myauth.sendOTP() == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    snack.helpSnackBar('Hi There!', 'OTP has been sent'));
+        Navigator.push(context, PageTransition(child:OtpScreen(
+          myauth: myauth,
+          name: _nametext.text,
+          mail: _emailText.text,
+          phone: _phonenumbertext.text,
+          pass: _passText.text,
+        ),
+            type: PageTransitionType.rightToLeft,
+            duration: Duration(milliseconds: 500)));
+      } else {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(snack.errorSnackBar('On Snap!', 'OTP send failed'));
       }
     }
     setState(() {
-      _isLoading = false;
+      _isLoading=false;
     });
   }
+  // Future _submitFormOnSignup() async {
+  //   final isValid = _signupFormKey.currentState!.validate();
+  //   if (isValid) {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     try {
+  //       myauth.setConfig(
+  //           appEmail: "contact@jobbook.com",
+  //           appName: "Jobbook",
+  //           userEmail: _emailText.text,
+  //           otpLength: 4,
+  //           otpType: OTPType.digitsOnly);
+  //       if (await myauth.sendOTP() == true) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //             snack.helpSnackBar('Hi There!', 'OTP has been sent'));
+  //         Navigator.push(
+  //             context,
+  //             PageTransition(
+  //                 child: OtpScreen(
+  //                   myauth: myauth,
+  //                   name: _nametext.text,
+  //                   mail: _emailText.text,
+  //                   phone: _phonenumbertext.text,
+  //                   pass: _passText.text,
+  //                 ),
+  //                 type: PageTransitionType.rightToLeft,
+  //                 duration: const Duration(milliseconds: 500)));
+  //       } else {
+  //         ScaffoldMessenger.of(context)
+  //             .showSnackBar(snack.errorSnackBar('On Snap!', 'OTP send failed'));
+  //       }
+  //     } on FirebaseAuthException catch (e) {
+  //       if (e.message ==
+  //           'The email address is already in use by another account.') {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //             snack.errorSnackBar('On Snap!', 'This email is already exit'));
+  //       } else if (e.message ==
+  //           'A network error (such as timeout, interrupted connection or unreachable host) has occurred.') {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //             snack.errorSnackBar('On Error!', 'No Internet Connection'));
+  //       } else {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //             snack.errorSnackBar('On Error!', e.message.toString()));
+  //       }
+  //     }
+  //   }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
